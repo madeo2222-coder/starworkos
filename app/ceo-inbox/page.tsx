@@ -472,7 +472,12 @@ export default async function CeoInboxPage({
   const rangeFrom = (filters.page - 1) * PAGE_SIZE;
   const rangeTo = rangeFrom + PAGE_SIZE - 1;
 
-  const [inboxResult, unreadCountResult] = await Promise.all([
+  const [
+    inboxResult,
+    unreadCountResult,
+    approvalCountResult,
+    proposalCountResult,
+  ] = await Promise.all([
     inboxQuery
       .order("created_at", {
         ascending: filters.sort === "oldest",
@@ -486,6 +491,18 @@ export default async function CeoInboxPage({
         head: true,
       })
       .eq("status", "UNREAD"),
+
+    supabase
+      .from("ceo_inbox")
+      .select("id", { count: "exact", head: true })
+      .eq("status", "UNREAD")
+      .eq("item_type", "APPROVAL_REQUEST"),
+
+    supabase
+      .from("ceo_inbox")
+      .select("id", { count: "exact", head: true })
+      .eq("status", "UNREAD")
+      .eq("item_type", "REPORT"),
   ]);
 
   if (inboxResult.error) {
@@ -500,9 +517,15 @@ export default async function CeoInboxPage({
     );
   }
 
+  if (approvalCountResult.error || proposalCountResult.error) {
+    throw new Error("CEO Inbox分類件数の取得に失敗しました。");
+  }
+
   const totalCount = inboxResult.count ?? 0;
   const totalPages = Math.max(1, Math.ceil(totalCount / PAGE_SIZE));
   const unreadTotalCount = unreadCountResult.count ?? 0;
+  const approvalCount = approvalCountResult.count ?? 0;
+  const proposalCount = proposalCountResult.count ?? 0;
 
   if (filters.page > totalPages) {
     redirect(
@@ -589,37 +612,35 @@ export default async function CeoInboxPage({
           : null;
 
   return (
-    <main className="min-h-screen bg-gray-100 px-4 py-6 md:px-8">
+    <main className="min-h-screen bg-[#f7f7f5] px-4 py-6 md:px-8 md:py-10">
       <div className="mx-auto max-w-6xl">
         <div className="mb-6 flex flex-wrap gap-4">
           <Link
             href="/dashboard"
-            className="text-sm font-semibold text-gray-700 underline"
+            className="text-sm font-medium text-zinc-500 hover:text-zinc-950"
           >
-            ← Dashboardへ戻る
+            ← Command Center
           </Link>
 
           <Link
             href="/workflows"
-            className="text-sm font-semibold text-gray-700 underline"
+            className="text-sm font-medium text-zinc-500 hover:text-zinc-950"
           >
             Workflows一覧
           </Link>
         </div>
 
-        <header className="rounded-2xl bg-white p-6 shadow-sm md:p-8">
-          <p className="text-sm font-semibold text-gray-500">
-            STAR WORK OS
-          </p>
+        <header className="os-surface rounded-[24px] p-6 md:p-8">
+          <p className="os-eyebrow">Decision queue</p>
 
           <div className="mt-2 flex flex-wrap items-center justify-between gap-4">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">
+              <h1 className="mt-3 text-4xl font-semibold tracking-[-0.04em] text-zinc-950">
                 CEO Inbox
               </h1>
 
-              <p className="mt-2 text-sm leading-6 text-gray-600">
-                AI社員から届いた承認依頼・確認事項・報告を処理します。
+              <p className="mt-3 max-w-2xl text-sm leading-6 text-zinc-500">
+                AI社員が仕事を進めるために、CEOだけが判断すべき案件を集約します。
               </p>
             </div>
 
@@ -629,10 +650,16 @@ export default async function CeoInboxPage({
           </div>
         </header>
 
+        <section className="mt-6 grid gap-4 md:grid-cols-3">
+          <InboxQueueCard label="承認待ち" value={approvalCount} href="/ceo-inbox?status=unread&type=APPROVAL_REQUEST&priority=all&sort=newest&page=1" tone="amber" />
+          <InboxQueueCard label="AIからの提案" value={proposalCount} href="/ceo-inbox?status=unread&type=REPORT&priority=all&sort=newest&page=1" tone="blue" />
+          <InboxQueueCard label="未処理通知" value={unreadTotalCount} href="/ceo-inbox" tone="neutral" />
+        </section>
+
         <form
           method="get"
           action="/ceo-inbox"
-          className="mt-6 rounded-2xl bg-white p-5 shadow-sm"
+          className="os-surface mt-6 rounded-[22px] p-5"
         >
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
             <label className="text-sm font-semibold text-gray-700">
@@ -758,7 +785,7 @@ export default async function CeoInboxPage({
                 return (
                   <article
                     key={item.id}
-                    className="rounded-2xl border border-amber-200 bg-white p-6 shadow-sm"
+                    className="os-surface rounded-[22px] p-6"
                   >
                     <div className="flex flex-wrap items-start justify-between gap-4">
                       <div className="min-w-0 flex-1">
@@ -904,7 +931,7 @@ export default async function CeoInboxPage({
               {processedItems.map((item) => (
                 <article
                   key={item.id}
-                  className="rounded-2xl bg-white p-5 opacity-75 shadow-sm"
+                  className="os-surface rounded-[20px] p-5 opacity-75"
                 >
                   <div className="flex flex-wrap items-start justify-between gap-4">
                     <div>
@@ -927,7 +954,7 @@ export default async function CeoInboxPage({
         )}
 
         <nav
-          className="mt-8 flex flex-wrap items-center justify-between gap-4 rounded-2xl bg-white p-5 shadow-sm"
+          className="os-surface mt-8 flex flex-wrap items-center justify-between gap-4 rounded-[20px] p-5"
           aria-label="CEO Inboxのページ移動"
         >
           <div>
@@ -971,5 +998,29 @@ export default async function CeoInboxPage({
         </nav>
       </div>
     </main>
+  );
+}
+
+function InboxQueueCard({
+  label,
+  value,
+  href,
+  tone,
+}: {
+  label: string;
+  value: number;
+  href: string;
+  tone: "amber" | "blue" | "neutral";
+}) {
+  const dot = tone === "amber" ? "bg-amber-500" : tone === "blue" ? "bg-blue-500" : "bg-zinc-400";
+  return (
+    <Link href={href} className="os-surface os-card-hover rounded-[20px] p-5">
+      <div className="flex items-center justify-between gap-3">
+        <span className="text-sm font-medium text-zinc-600">{label}</span>
+        <span className={`size-2 rounded-full ${dot}`} />
+      </div>
+      <p className="mt-4 text-3xl font-semibold tracking-[-0.04em] text-zinc-950">{value}</p>
+      <p className="mt-3 text-xs font-semibold text-zinc-500">確認する →</p>
+    </Link>
   );
 }

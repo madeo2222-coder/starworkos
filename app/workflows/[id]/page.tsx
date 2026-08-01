@@ -267,59 +267,59 @@ export default async function WorkflowDetailPage({
   );
 
   return (
-    <main className="min-h-screen bg-gray-50 p-6 md:p-10">
+    <main className="min-h-screen bg-[#f7f7f5] p-6 md:p-10">
       <div className="mx-auto max-w-5xl">
         <div className="mb-6 flex flex-wrap gap-4">
           <Link
             href="/dashboard"
-            className="text-sm font-semibold text-gray-700 underline"
+            className="text-sm font-medium text-zinc-500 hover:text-zinc-950"
           >
-            ← Dashboardへ戻る
+            ← Command Center
           </Link>
 
           <Link
             href="/workflows"
-            className="text-sm font-semibold text-gray-700 underline"
+            className="text-sm font-medium text-zinc-500 hover:text-zinc-950"
           >
             Workflows一覧へ戻る
           </Link>
 
           <Link
             href={`/workflows/${workflow.id}/chat`}
-            className="text-sm font-semibold text-blue-700 underline"
+            className="text-sm font-medium text-zinc-500 hover:text-zinc-950"
           >
             AI社員チャットを見る
           </Link>
         </div>
 
-        <section className="rounded-2xl bg-white p-6 shadow-sm md:p-8">
+        <section className="os-surface rounded-[24px] p-6 md:p-8">
           <div className="flex flex-wrap items-start justify-between gap-4">
             <div>
-              <p className="text-sm font-medium text-gray-500">
+              <p className="os-eyebrow">
                 {projectName}
               </p>
 
-              <h1 className="mt-2 text-3xl font-bold text-gray-900">
+              <h1 className="mt-3 text-3xl font-semibold tracking-[-0.04em] text-zinc-950 md:text-4xl">
                 {workflow.title}
               </h1>
 
-              <p className="mt-4 max-w-3xl text-sm leading-7 text-gray-600">
+              <p className="mt-4 max-w-3xl text-sm leading-7 text-zinc-500">
                 {workflow.description ??
                   "説明は登録されていません。"}
               </p>
             </div>
 
             <div className="flex flex-wrap gap-2">
-              <span className="rounded-full bg-gray-100 px-3 py-1 text-xs font-semibold text-gray-700">
+              <span className="rounded-full bg-zinc-950 px-3 py-1 text-xs font-semibold text-white">
                 {workflow.status ?? "未設定"}
               </span>
 
-              <span className="rounded-full bg-gray-100 px-3 py-1 text-xs font-semibold text-gray-700">
+              <span className="rounded-full border border-zinc-200 px-3 py-1 text-xs font-semibold text-zinc-600">
                 優先度{" "}
                 {workflow.priority ?? "未設定"}
               </span>
 
-              <span className="rounded-full bg-gray-100 px-3 py-1 text-xs font-semibold text-gray-700">
+              <span className="rounded-full bg-zinc-100 px-3 py-1 text-xs font-semibold text-zinc-700">
                 現在 STEP{" "}
                 {workflow.current_step_order ?? "-"}
               </span>
@@ -366,7 +366,8 @@ export default async function WorkflowDetailPage({
         <section className="mt-8">
           <div className="flex flex-wrap items-end justify-between gap-4">
             <div>
-              <h2 className="text-xl font-bold text-gray-900">
+              <p className="os-eyebrow">Execution plan</p>
+              <h2 className="mt-2 text-xl font-semibold tracking-tight text-zinc-950">
                 Workflow Steps
               </h2>
 
@@ -403,10 +404,10 @@ export default async function WorkflowDetailPage({
                 return (
                   <article
                     key={step.id}
-                    className={`rounded-2xl bg-white p-6 shadow-sm ${
+                    className={`os-surface rounded-[22px] p-6 ${
                       isCurrentStep
-                        ? "border-2 border-blue-300"
-                        : "border border-transparent"
+                        ? "!border-zinc-950 ring-1 ring-zinc-950"
+                        : ""
                     }`}
                   >
                     <div className="flex flex-wrap items-start justify-between gap-5">
@@ -417,13 +418,13 @@ export default async function WorkflowDetailPage({
                           </p>
 
                           {isCurrentStep && (
-                            <span className="rounded-full bg-blue-100 px-3 py-1 text-xs font-bold text-blue-800">
+                            <span className="rounded-full bg-zinc-950 px-3 py-1 text-xs font-bold text-white">
                               現在の工程
                             </span>
                           )}
                         </div>
 
-                        <h3 className="mt-1 text-lg font-bold text-gray-900">
+                        <h3 className="mt-2 text-lg font-semibold tracking-tight text-zinc-950">
                           {step.name}
                         </h3>
 

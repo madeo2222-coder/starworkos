@@ -228,35 +228,33 @@ export default async function AiEmployeesPage() {
   ).length;
 
   return (
-    <main className="min-h-screen bg-gray-100 px-4 py-6 md:px-8">
+    <main className="min-h-screen bg-[#f7f7f5] px-4 py-6 md:px-8 md:py-10">
       <div className="mx-auto max-w-7xl">
         <div className="mb-6 flex flex-wrap gap-4">
           <Link
             href="/dashboard"
-            className="text-sm font-semibold text-gray-700 underline"
+            className="text-sm font-medium text-zinc-500 hover:text-zinc-950"
           >
-            ← Dashboardへ戻る
+            ← Command Center
           </Link>
 
           <Link
             href="/executions"
-            className="text-sm font-semibold text-gray-700 underline"
+            className="text-sm font-medium text-zinc-500 hover:text-zinc-950"
           >
             実行履歴を見る
           </Link>
         </div>
 
-        <header className="rounded-2xl bg-white p-6 shadow-sm">
-          <p className="text-sm font-semibold text-gray-500">
-            STAR WORK OS
-          </p>
+        <header className="os-surface rounded-[24px] p-6 md:p-8">
+          <p className="os-eyebrow">AI workforce</p>
 
-          <h1 className="mt-2 text-3xl font-bold text-gray-900">
+          <h1 className="mt-3 text-4xl font-semibold tracking-[-0.04em] text-zinc-950">
             AI Employees
           </h1>
 
-          <p className="mt-2 text-sm text-gray-600">
-            AI社員の役割、稼働状況、実行実績、成功率を確認します。
+          <p className="mt-3 max-w-2xl text-sm leading-6 text-zinc-500">
+            会社を動かすAI社員の役割、現在の状態、実行品質をひとつの組織図として確認します。
           </p>
         </header>
 
@@ -299,11 +297,14 @@ export default async function AiEmployeesPage() {
               {employeeRows.map(({ employee, stats }) => (
                 <article
                   key={employee.id}
-                  className="rounded-2xl bg-white p-6 shadow-sm"
+                  className="os-surface os-card-hover rounded-[22px] p-6"
                 >
                   <div className="flex items-start justify-between gap-4">
                     <div>
-                      <h2 className="text-xl font-bold text-gray-900">
+                      <div className="mb-4 grid size-11 place-items-center rounded-2xl bg-zinc-950 text-sm font-bold text-white">
+                        {employee.name.slice(0, 2)}
+                      </div>
+                      <h2 className="text-xl font-semibold tracking-tight text-zinc-950">
                         {employee.name}
                       </h2>
 
@@ -352,7 +353,7 @@ export default async function AiEmployeesPage() {
                     />
                   </div>
 
-                  <div className="mt-5 rounded-xl bg-gray-50 p-4">
+                  <div className="mt-5 rounded-2xl border border-zinc-100 bg-zinc-50/80 p-4">
                     <p className="text-xs font-semibold text-gray-500">
                       最近の実行
                     </p>
@@ -415,12 +416,12 @@ function SummaryCard({
   value: string;
 }) {
   return (
-    <div className="rounded-2xl bg-white p-5 shadow-sm">
-      <p className="text-sm font-medium text-gray-500">
+    <div className="os-surface rounded-[20px] p-5">
+      <p className="text-xs font-medium text-zinc-500">
         {title}
       </p>
 
-      <p className="mt-3 text-3xl font-bold text-gray-900">
+      <p className="mt-3 text-3xl font-semibold tracking-[-0.04em] text-zinc-950">
         {value}
       </p>
     </div>
@@ -435,7 +436,7 @@ function Metric({
   value: string;
 }) {
   return (
-    <div className="rounded-xl border border-gray-200 p-3">
+    <div className="rounded-xl border border-zinc-200 p-3">
       <p className="text-xs font-semibold text-gray-500">
         {label}
       </p>

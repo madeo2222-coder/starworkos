@@ -37,6 +37,28 @@ type CeoInboxItem = {
   created_at: string;
 };
 
+type AiEmployee = {
+  id: string;
+  name: string;
+  role: string | null;
+  status: string | null;
+};
+
+type TodayTask = {
+  id: string;
+  title: string;
+  status: string;
+  priority: string;
+  due_date: string | null;
+};
+
+type WorkflowSummary = {
+  id: string;
+  title: string;
+  status: string;
+  current_step_order: number | null;
+};
+
 function getProjectName(task: ReviewTask) {
   if (!task.projects) {
     return "未分類";
@@ -102,6 +124,16 @@ export default async function DashboardPage() {
     redirect("/login");
   }
 
+  const today = new Intl.DateTimeFormat("en-CA", {
+    timeZone: "Asia/Tokyo",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).format(new Date());
+  const todayStartedAt = new Date(
+    `${today}T00:00:00+09:00`,
+  ).toISOString();
+
   const [
     projectsResult,
     importantTasksResult,
@@ -109,6 +141,10 @@ export default async function DashboardPage() {
     reviewTasksResult,
     doneTasksResult,
     ceoInboxResult,
+    employeesResult,
+    todayTasksResult,
+    workflowsResult,
+    todayErrorsResult,
   ] = await Promise.all([
     supabase
       .from("projects")
@@ -165,6 +201,30 @@ export default async function DashboardPage() {
       .eq("status", "UNREAD")
       .order("created_at", { ascending: false })
       .limit(10),
+
+    supabase
+      .from("ai_employees")
+      .select("id, name, role, status")
+      .order("created_at", { ascending: true }),
+
+    supabase
+      .from("tasks")
+      .select("id, title, status, priority, due_date")
+      .eq("due_date", today)
+      .order("priority", { ascending: false })
+      .limit(8),
+
+    supabase
+      .from("workflows")
+      .select("id, title, status, current_step_order")
+      .order("updated_at", { ascending: false })
+      .limit(6),
+
+    supabase
+      .from("execution_history")
+      .select("id", { count: "exact", head: true })
+      .eq("status", "ERROR")
+      .gte("created_at", todayStartedAt),
   ]);
 
   if (projectsResult.error) {
@@ -203,9 +263,36 @@ export default async function DashboardPage() {
     );
   }
 
+  if (employeesResult.error) {
+    throw new Error(
+      `AI社員取得に失敗しました: ${employeesResult.error.message}`,
+    );
+  }
+
+  if (todayTasksResult.error) {
+    throw new Error(
+      `今日のTask取得に失敗しました: ${todayTasksResult.error.message}`,
+    );
+  }
+
+  if (workflowsResult.error) {
+    throw new Error(
+      `Workflow状況の取得に失敗しました: ${workflowsResult.error.message}`,
+    );
+  }
+
+  if (todayErrorsResult.error) {
+    throw new Error(
+      `システム状態の取得に失敗しました: ${todayErrorsResult.error.message}`,
+    );
+  }
+
   const projects: Project[] = projectsResult.data ?? [];
   const reviewTasks: ReviewTask[] = reviewTasksResult.data ?? [];
   const ceoInboxItems: CeoInboxItem[] = ceoInboxResult.data ?? [];
+  const employees: AiEmployee[] = employeesResult.data ?? [];
+  const todayTasks: TodayTask[] = todayTasksResult.data ?? [];
+  const workflows: WorkflowSummary[] = workflowsResult.data ?? [];
 
   const activeProjectsCount = projects.filter(
     (project) => project.status === "開発中",
@@ -214,48 +301,50 @@ export default async function DashboardPage() {
   const humanReviewCount = reviewTasks.length;
   const ceoInboxUnreadCount =
     ceoInboxResult.count ?? ceoInboxItems.length;
+  const todayErrorCount = todayErrorsResult.count ?? 0;
 
   return (
-    <main className="min-h-screen bg-gray-100 px-4 py-6 md:px-8">
+    <main className="min-h-screen bg-[#f7f7f5] px-4 py-5 md:px-8 md:py-8">
       <div className="mx-auto max-w-7xl">
-        <header className="flex flex-col gap-4 rounded-2xl bg-white p-6 shadow-sm md:flex-row md:items-center md:justify-between">
-          <div>
-            <p className="text-sm font-semibold text-gray-500">
-              STAR WORK OS
-            </p>
+        <header className="os-surface rounded-[24px] p-6 md:p-8">
+          <div className="mb-8 flex flex-wrap items-center justify-between gap-4 border-b border-zinc-100 pb-5">
+            <Link href="/dashboard" className="flex items-center gap-3">
+              <span className="grid size-9 place-items-center rounded-xl bg-zinc-950 text-xs font-bold text-white">
+                SW
+              </span>
+              <span className="text-sm font-semibold tracking-tight text-zinc-950">
+                STAR WORK OS
+              </span>
+            </Link>
 
-            <h1 className="mt-1 text-3xl font-bold text-gray-900">
-              CEO Dashboard
+            <nav className="flex flex-wrap items-center gap-1 text-sm font-medium text-zinc-600">
+              <Link href="/tasks" className="rounded-lg px-3 py-2 hover:bg-zinc-100 hover:text-zinc-950">Tasks</Link>
+              <Link href="/workflows" className="rounded-lg px-3 py-2 hover:bg-zinc-100 hover:text-zinc-950">Workflows</Link>
+              <Link href="/ai-employees" className="rounded-lg px-3 py-2 hover:bg-zinc-100 hover:text-zinc-950">AI Employees</Link>
+              <Link href="/ceo-inbox" className="rounded-lg px-3 py-2 hover:bg-zinc-100 hover:text-zinc-950">CEO Inbox</Link>
+              <LogoutButton />
+            </nav>
+          </div>
+
+          <div className="flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
+          <div>
+            <p className="os-eyebrow">Company command center</p>
+
+            <h1 className="mt-3 text-3xl font-semibold tracking-[-0.04em] text-zinc-950 md:text-4xl">
+              おはようございます。
             </h1>
 
-            <p className="mt-2 text-sm text-gray-600">
-              ログイン中：{user.email}
+            <p className="mt-3 text-sm text-zinc-500">
+              AI社員と会社全体の動きを、ここから把握できます。 · {user.email}
             </p>
           </div>
 
-          <div className="flex flex-col gap-2 sm:flex-row">
             <Link
               href="/tasks"
-              className="rounded-xl border border-gray-300 bg-white px-4 py-2 text-center text-sm font-semibold text-gray-700 hover:bg-gray-50"
+              className="inline-flex w-fit items-center rounded-xl bg-zinc-950 px-4 py-2.5 text-sm font-semibold text-white hover:bg-zinc-800"
             >
-              Tasks
+              ＋ 新しいTask
             </Link>
-
-            <Link
-              href="/workflows"
-              className="rounded-xl border border-gray-300 bg-white px-4 py-2 text-center text-sm font-semibold text-gray-700 hover:bg-gray-50"
-            >
-              Workflows
-            </Link>
-
-            <Link
-              href="/projects"
-              className="rounded-xl bg-black px-4 py-2 text-center text-sm font-semibold text-white"
-            >
-              Projects
-            </Link>
-
-            <LogoutButton />
           </div>
         </header>
 
@@ -298,8 +387,101 @@ export default async function DashboardPage() {
           </Link>
         </section>
 
+        <section className="mt-6 grid gap-6 xl:grid-cols-12">
+          <div className="os-surface rounded-[22px] p-6 xl:col-span-7">
+            <SectionHeading
+              eyebrow="AI workforce"
+              title="AI社員"
+              description="いま会社で動いているAIチーム"
+              href="/ai-employees"
+            />
+
+            <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+              {employees.map((employee) => (
+                <Link
+                  key={employee.id}
+                  href={`/ai-employees/${employee.id}`}
+                  className="os-card-hover rounded-2xl border border-zinc-200 bg-white p-4"
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <span className="grid size-10 place-items-center rounded-xl bg-zinc-100 text-sm font-bold text-zinc-700">
+                      {employee.name.slice(0, 2)}
+                    </span>
+                    <StatusDot status={employee.status} />
+                  </div>
+                  <p className="mt-4 font-semibold text-zinc-950">{employee.name}</p>
+                  <p className="mt-1 text-xs leading-5 text-zinc-500">{employee.role ?? "役割未設定"}</p>
+                </Link>
+              ))}
+              {employees.length === 0 && (
+                <p className="text-sm text-zinc-500">AI社員はまだ登録されていません。</p>
+              )}
+            </div>
+          </div>
+
+          <div className="os-surface rounded-[22px] p-6 xl:col-span-5">
+            <SectionHeading
+              eyebrow="Today"
+              title="今日のタスク"
+              description={`${today} が期限の仕事`}
+              href="/tasks"
+            />
+            <div className="mt-5 divide-y divide-zinc-100">
+              {todayTasks.map((task) => (
+                <Link key={task.id} href={`/tasks/${task.id}`} className="flex items-center gap-3 py-3 first:pt-0 last:pb-0">
+                  <span className="size-2 rounded-full bg-zinc-900" />
+                  <span className="min-w-0 flex-1 truncate text-sm font-medium text-zinc-800">{task.title}</span>
+                  <span className="rounded-full bg-zinc-100 px-2.5 py-1 text-[11px] font-semibold text-zinc-600">{task.status}</span>
+                </Link>
+              ))}
+              {todayTasks.length === 0 && (
+                <div className="rounded-2xl bg-zinc-50 px-4 py-8 text-center text-sm text-zinc-500">今日が期限のTaskはありません。</div>
+              )}
+            </div>
+          </div>
+
+          <div className="os-surface rounded-[22px] p-6 xl:col-span-8">
+            <SectionHeading
+              eyebrow="Operations"
+              title="Workflow状況"
+              description="最近更新された5STEP Workflow"
+              href="/workflows"
+            />
+            <div className="mt-5 grid gap-3 md:grid-cols-2">
+              {workflows.map((workflow) => (
+                <Link key={workflow.id} href={`/workflows/${workflow.id}`} className="os-card-hover rounded-2xl border border-zinc-200 p-4">
+                  <div className="flex items-start justify-between gap-3">
+                    <p className="font-semibold text-zinc-900">{workflow.title}</p>
+                    <span className="rounded-full bg-zinc-100 px-2.5 py-1 text-[11px] font-semibold text-zinc-600">{workflow.status}</span>
+                  </div>
+                  <div className="mt-4 h-1.5 overflow-hidden rounded-full bg-zinc-100">
+                    <div className="h-full rounded-full bg-zinc-900" style={{ width: `${Math.min(100, ((workflow.current_step_order ?? 0) / 5) * 100)}%` }} />
+                  </div>
+                  <p className="mt-2 text-xs text-zinc-500">STEP {workflow.current_step_order ?? "-"} / 5</p>
+                </Link>
+              ))}
+            </div>
+          </div>
+
+          <aside className="os-surface rounded-[22px] p-6 xl:col-span-4">
+            <p className="os-eyebrow">System health</p>
+            <div className="mt-4 flex items-center gap-3">
+              <span className={`size-3 rounded-full ${todayErrorCount === 0 ? "bg-emerald-500" : "bg-amber-500"}`} />
+              <h2 className="text-xl font-semibold tracking-tight text-zinc-950">
+                {todayErrorCount === 0 ? "すべて正常" : "確認が必要です"}
+              </h2>
+            </div>
+            <dl className="mt-6 space-y-4 text-sm">
+              <SystemRow label="Database" value="Connected" />
+              <SystemRow label="AI実行エラー（本日）" value={`${todayErrorCount}件`} />
+              <SystemRow label="承認待ち" value={`${ceoInboxUnreadCount}件`} />
+              <SystemRow label="稼働中Task" value={`${inProgressTasksResult.count ?? 0}件`} />
+            </dl>
+          </aside>
+        </section>
+
         <section className="mt-6 grid gap-6 lg:grid-cols-3">
-          <div className="rounded-2xl bg-white p-6 shadow-sm lg:col-span-2">
+          <div className="os-surface rounded-[22px] p-6 lg:col-span-2">
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <h2 className="text-xl font-bold text-gray-900">
@@ -359,7 +541,7 @@ export default async function DashboardPage() {
             </div>
           </div>
 
-          <aside className="rounded-2xl bg-white p-6 shadow-sm">
+          <aside className="os-surface rounded-[22px] p-6">
             <div className="flex items-center justify-between gap-3">
               <div>
                 <h2 className="text-xl font-bold text-gray-900">
@@ -514,9 +696,52 @@ function SummaryCard({
   value: string;
 }) {
   return (
-    <div className="rounded-2xl bg-white p-5 shadow-sm">
-      <p className="text-sm font-medium text-gray-500">{title}</p>
-      <p className="mt-3 text-3xl font-bold text-gray-900">{value}</p>
+    <div className="os-surface rounded-[20px] p-5">
+      <p className="text-xs font-medium text-zinc-500">{title}</p>
+      <p className="mt-3 text-3xl font-semibold tracking-[-0.04em] text-zinc-950">{value}</p>
+    </div>
+  );
+}
+
+function SectionHeading({
+  eyebrow,
+  title,
+  description,
+  href,
+}: {
+  eyebrow: string;
+  title: string;
+  description: string;
+  href: string;
+}) {
+  return (
+    <div className="flex items-end justify-between gap-4">
+      <div>
+        <p className="os-eyebrow">{eyebrow}</p>
+        <h2 className="mt-2 text-xl font-semibold tracking-tight text-zinc-950">{title}</h2>
+        <p className="mt-1 text-sm text-zinc-500">{description}</p>
+      </div>
+      <Link href={href} className="shrink-0 text-xs font-semibold text-zinc-600 hover:text-zinc-950">すべて見る →</Link>
+    </div>
+  );
+}
+
+function StatusDot({ status }: { status: string | null }) {
+  const active = status === "IN_PROGRESS";
+  const blocked = status === "BLOCKED";
+  return (
+    <span className="inline-flex items-center gap-1.5 text-[11px] font-medium text-zinc-500">
+      <span className={`size-2 rounded-full ${blocked ? "bg-red-500" : active ? "bg-blue-500" : "bg-emerald-500"}`} />
+      {blocked ? "停止中" : active ? "作業中" : "待機中"}
+    </span>
+  );
+}
+
+function SystemRow({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="flex items-center justify-between gap-3 border-b border-zinc-100 pb-3 last:border-0 last:pb-0">
+      <dt className="text-zinc-500">{label}</dt>
+      <dd className="font-semibold text-zinc-900">{value}</dd>
     </div>
   );
 }
