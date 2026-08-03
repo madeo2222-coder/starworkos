@@ -287,106 +287,76 @@ async function resolveInboxItem(formData: FormData) {
     );
   }
 
-  if (decision === "APPROVED") {
-    const { data: workflow, error: workflowError } = await supabase
-      .from("workflows")
-      .select("id, current_step_order")
-      .eq("id", workflowId)
-      .maybeSingle();
-
-    if (workflowError) {
-      throw new Error(
-        `Workflowの取得に失敗しました: ${workflowError.message}`,
-      );
-    }
-
-    if (!workflow || workflow.current_step_order === null) {
-      throw new Error("承認対象の現在STEPが見つかりません。");
-    }
-
-    const { data: currentStep, error: stepError } = await supabase
-      .from("workflow_steps")
-      .select("id, name, requires_human_approval")
-      .eq("workflow_id", workflowId)
-      .eq("step_order", workflow.current_step_order)
-      .maybeSingle();
-
-    if (stepError) {
-      throw new Error(
-        `現在STEPの取得に失敗しました: ${stepError.message}`,
-      );
-    }
-
-    if (!currentStep) {
-      throw new Error("承認対象の現在STEPが見つかりません。");
-    }
-
-    if (currentStep.requires_human_approval) {
-      const { error: approvalError } = await supabase
-        .from("workflow_steps")
-        .update({
-          requires_human_approval: false,
-        })
-        .eq("id", currentStep.id)
-        .eq("workflow_id", workflowId)
-        .eq("requires_human_approval", true);
-
-      if (approvalError) {
-        throw new Error(
-          `STEPの承認に失敗しました: ${approvalError.message}`,
-        );
-      }
-    }
-
-    const { error: messageError } = await supabase
-      .from("workflow_messages")
-      .insert({
-        workflow_id: workflowId,
-        workflow_step_id: currentStep.id,
-        sender_type: "CEO",
-        message_type: "APPROVAL_RESULT",
-        content: `CEOがSTEP「${currentStep.name}」を承認しました。`,
-        created_by_user_id: user.id,
-      });
-
-    if (messageError) {
-      throw new Error(
-        `承認結果の保存に失敗しました: ${messageError.message}`,
-      );
-    }
-  }
-
-  if (decision === "REJECTED") {
-    const { error: messageError } = await supabase
-      .from("workflow_messages")
-      .insert({
-        workflow_id: workflowId,
-        sender_type: "CEO",
-        message_type: "APPROVAL_RESULT",
-        content:
-          "CEOが承認依頼を却下しました。内容を確認し、修正後に再申請してください。",
-        created_by_user_id: user.id,
-      });
-
-    if (messageError) {
-      throw new Error(
-        `却下結果の保存に失敗しました: ${messageError.message}`,
-      );
-    }
-  }
-
-  const { error: updateError } = await supabase
-    .from("ceo_inbox")
-    .update({
-      status: "READ",
-    })
-    .eq("id", inboxItemId)
-    .eq("status", "UNREAD");
-
-  if (updateError) {
-    throw new Error(
-      `CEO Inboxの更新に失敗しました: ${updateError.message}`,
+  if (isApprovalRequest) {
+    const { error: resolveError } = await supabase.rpc(
+      "resolve_ceo_inbox_item",
+      {
+        p_inbox_id: inboxItemId,
+        p_decision: decision,
+        p_response: null,
+        p_reason: null,
+        p_expected_updated_at: null,
+      },
     );
+
+    if (resolveError) {
+      const rpcMessage = resolveError.message ?? "";
+      let userMessage =
+        "CEO Inboxの処理に失敗しました。画面を更新して、もう一度お試しください。";
+
+      if (rpcMessage.includes("AUTHENTICATION_REQUIRED")) {
+        redirect("/login");
+      }
+
+      if (rpcMessage.includes("INBOX_ITEM_NOT_FOUND")) {
+        userMessage = "対象のCEO Inboxが見つかりません。";
+      } else if (
+        rpcMessage.includes("INBOX_ITEM_ALREADY_PROCESSED")
+      ) {
+        userMessage = "このCEO Inboxはすでに処理されています。";
+      } else if (
+        rpcMessage.includes("UNSUPPORTED_INBOX_ITEM_TYPE")
+      ) {
+        userMessage = "この通知は承認・却下の対象ではありません。";
+      } else if (rpcMessage.includes("INVALID_DECISION")) {
+        userMessage = "承認または却下の指定が正しくありません。";
+      } else if (rpcMessage.includes("WORKFLOW_NOT_FOUND")) {
+        userMessage = "対象のWorkflowが見つかりません。";
+      } else if (
+        rpcMessage.includes("WORKFLOW_STEP_NOT_FOUND") ||
+        rpcMessage.includes("WORKFLOW_STEP_MISMATCH")
+      ) {
+        userMessage =
+          "承認対象のWorkflow STEPを特定できません。通知内容を確認してください。";
+      } else if (
+        rpcMessage.includes("WORKFLOW_ALREADY_ADVANCED")
+      ) {
+        userMessage =
+          "Workflowがすでに次のSTEPへ進んでいるため、この通知は処理できません。";
+      } else if (rpcMessage.includes("APPROVAL_NOT_REQUIRED")) {
+        userMessage = "現在のSTEPは承認待ちではありません。";
+      } else if (rpcMessage.includes("INBOX_ITEM_CHANGED")) {
+        userMessage =
+          "通知内容が更新されています。画面を再読み込みしてください。";
+      }
+
+      throw new Error(userMessage);
+    }
+  } else {
+    const { error: updateError } = await supabase
+      .from("ceo_inbox")
+      .update({
+        status: "READ",
+        read_at: new Date().toISOString(),
+      })
+      .eq("id", inboxItemId)
+      .eq("status", "UNREAD");
+
+    if (updateError) {
+      throw new Error(
+        `CEO Inboxの更新に失敗しました: ${updateError.message}`,
+      );
+    }
   }
 
   revalidatePath("/ceo-inbox");
