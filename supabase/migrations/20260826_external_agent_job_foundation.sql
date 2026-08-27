@@ -48,6 +48,37 @@ alter table public.external_agent_jobs enable row level security;
 revoke all on table public.external_agent_jobs from anon, authenticated;
 grant all on table public.external_agent_jobs to service_role;
 
+-- This is a server-managed allowlist.  It deliberately starts empty so that the
+-- job-creation RPC is fail-closed until an operator grants a repository to a
+-- user for a project.  Browser roles never administer this table.
+create table public.external_agent_job_authorizations (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null references auth.users(id) on delete cascade,
+  project_id uuid not null references public.projects(id) on delete cascade,
+  repository text not null,
+  enabled boolean not null default true,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  constraint external_agent_job_authorizations_repository_check
+    check (repository ~ '^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$'),
+  constraint external_agent_job_authorizations_user_project_repository_key
+    unique (user_id, project_id, repository)
+);
+
+alter table public.external_agent_job_authorizations enable row level security;
+revoke all on table public.external_agent_job_authorizations from public, anon, authenticated;
+grant all on table public.external_agent_job_authorizations to service_role;
+
+create function public.set_external_agent_job_authorization_updated_at()
+returns trigger language plpgsql set search_path = '' as $$
+begin
+  new.updated_at := now();
+  return new;
+end $$;
+create trigger set_external_agent_job_authorization_updated_at
+before update on public.external_agent_job_authorizations
+for each row execute function public.set_external_agent_job_authorization_updated_at();
+
 create function public.guard_external_agent_job_update()
 returns trigger language plpgsql set search_path = '' as $$
 begin
@@ -91,15 +122,13 @@ create function public.create_external_agent_job(
   p_task_id uuid, p_ai_employee_id uuid, p_provider text, p_capability text,
   p_repository text, p_base_branch text, p_idempotency_key text
 ) returns jsonb language plpgsql security definer set search_path = '' as $$
-declare v_task public.tasks%rowtype; v_existing public.external_agent_jobs%rowtype; v_job public.external_agent_jobs%rowtype;
+declare
+  v_user_id uuid := auth.uid();
+  v_task public.tasks%rowtype;
+  v_existing public.external_agent_jobs%rowtype;
+  v_job public.external_agent_jobs%rowtype;
 begin
-  select * into v_existing from public.external_agent_jobs where idempotency_key = p_idempotency_key;
-  if found then
-    if (v_existing.task_id, v_existing.ai_employee_id, v_existing.provider, v_existing.capability, v_existing.repository, v_existing.base_branch)
-       is distinct from (p_task_id, p_ai_employee_id, p_provider, p_capability, p_repository, p_base_branch)
-    then raise exception 'idempotency key conflicts with another request'; end if;
-    return to_jsonb(v_existing);
-  end if;
+  if v_user_id is null then raise exception 'AUTHENTICATION_REQUIRED'; end if;
   select * into v_task from public.tasks where id = p_task_id;
   if not found then raise exception 'Task not found'; end if;
   if v_task.status in ('COMPLETED', 'CANCELLED') then raise exception 'Task is not eligible for an external job'; end if;
@@ -107,6 +136,21 @@ begin
   if p_provider not in ('openai_codex', 'anthropic_claude_code') then raise exception 'Unsupported provider'; end if;
   if p_capability not in ('software_development', 'code_review', 'repository_analysis') then raise exception 'Unsupported capability'; end if;
   if p_repository !~ '^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$' then raise exception 'Invalid repository'; end if;
+  if not exists (
+    select 1
+    from public.external_agent_job_authorizations authorization
+    where authorization.user_id = v_user_id
+      and authorization.project_id = v_task.project_id
+      and authorization.repository = p_repository
+      and authorization.enabled = true
+  ) then raise exception 'EXTERNAL_AGENT_JOB_FORBIDDEN'; end if;
+  select * into v_existing from public.external_agent_jobs where idempotency_key = p_idempotency_key;
+  if found then
+    if (v_existing.task_id, v_existing.ai_employee_id, v_existing.provider, v_existing.capability, v_existing.repository, v_existing.base_branch)
+       is distinct from (p_task_id, p_ai_employee_id, p_provider, p_capability, p_repository, p_base_branch)
+    then raise exception 'idempotency key conflicts with another request'; end if;
+    return to_jsonb(v_existing);
+  end if;
   insert into public.external_agent_jobs(task_id, ai_employee_id, provider, capability, repository, base_branch, idempotency_key)
   values (p_task_id, p_ai_employee_id, p_provider, p_capability, p_repository, p_base_branch, p_idempotency_key)
   returning * into v_job;

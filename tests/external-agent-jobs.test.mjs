@@ -34,9 +34,35 @@ test("database contract handles idempotency atomically", () => {
   assert.match(migration, /idempotency key conflicts with another request/);
   assert.match(migration, /when unique_violation/);
 });
+test("job creation is authenticated and fails closed without an exact allowlist entry", () => {
+  assert.match(migration, /v_user_id uuid := auth\.uid\(\)/);
+  assert.match(migration, /if v_user_id is null then raise exception 'AUTHENTICATION_REQUIRED'/);
+  assert.match(migration, /create table public\.external_agent_job_authorizations/);
+  assert.match(migration, /authorization\.user_id = v_user_id/);
+  assert.match(migration, /authorization\.project_id = v_task\.project_id/);
+  assert.match(migration, /authorization\.repository = p_repository/);
+  assert.match(migration, /authorization\.enabled = true/);
+  assert.match(migration, /EXTERNAL_AGENT_JOB_FORBIDDEN/);
+});
+test("authorization runs before idempotency lookup so known keys cannot bypass access control", () => {
+  assert.ok(migration.indexOf("EXTERNAL_AGENT_JOB_FORBIDDEN") < migration.indexOf("select * into v_existing from public.external_agent_jobs where idempotency_key = p_idempotency_key"));
+});
+test("browser roles cannot administer the external-agent allowlist", () => {
+  assert.match(migration, /revoke all on table public\.external_agent_job_authorizations from public, anon, authenticated/);
+  assert.match(migration, /grant all on table public\.external_agent_job_authorizations to service_role/);
+});
 test("browser roles cannot mutate jobs and result RPC is service-only", () => {
   assert.match(migration, /revoke all on table public\.external_agent_jobs from anon, authenticated/);
   assert.match(migration, /update_external_agent_job_result[\s\S]+from public, anon, authenticated/);
+});
+test("route maps expected job-creation errors without returning raw database details", async () => {
+  const route = await readFile(new URL("../app/api/external-agent-jobs/route.ts", import.meta.url), "utf8");
+  assert.match(route, /EXTERNAL_AGENT_JOB_FORBIDDEN/) && assert.match(route, /: 403/);
+  assert.match(route, /AUTHENTICATION_REQUIRED/) && assert.match(route, /: 401/);
+  assert.match(route, /EXTERNAL_AGENT_JOB_IDEMPOTENCY_CONFLICT/);
+  assert.match(route, /EXTERNAL_AGENT_JOB_DUPLICATE_ACTIVE/);
+  assert.match(route, /EXTERNAL_AGENT_JOB_CREATE_FAILED/);
+  assert.doesNotMatch(route, /error: error\.message/);
 });
 test("phase 1 contains no dispatch, merge, deploy, or external HTTP implementation", () => {
   assert.doesNotMatch(migration, /http_post|net\.http|github push|openai api/i);
