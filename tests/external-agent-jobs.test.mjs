@@ -34,6 +34,12 @@ test("database contract handles idempotency atomically", () => {
   assert.match(migration, /idempotency key conflicts with another request/);
   assert.match(migration, /when unique_violation/);
 });
+test("idempotency race revalidates the request payload before returning the winning job", () => {
+  const raceHandler = migration.split("exception when unique_violation then")[1]?.split("end $$;")[0] ?? "";
+  assert.match(raceHandler, /select \* into v_existing from public\.external_agent_jobs where idempotency_key = p_idempotency_key/);
+  assert.match(raceHandler, /is distinct from \(p_task_id, p_ai_employee_id, p_provider, p_capability, p_repository, p_base_branch\)/);
+  assert.match(raceHandler, /idempotency key conflicts with another request/);
+});
 test("job creation is authenticated and fails closed without an exact allowlist entry", () => {
   assert.match(migration, /v_user_id uuid := auth\.uid\(\)/);
   assert.match(migration, /if v_user_id is null then raise exception 'AUTHENTICATION_REQUIRED'/);
