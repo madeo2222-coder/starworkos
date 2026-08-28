@@ -48,9 +48,9 @@ alter table public.external_agent_jobs enable row level security;
 revoke all on table public.external_agent_jobs from anon, authenticated;
 grant all on table public.external_agent_jobs to service_role;
 
--- This is a server-managed allowlist.  It deliberately starts empty so that the
+-- This is a server-managed allowlist. It deliberately starts empty so that the
 -- job-creation RPC is fail-closed until an operator grants a repository to a
--- user for a project.  Browser roles never administer this table.
+-- user for a project. Browser roles never administer this table.
 create table public.external_agent_job_authorizations (
   id uuid primary key default gen_random_uuid(),
   user_id uuid not null references auth.users(id) on delete cascade,
@@ -158,6 +158,9 @@ begin
 exception when unique_violation then
   select * into v_existing from public.external_agent_jobs where idempotency_key = p_idempotency_key;
   if not found then raise exception 'duplicate active external agent job'; end if;
+  if (v_existing.task_id, v_existing.ai_employee_id, v_existing.provider, v_existing.capability, v_existing.repository, v_existing.base_branch)
+     is distinct from (p_task_id, p_ai_employee_id, p_provider, p_capability, p_repository, p_base_branch)
+  then raise exception 'idempotency key conflicts with another request'; end if;
   return to_jsonb(v_existing);
 end $$;
 
