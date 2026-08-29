@@ -44,10 +44,10 @@ test("job creation is authenticated and fails closed without an exact allowlist 
   assert.match(migration, /v_user_id uuid := auth\.uid\(\)/);
   assert.match(migration, /if v_user_id is null then raise exception 'AUTHENTICATION_REQUIRED'/);
   assert.match(migration, /create table public\.external_agent_job_authorizations/);
-  assert.match(migration, /authorization\.user_id = v_user_id/);
-  assert.match(migration, /authorization\.project_id = v_task\.project_id/);
-  assert.match(migration, /authorization\.repository = p_repository/);
-  assert.match(migration, /authorization\.enabled = true/);
+  assert.match(migration, /authz\.user_id = v_user_id/);
+  assert.match(migration, /authz\.project_id = v_task\.project_id/);
+  assert.match(migration, /authz\.repository = p_repository/);
+  assert.match(migration, /authz\.enabled = true/);
   assert.match(migration, /EXTERNAL_AGENT_JOB_FORBIDDEN/);
 });
 test("authorization runs before idempotency lookup so known keys cannot bypass access control", () => {

@@ -138,11 +138,11 @@ begin
   if p_repository !~ '^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$' then raise exception 'Invalid repository'; end if;
   if not exists (
     select 1
-    from public.external_agent_job_authorizations authorization
-    where authorization.user_id = v_user_id
-      and authorization.project_id = v_task.project_id
-      and authorization.repository = p_repository
-      and authorization.enabled = true
+    from public.external_agent_job_authorizations as authz
+    where authz.user_id = v_user_id
+      and authz.project_id = v_task.project_id
+      and authz.repository = p_repository
+      and authz.enabled = true
   ) then raise exception 'EXTERNAL_AGENT_JOB_FORBIDDEN'; end if;
   select * into v_existing from public.external_agent_jobs where idempotency_key = p_idempotency_key;
   if found then
