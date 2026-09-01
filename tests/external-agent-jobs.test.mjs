@@ -102,7 +102,12 @@ test("callback route requires signed requests and records nonce before accepting
   assert.match(callbackRoute, /verifyCallbackSignature/);
   assert.match(callbackRoute, /external_agent_callback_nonces/);
   assert.match(callbackRoute, /CALLBACK_REPLAY_DETECTED/);
+  assert.doesNotMatch(callbackRoute, /EXTERNAL_AGENT_RESULT_TOKEN/);
   assert.doesNotMatch(callbackRoute, /error: error\.message/);
+});
+
+test("legacy bearer-token result route is removed so callbacks have one authenticated entry point", async () => {
+  await assert.rejects(readFile(new URL("../app/api/internal/external-agent-jobs/result/route.ts", import.meta.url)), { code: "ENOENT" });
 });
 
 test("dispatch is disabled until every operator-provided gateway setting is present", () => {
