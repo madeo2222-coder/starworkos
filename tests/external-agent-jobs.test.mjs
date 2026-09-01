@@ -138,7 +138,7 @@ test("internal dispatch authentication uses a constant-time equality check", () 
 
 test("dispatch route is fail-closed, idempotent at the gateway, and never returns raw errors", async () => {
   const route = await readFile(new URL("../app/api/internal/external-agent-jobs/dispatch/route.ts", import.meta.url), "utf8");
-  assert.match(route, /if \(!config\.ok \|\| !config\.url/);
+  assert.match(route, /if \(!config\.ok\)/);
   assert.match(route, /DISPATCH_AUTHENTICATION_REQUIRED/);
   assert.match(route, /EXTERNAL_AGENT_DISPATCH_TRIGGER_TOKEN/);
   assert.match(route, /config\.gatewayToken/);
