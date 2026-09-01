@@ -2,6 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import { HUMAN_APPROVAL_ACTIONS, isValidTransition, validateCreateInput, validateResultInput } from "../lib/external-agent-jobs.js";
+import { CALLBACK_MAX_AGE_SECONDS, createCallbackSignature, verifyCallbackSignature } from "../lib/external-agent-callback.js";
 
 const valid = { taskId: "task", aiEmployeeId: "employee", provider: "openai_codex", capability: "software_development", repository: "madeo2222-coder/starworkos", baseBranch: "main" };
 const migration = await readFile(new URL("../supabase/migrations/20260826_external_agent_job_foundation.sql", import.meta.url), "utf8");
@@ -72,4 +73,33 @@ test("route maps expected job-creation errors without returning raw database det
 });
 test("phase 1 contains no dispatch, merge, deploy, or external HTTP implementation", () => {
   assert.doesNotMatch(migration, /http_post|net\.http|github push|openai api/i);
+});
+
+test("signed callback is accepted only with its intact body, timestamp, and nonce", () => {
+  const secret = "test-callback-secret";
+  const timestamp = String(Math.floor(Date.now() / 1000));
+  const nonce = "a".repeat(32);
+  const body = JSON.stringify({ jobId: "job", status: "SUCCEEDED" });
+  const signature = createCallbackSignature({ secret, timestamp, nonce, body });
+  assert.equal(verifyCallbackSignature({ secret, timestamp, nonce, body, signature }), true);
+  assert.equal(verifyCallbackSignature({ secret, timestamp, nonce, body: `${body} `, signature }), false);
+});
+
+test("signed callback rejects expired timestamps and short nonces", () => {
+  const secret = "test-callback-secret";
+  const now = Date.now();
+  const timestamp = String(Math.floor((now - (CALLBACK_MAX_AGE_SECONDS + 1) * 1000) / 1000));
+  const nonce = "b".repeat(32);
+  const body = "{}";
+  const signature = createCallbackSignature({ secret, timestamp, nonce, body });
+  assert.equal(verifyCallbackSignature({ secret, timestamp, nonce, body, signature, now }), false);
+  assert.equal(verifyCallbackSignature({ secret, timestamp: String(Math.floor(now / 1000)), nonce: "short", body, signature, now }), false);
+});
+
+test("callback route requires signed requests and records nonce before accepting results", async () => {
+  const callbackRoute = await readFile(new URL("../app/api/internal/external-agent-jobs/callback/route.ts", import.meta.url), "utf8");
+  assert.match(callbackRoute, /verifyCallbackSignature/);
+  assert.match(callbackRoute, /external_agent_callback_nonces/);
+  assert.match(callbackRoute, /CALLBACK_REPLAY_DETECTED/);
+  assert.doesNotMatch(callbackRoute, /error: error\.message/);
 });
