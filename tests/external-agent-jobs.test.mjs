@@ -2,6 +2,8 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import { HUMAN_APPROVAL_ACTIONS, isValidTransition, validateCreateInput, validateResultInput } from "../lib/external-agent-jobs.js";
+import { CALLBACK_MAX_AGE_SECONDS, createCallbackSignature, verifyCallbackSignature } from "../lib/external-agent-callback.js";
+import { dispatchConfig, dispatchPayload, parseDispatchResponse, safeTokenEquals, validateDispatchRequest } from "../lib/external-agent-dispatch.js";
 
 const valid = { taskId: "task", aiEmployeeId: "employee", provider: "openai_codex", capability: "software_development", repository: "madeo2222-coder/starworkos", baseBranch: "main" };
 const migration = await readFile(new URL("../supabase/migrations/20260826_external_agent_job_foundation.sql", import.meta.url), "utf8");
@@ -72,6 +74,83 @@ test("route maps expected job-creation errors without returning raw database det
 });
 test("phase 1 contains no dispatch, merge, deploy, or external HTTP implementation", () => {
   assert.doesNotMatch(migration, /http_post|net\.http|github push|openai api/i);
+});
+
+test("signed callback is accepted only with its intact body, timestamp, and nonce", () => {
+  const secret = "test-callback-secret";
+  const timestamp = String(Math.floor(Date.now() / 1000));
+  const nonce = "a".repeat(32);
+  const body = JSON.stringify({ jobId: "job", status: "SUCCEEDED" });
+  const signature = createCallbackSignature({ secret, timestamp, nonce, body });
+  assert.equal(verifyCallbackSignature({ secret, timestamp, nonce, body, signature }), true);
+  assert.equal(verifyCallbackSignature({ secret, timestamp, nonce, body: `${body} `, signature }), false);
+});
+
+test("signed callback rejects expired timestamps and short nonces", () => {
+  const secret = "test-callback-secret";
+  const now = Date.now();
+  const timestamp = String(Math.floor((now - (CALLBACK_MAX_AGE_SECONDS + 1) * 1000) / 1000));
+  const nonce = "b".repeat(32);
+  const body = "{}";
+  const signature = createCallbackSignature({ secret, timestamp, nonce, body });
+  assert.equal(verifyCallbackSignature({ secret, timestamp, nonce, body, signature, now }), false);
+  assert.equal(verifyCallbackSignature({ secret, timestamp: String(Math.floor(now / 1000)), nonce: "short", body, signature, now }), false);
+});
+
+test("callback route requires signed requests and records nonce before accepting results", async () => {
+  const callbackRoute = await readFile(new URL("../app/api/internal/external-agent-jobs/callback/route.ts", import.meta.url), "utf8");
+  assert.match(callbackRoute, /verifyCallbackSignature/);
+  assert.match(callbackRoute, /external_agent_callback_nonces/);
+  assert.match(callbackRoute, /CALLBACK_REPLAY_DETECTED/);
+  assert.doesNotMatch(callbackRoute, /EXTERNAL_AGENT_RESULT_TOKEN/);
+  assert.doesNotMatch(callbackRoute, /error: error\.message/);
+});
+
+test("legacy bearer-token result route is removed so callbacks have one authenticated entry point", async () => {
+  await assert.rejects(readFile(new URL("../app/api/internal/external-agent-jobs/result/route.ts", import.meta.url)), { code: "ENOENT" });
+});
+
+test("dispatch is disabled until every operator-provided gateway setting is present", () => {
+  assert.equal(dispatchConfig({}).error, "EXTERNAL_AGENT_DISPATCH_DISABLED");
+  assert.equal(dispatchConfig({ EXTERNAL_AGENT_DISPATCH_ENABLED: "true" }).error, "EXTERNAL_AGENT_DISPATCH_NOT_CONFIGURED");
+  const config = dispatchConfig({
+    EXTERNAL_AGENT_DISPATCH_ENABLED: "true",
+    EXTERNAL_AGENT_DISPATCH_URL: "https://gateway.example.test/jobs",
+    EXTERNAL_AGENT_CALLBACK_URL: "https://work.example.test/api/internal/external-agent-jobs/callback",
+    EXTERNAL_AGENT_DISPATCH_ALLOWED_HOSTS: "gateway.example.test",
+    EXTERNAL_AGENT_GATEWAY_TOKEN: "a".repeat(32),
+  });
+  assert.equal(config.ok, true);
+  assert.equal(dispatchConfig({ ...config, EXTERNAL_AGENT_DISPATCH_ENABLED: "true", EXTERNAL_AGENT_DISPATCH_URL: "http://gateway.example.test" }).error, "EXTERNAL_AGENT_DISPATCH_NOT_CONFIGURED");
+});
+
+test("dispatch request and gateway response contracts are strictly minimal", () => {
+  assert.equal(validateDispatchRequest({ jobId: "not-a-uuid" }), "INVALID_DISPATCH_REQUEST");
+  assert.equal(validateDispatchRequest({ jobId: "b2916606-3298-4457-a3ee-6e52340e925b" }), null);
+  assert.equal(parseDispatchResponse({ externalJobId: "remote-123" }).externalJobId, "remote-123");
+  assert.equal(parseDispatchResponse({}), null);
+  assert.deepEqual(dispatchPayload({ id: "job", task_id: "task", ai_employee_id: "employee", provider: "openai_codex", capability: "software_development", repository: "madeo2222-coder/starworkos", base_branch: "main", requested_action: "software_development" }, "https://work.example.test/callback"), {
+    job: { id: "job", taskId: "task", aiEmployeeId: "employee", provider: "openai_codex", capability: "software_development", repository: "madeo2222-coder/starworkos", baseBranch: "main", requestedAction: "software_development" },
+    callbackUrl: "https://work.example.test/callback",
+  });
+});
+
+test("internal dispatch authentication uses a constant-time equality check", () => {
+  assert.equal(safeTokenEquals("a".repeat(32), "a".repeat(32)), true);
+  assert.equal(safeTokenEquals("a".repeat(32), "b".repeat(32)), false);
+  assert.equal(safeTokenEquals("a".repeat(32), "a".repeat(31)), false);
+});
+
+test("dispatch route is fail-closed, idempotent at the gateway, and never returns raw errors", async () => {
+  const route = await readFile(new URL("../app/api/internal/external-agent-jobs/dispatch/route.ts", import.meta.url), "utf8");
+  assert.match(route, /if \(!config\.ok\)/);
+  assert.match(route, /DISPATCH_AUTHENTICATION_REQUIRED/);
+  assert.match(route, /EXTERNAL_AGENT_DISPATCH_TRIGGER_TOKEN/);
+  assert.match(route, /config\.gatewayToken/);
+  assert.match(route, /idempotency-key/);
+  assert.match(route, /external-agent-job:\$\{job\.id\}/);
+  assert.match(route, /p_status: "RUNNING"/);
+  assert.doesNotMatch(route, /error: .*\.message/);
 });
 
 test("AI execution is server-guarded before history creation or an OpenAI call", async () => {
