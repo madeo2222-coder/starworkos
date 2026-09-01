@@ -8,7 +8,9 @@ const DISPATCH_TIMEOUT_MS = 10_000;
 
 export async function POST(request: Request) {
   const config = dispatchConfig();
-  if (!config.ok) return NextResponse.json({ ok: false, error: config.error }, { status: 503 });
+  if (!config.ok || !config.url || !config.callbackUrl || !config.gatewayToken) {
+    return NextResponse.json({ ok: false, error: config.error ?? "EXTERNAL_AGENT_DISPATCH_NOT_CONFIGURED" }, { status: 503 });
+  }
 
   const suppliedToken = request.headers.get("authorization")?.replace(/^Bearer\s+/i, "");
   if (!safeTokenEquals(process.env.EXTERNAL_AGENT_DISPATCH_TRIGGER_TOKEN, suppliedToken)) {
