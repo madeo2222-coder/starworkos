@@ -97,6 +97,8 @@ export async function POST(
         step_order,
         name,
         status,
+        requires_human_approval,
+        approved_at,
         ceo_instruction,
         work_note,
         deliverable,
@@ -119,6 +121,66 @@ export async function POST(
           error: "対象のWorkflow STEPが見つかりません。",
         },
         { status: 404 },
+      );
+    }
+
+    const { data: workflow, error: workflowError } = await supabase
+      .from("workflows")
+      .select("id, status, current_step_order")
+      .eq("id", workflowId)
+      .maybeSingle();
+
+    if (workflowError) {
+      throw new Error(`Workflowの取得に失敗しました: ${workflowError.message}`);
+    }
+
+    if (!workflow) {
+      return NextResponse.json(
+        {
+          ok: false,
+          error: "対象のWorkflowが見つかりません。",
+        },
+        { status: 404 },
+      );
+    }
+
+    if (workflow.status !== "IN_PROGRESS") {
+      return NextResponse.json(
+        {
+          ok: false,
+          error: "Workflowは現在AI実行できる状態ではありません。",
+        },
+        { status: 409 },
+      );
+    }
+
+    if (step.step_order !== workflow.current_step_order) {
+      return NextResponse.json(
+        {
+          ok: false,
+          error: "現在のWorkflow STEPのみ実行できます。",
+        },
+        { status: 409 },
+      );
+    }
+
+    if (step.status !== "IN_PROGRESS") {
+      return NextResponse.json(
+        {
+          ok: false,
+          error: "現在のSTEPはAI実行できる状態ではありません。",
+        },
+        { status: 409 },
+      );
+    }
+
+    if (step.requires_human_approval && !step.approved_at) {
+      return NextResponse.json(
+        {
+          ok: false,
+          error: "このSTEPは人間承認後に実行できます。",
+        },
+        { status: 409 },
       );
     }
 

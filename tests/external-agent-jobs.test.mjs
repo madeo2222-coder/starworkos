@@ -73,3 +73,19 @@ test("route maps expected job-creation errors without returning raw database det
 test("phase 1 contains no dispatch, merge, deploy, or external HTTP implementation", () => {
   assert.doesNotMatch(migration, /http_post|net\.http|github push|openai api/i);
 });
+
+test("AI execution is server-guarded before history creation or an OpenAI call", async () => {
+  const route = await readFile(new URL("../app/api/workflow-steps/[stepId]/run-ai/route.ts", import.meta.url), "utf8");
+  const guardStart = route.indexOf('.from("workflows")');
+  const historyCreate = route.indexOf('.from("execution_history")');
+  const openAiCall = route.indexOf("new OpenAI(");
+
+  assert.ok(guardStart >= 0);
+  assert.ok(guardStart < historyCreate);
+  assert.ok(guardStart < openAiCall);
+  assert.match(route, /workflow\.status !== "IN_PROGRESS"/);
+  assert.match(route, /step\.step_order !== workflow\.current_step_order/);
+  assert.match(route, /step\.status !== "IN_PROGRESS"/);
+  assert.match(route, /step\.requires_human_approval && !step\.approved_at/);
+  assert.match(route, /status: 409/);
+});
