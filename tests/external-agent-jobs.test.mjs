@@ -152,3 +152,19 @@ test("dispatch route is fail-closed, idempotent at the gateway, and never return
   assert.match(route, /p_status: "RUNNING"/);
   assert.doesNotMatch(route, /error: .*\.message/);
 });
+
+test("AI execution is server-guarded before history creation or an OpenAI call", async () => {
+  const route = await readFile(new URL("../app/api/workflow-steps/[stepId]/run-ai/route.ts", import.meta.url), "utf8");
+  const guardStart = route.indexOf('.from("workflows")');
+  const historyCreate = route.indexOf('.from("execution_history")');
+  const openAiCall = route.indexOf("new OpenAI(");
+
+  assert.ok(guardStart >= 0);
+  assert.ok(guardStart < historyCreate);
+  assert.ok(guardStart < openAiCall);
+  assert.match(route, /workflow\.status !== "IN_PROGRESS"/);
+  assert.match(route, /step\.step_order !== workflow\.current_step_order/);
+  assert.match(route, /step\.status !== "IN_PROGRESS"/);
+  assert.match(route, /step\.requires_human_approval && !step\.approved_at/);
+  assert.match(route, /status: 409/);
+});
