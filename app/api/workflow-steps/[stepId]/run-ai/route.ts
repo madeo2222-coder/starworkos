@@ -1,33 +1,10 @@
 import OpenAI from "openai";
 import { NextResponse } from "next/server";
+import {
+  buildWorkflowAiPrompt,
+  parseWorkflowAiResult,
+} from "@/lib/workflow-ai";
 import { createClient } from "@/utils/supabase/server";
-
-type AiResult = {
-  work_note: string;
-  deliverable: string;
-};
-
-function parseAiResult(text: string): AiResult {
-  const cleaned = text
-    .replace(/^```json\s*/i, "")
-    .replace(/^```\s*/i, "")
-    .replace(/\s*```$/i, "")
-    .trim();
-
-  const parsed = JSON.parse(cleaned) as Partial<AiResult>;
-
-  if (
-    typeof parsed.work_note !== "string" ||
-    typeof parsed.deliverable !== "string"
-  ) {
-    throw new Error("AIの回答形式が正しくありません。");
-  }
-
-  return {
-    work_note: parsed.work_note.trim(),
-    deliverable: parsed.deliverable.trim(),
-  };
-}
 
 export async function POST(
   request: Request,
@@ -126,7 +103,7 @@ export async function POST(
 
     const { data: workflow, error: workflowError } = await supabase
       .from("workflows")
-      .select("id, status, current_step_order")
+      .select("id, title, description, priority, status, current_step_order")
       .eq("id", workflowId)
       .maybeSingle();
 
@@ -290,37 +267,24 @@ export async function POST(
       );
     }
 
-    const prompt = `
-あなたはSTAR WORK OSのAI社員です。
-
-【担当AI社員】
-名前: ${employeeName}
-役割: ${employeeRole}
-役割説明: ${employeeDescription || "未登録"}
-
-【現在の工程】
-STEP ${step.step_order}: ${step.name}
-
-【CEOからの指示】
-${ceoInstruction}
-
-【前工程からの引継ぎ】
-${previousStepText}
-
-次のルールを守ってください。
-
-1. 担当する役割の範囲で作業してください。
-2. 不明な情報を事実として断定しないでください。
-3. 人間の承認が必要な判断は、勝手に確定しないでください。
-4. 次工程のAI社員が理解できる具体的な成果物を作ってください。
-5. 日本語で回答してください。
-6. 必ず次のJSON形式だけで回答してください。説明文やコードフェンスは不要です。
-
-{
-  "work_note": "分析、確認事項、作業経過、判断根拠",
-  "deliverable": "完成した成果物、決定事項、未解決事項、次工程への具体的な引継ぎ"
-}
-`.trim();
+    const prompt = buildWorkflowAiPrompt({
+      employee: {
+        name: employeeName,
+        role: employeeRole,
+        description: employeeDescription,
+      },
+      workflow: {
+        title: workflow.title,
+        description: workflow.description,
+        priority: workflow.priority,
+      },
+      step: {
+        stepOrder: step.step_order,
+        name: step.name,
+      },
+      ceoInstruction,
+      previousStep: previousStepText,
+    });
 
     const openai = new OpenAI({
       apiKey: process.env.OPENAI_API_KEY,
@@ -337,7 +301,7 @@ ${previousStepText}
       throw new Error("OpenAIから回答を取得できませんでした。");
     }
 
-    const aiResult = parseAiResult(outputText);
+    const aiResult = parseWorkflowAiResult(outputText);
 
     const { error: stepUpdateError } = await supabase
       .from("workflow_steps")
