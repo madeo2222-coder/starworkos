@@ -114,3 +114,27 @@ test("route keeps server-side workflow and human approval guards before persiste
   assert.match(route, /buildWorkflowAiPrompt/);
   assert.match(route, /parseWorkflowAiResult/);
 });
+
+test("route authenticates and bounds its request before accessing workflow data or OpenAI", async () => {
+  const route = await readFile(
+    new URL("../app/api/workflow-steps/[stepId]/run-ai/route.ts", import.meta.url),
+    "utf8",
+  );
+
+  const authentication = route.indexOf("if (!user)");
+  const bodyLimit = route.indexOf("const parsedBody = await readJsonBodyWithLimit");
+  const workflowQuery = route.indexOf('.from("workflow_steps")');
+  const openAiCall = route.indexOf("new OpenAI(");
+
+  assert.ok(authentication >= 0);
+  assert.ok(bodyLimit >= 0);
+  assert.ok(workflowQuery >= 0);
+  assert.ok(openAiCall >= 0);
+  assert.ok(authentication < bodyLimit);
+  assert.ok(bodyLimit < workflowQuery);
+  assert.ok(bodyLimit < openAiCall);
+  assert.match(route, /RUN_AI_MAX_BODY_BYTES = 4 \* 1024/);
+  assert.match(route, /UUID_PATTERN\.test\(stepId\)/);
+  assert.match(route, /isRunAiRequestBody/);
+  assert.match(route, /const message = "AI社員の実行中に問題が発生しました。"/);
+});
