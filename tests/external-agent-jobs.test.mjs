@@ -4,6 +4,7 @@ import { readFile } from "node:fs/promises";
 import { HUMAN_APPROVAL_ACTIONS, isValidTransition, validateCreateInput, validateResultInput } from "../lib/external-agent-jobs.js";
 import { CALLBACK_MAX_AGE_SECONDS, CALLBACK_MAX_BODY_BYTES, createCallbackSignature, verifyCallbackSignature } from "../lib/external-agent-callback.js";
 import { dispatchConfig, dispatchPayload, hasMinimumTokenLength, parseDispatchResponse, safeTokenEquals, validateDispatchRequest } from "../lib/external-agent-dispatch.js";
+import { readJsonBodyWithLimit, readUtf8BodyWithLimit } from "../lib/request-body.js";
 
 const valid = { taskId: "task", aiEmployeeId: "employee", provider: "openai_codex", capability: "software_development", repository: "madeo2222-coder/starworkos", baseBranch: "main" };
 const migration = await readFile(new URL("../supabase/migrations/20260826_external_agent_job_foundation.sql", import.meta.url), "utf8");
@@ -169,10 +170,44 @@ test("dispatch route is fail-closed, idempotent at the gateway, and never return
 
 test("callback rejects oversized payloads before signature or database work", async () => {
   const callbackRoute = await readFile(new URL("../app/api/internal/external-agent-jobs/callback/route.ts", import.meta.url), "utf8");
-  assert.match(callbackRoute, /content-length/);
+  assert.match(callbackRoute, /readUtf8BodyWithLimit/);
   assert.match(callbackRoute, /CALLBACK_PAYLOAD_TOO_LARGE/);
-  assert.match(callbackRoute, /Buffer\.byteLength\(rawBody, "utf8"\) > CALLBACK_MAX_BODY_BYTES/);
+  assert.doesNotMatch(callbackRoute, /request\.text\(\)/);
   assert.ok(callbackRoute.lastIndexOf("CALLBACK_PAYLOAD_TOO_LARGE") < callbackRoute.lastIndexOf("verifyCallbackSignature"));
+});
+
+test("bounded body reader rejects oversized chunked requests without collecting later chunks", async () => {
+  let pulls = 0;
+  const request = new Request("https://work.example.test/callback", {
+    method: "POST",
+    body: new ReadableStream({
+      pull(controller) {
+        pulls += 1;
+        controller.enqueue(new TextEncoder().encode("12345"));
+        if (pulls > 1) controller.close();
+      },
+    }),
+    duplex: "half",
+  });
+  const result = await readUtf8BodyWithLimit(request, 4);
+  assert.deepEqual(result, { ok: false });
+  assert.equal(pulls, 1);
+});
+
+test("bounded JSON reader preserves valid small input and treats malformed JSON as invalid input", async () => {
+  const validRequest = new Request("https://work.example.test/jobs", { method: "POST", body: '{"jobId":"x"}' });
+  assert.deepEqual(await readJsonBodyWithLimit(validRequest, 64), { ok: true, value: { jobId: "x" } });
+  const malformedRequest = new Request("https://work.example.test/jobs", { method: "POST", body: "{" });
+  assert.deepEqual(await readJsonBodyWithLimit(malformedRequest, 64), { ok: true, value: null });
+});
+
+test("agent entry routes authenticate before reading a body and apply strict body limits", async () => {
+  const createRoute = await readFile(new URL("../app/api/external-agent-jobs/route.ts", import.meta.url), "utf8");
+  const dispatchRoute = await readFile(new URL("../app/api/internal/external-agent-jobs/dispatch/route.ts", import.meta.url), "utf8");
+  assert.match(createRoute, /EXTERNAL_AGENT_JOB_PAYLOAD_TOO_LARGE/);
+  assert.ok(createRoute.indexOf("auth.getUser") < createRoute.indexOf("const parsedBody"));
+  assert.match(dispatchRoute, /DISPATCH_PAYLOAD_TOO_LARGE/);
+  assert.ok(dispatchRoute.indexOf("DISPATCH_AUTHENTICATION_REQUIRED") < dispatchRoute.indexOf("const parsedBody"));
 });
 
 test("AI execution is server-guarded before history creation or an OpenAI call", async () => {

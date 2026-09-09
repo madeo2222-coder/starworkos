@@ -1,10 +1,12 @@
 import { NextResponse } from "next/server";
 import { dispatchConfig, dispatchPayload, hasMinimumTokenLength, parseDispatchResponse, safeTokenEquals, validateDispatchRequest } from "@/lib/external-agent-dispatch";
+import { readJsonBodyWithLimit } from "@/lib/request-body";
 import { createServiceClient } from "@/utils/supabase/service";
 
 export const runtime = "nodejs";
 
 const DISPATCH_TIMEOUT_MS = 10_000;
+const DISPATCH_MAX_BODY_BYTES = 4 * 1024;
 
 export async function POST(request: Request) {
   const config = dispatchConfig();
@@ -16,7 +18,9 @@ export async function POST(request: Request) {
     return NextResponse.json({ ok: false, error: "DISPATCH_AUTHENTICATION_REQUIRED" }, { status: 401 });
   }
 
-  const body: unknown = await request.json().catch(() => null);
+  const parsedBody = await readJsonBodyWithLimit(request, DISPATCH_MAX_BODY_BYTES);
+  if (!parsedBody.ok) return NextResponse.json({ ok: false, error: "DISPATCH_PAYLOAD_TOO_LARGE" }, { status: 413 });
+  const body = parsedBody.value;
   const requestError = validateDispatchRequest(body);
   if (requestError) return NextResponse.json({ ok: false, error: requestError }, { status: 400 });
   const jobId = (body as { jobId: string }).jobId;
