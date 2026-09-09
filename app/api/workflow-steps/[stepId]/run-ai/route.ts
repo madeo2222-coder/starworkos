@@ -4,7 +4,24 @@ import {
   buildWorkflowAiPrompt,
   parseWorkflowAiResult,
 } from "@/lib/workflow-ai";
+import { readJsonBodyWithLimit } from "@/lib/request-body";
 import { createClient } from "@/utils/supabase/server";
+
+const RUN_AI_MAX_BODY_BYTES = 4 * 1024;
+const UUID_PATTERN =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
+function isRunAiRequestBody(value: unknown): value is { workflowId: string } {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return false;
+
+  const body = value as Record<string, unknown>;
+  const entries = Object.entries(body);
+  return (
+    entries.length === 1 &&
+    typeof body.workflowId === "string" &&
+    UUID_PATTERN.test(body.workflowId)
+  );
+}
 
 export async function POST(
   request: Request,
@@ -22,31 +39,13 @@ export async function POST(
 
   try {
     const { stepId } = await context.params;
-
-    const body = (await request.json()) as {
-      workflowId?: string;
-    };
-
-    const workflowId = body.workflowId;
-    const model = process.env.OPENAI_MODEL ?? "gpt-5-mini";
-
-    if (!stepId || !workflowId) {
+    if (!UUID_PATTERN.test(stepId)) {
       return NextResponse.json(
         {
           ok: false,
-          error: "Workflow STEPの情報が不足しています。",
+          error: "Workflow STEPの情報が不正です。",
         },
         { status: 400 },
-      );
-    }
-
-    if (!process.env.OPENAI_API_KEY) {
-      return NextResponse.json(
-        {
-          ok: false,
-          error: "OPENAI_API_KEYが設定されていません。",
-        },
-        { status: 500 },
       );
     }
 
@@ -65,6 +64,34 @@ export async function POST(
         { status: 401 },
       );
     }
+
+    const parsedBody = await readJsonBodyWithLimit(
+      request,
+      RUN_AI_MAX_BODY_BYTES,
+    );
+    if (!parsedBody.ok || !isRunAiRequestBody(parsedBody.value)) {
+      return NextResponse.json(
+        {
+          ok: false,
+          error: "リクエスト本文が不正です。",
+        },
+        { status: 400 },
+      );
+    }
+
+    const workflowId = parsedBody.value.workflowId;
+    if (!process.env.OPENAI_API_KEY) {
+      console.error("OPENAI_API_KEY is not configured");
+      return NextResponse.json(
+        {
+          ok: false,
+          error: "AI実行の設定に問題があります。",
+        },
+        { status: 503 },
+      );
+    }
+
+    const model = process.env.OPENAI_MODEL ?? "gpt-5-mini";
 
     const { data: step, error: stepError } = await supabase
       .from("workflow_steps")
@@ -383,10 +410,9 @@ export async function POST(
       },
     });
   } catch (error) {
-    const message =
-      error instanceof Error
-        ? error.message
-        : "AI社員の実行中に予期しないエラーが発生しました。";
+    const auditMessage =
+      error instanceof Error ? error.message.slice(0, 200) : "unexpected_error";
+    const message = "AI社員の実行中に問題が発生しました。";
 
     if (supabase && executionHistoryId) {
       const durationMs = Date.now() - startedTime;
@@ -397,7 +423,7 @@ export async function POST(
           status: "ERROR",
           duration_ms: durationMs,
           completed_at: new Date().toISOString(),
-          error_message: message,
+          error_message: auditMessage,
         })
         .eq("id", executionHistoryId);
 
