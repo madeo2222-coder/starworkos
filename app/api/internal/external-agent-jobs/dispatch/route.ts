@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { dispatchConfig, dispatchPayload, parseDispatchResponse, safeTokenEquals, validateDispatchRequest } from "@/lib/external-agent-dispatch";
+import { dispatchConfig, dispatchPayload, hasMinimumTokenLength, parseDispatchResponse, safeTokenEquals, validateDispatchRequest } from "@/lib/external-agent-dispatch";
 import { createServiceClient } from "@/utils/supabase/service";
 
 export const runtime = "nodejs";
@@ -11,7 +11,8 @@ export async function POST(request: Request) {
   if (!config.ok) return NextResponse.json({ ok: false, error: config.error }, { status: 503 });
 
   const suppliedToken = request.headers.get("authorization")?.replace(/^Bearer\s+/i, "");
-  if (!safeTokenEquals(process.env.EXTERNAL_AGENT_DISPATCH_TRIGGER_TOKEN, suppliedToken)) {
+  const triggerToken = process.env.EXTERNAL_AGENT_DISPATCH_TRIGGER_TOKEN;
+  if (!hasMinimumTokenLength(triggerToken) || !safeTokenEquals(triggerToken, suppliedToken)) {
     return NextResponse.json({ ok: false, error: "DISPATCH_AUTHENTICATION_REQUIRED" }, { status: 401 });
   }
 
@@ -44,6 +45,7 @@ export async function POST(request: Request) {
       body: JSON.stringify(dispatchPayload(job, config.callbackUrl)),
       signal: controller.signal,
       cache: "no-store",
+      redirect: "error",
     });
   } catch {
     return NextResponse.json({ ok: false, error: "EXTERNAL_AGENT_GATEWAY_UNAVAILABLE" }, { status: 502 });

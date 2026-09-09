@@ -1,12 +1,20 @@
 import { NextResponse } from "next/server";
-import { verifyCallbackSignature } from "@/lib/external-agent-callback";
+import { CALLBACK_MAX_BODY_BYTES, verifyCallbackSignature } from "@/lib/external-agent-callback";
 import { validateResultInput } from "@/lib/external-agent-jobs";
 import { createServiceClient } from "@/utils/supabase/service";
 
 export const runtime = "nodejs";
 
 export async function POST(request: Request) {
+  const contentLength = request.headers.get("content-length");
+  if (contentLength && (!/^\d+$/.test(contentLength) || Number(contentLength) > CALLBACK_MAX_BODY_BYTES)) {
+    return NextResponse.json({ ok: false, error: "CALLBACK_PAYLOAD_TOO_LARGE" }, { status: 413 });
+  }
+
   const rawBody = await request.text();
+  if (Buffer.byteLength(rawBody, "utf8") > CALLBACK_MAX_BODY_BYTES) {
+    return NextResponse.json({ ok: false, error: "CALLBACK_PAYLOAD_TOO_LARGE" }, { status: 413 });
+  }
   const signature = request.headers.get("x-external-agent-signature");
   const timestamp = request.headers.get("x-external-agent-timestamp");
   const nonce = request.headers.get("x-external-agent-nonce");

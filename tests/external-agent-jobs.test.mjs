@@ -2,8 +2,8 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import { HUMAN_APPROVAL_ACTIONS, isValidTransition, validateCreateInput, validateResultInput } from "../lib/external-agent-jobs.js";
-import { CALLBACK_MAX_AGE_SECONDS, createCallbackSignature, verifyCallbackSignature } from "../lib/external-agent-callback.js";
-import { dispatchConfig, dispatchPayload, parseDispatchResponse, safeTokenEquals, validateDispatchRequest } from "../lib/external-agent-dispatch.js";
+import { CALLBACK_MAX_AGE_SECONDS, CALLBACK_MAX_BODY_BYTES, createCallbackSignature, verifyCallbackSignature } from "../lib/external-agent-callback.js";
+import { dispatchConfig, dispatchPayload, hasMinimumTokenLength, parseDispatchResponse, safeTokenEquals, validateDispatchRequest } from "../lib/external-agent-dispatch.js";
 
 const valid = { taskId: "task", aiEmployeeId: "employee", provider: "openai_codex", capability: "software_development", repository: "madeo2222-coder/starworkos", baseBranch: "main" };
 const migration = await readFile(new URL("../supabase/migrations/20260826_external_agent_job_foundation.sql", import.meta.url), "utf8");
@@ -97,6 +97,16 @@ test("signed callback rejects expired timestamps and short nonces", () => {
   assert.equal(verifyCallbackSignature({ secret, timestamp: String(Math.floor(now / 1000)), nonce: "short", body, signature, now }), false);
 });
 
+test("signed callback rejects non-canonical timestamp formats", () => {
+  const secret = "test-callback-secret";
+  const nonce = "c".repeat(32);
+  const body = "{}";
+  const timestamp = "1234567890.5";
+  const signature = createCallbackSignature({ secret, timestamp, nonce, body });
+  assert.equal(verifyCallbackSignature({ secret, timestamp, nonce, body, signature }), false);
+  assert.equal(CALLBACK_MAX_BODY_BYTES, 64 * 1024);
+});
+
 test("callback route requires signed requests and records nonce before accepting results", async () => {
   const callbackRoute = await readFile(new URL("../app/api/internal/external-agent-jobs/callback/route.ts", import.meta.url), "utf8");
   assert.match(callbackRoute, /verifyCallbackSignature/);
@@ -139,6 +149,8 @@ test("internal dispatch authentication uses a constant-time equality check", () 
   assert.equal(safeTokenEquals("a".repeat(32), "a".repeat(32)), true);
   assert.equal(safeTokenEquals("a".repeat(32), "b".repeat(32)), false);
   assert.equal(safeTokenEquals("a".repeat(32), "a".repeat(31)), false);
+  assert.equal(hasMinimumTokenLength("a".repeat(16)), true);
+  assert.equal(hasMinimumTokenLength("short"), false);
 });
 
 test("dispatch route is fail-closed, idempotent at the gateway, and never returns raw errors", async () => {
@@ -149,8 +161,18 @@ test("dispatch route is fail-closed, idempotent at the gateway, and never return
   assert.match(route, /config\.gatewayToken/);
   assert.match(route, /idempotency-key/);
   assert.match(route, /external-agent-job:\$\{job\.id\}/);
+  assert.match(route, /hasMinimumTokenLength\(triggerToken\)/);
+  assert.match(route, /redirect: "error"/);
   assert.match(route, /p_status: "RUNNING"/);
   assert.doesNotMatch(route, /error: .*\.message/);
+});
+
+test("callback rejects oversized payloads before signature or database work", async () => {
+  const callbackRoute = await readFile(new URL("../app/api/internal/external-agent-jobs/callback/route.ts", import.meta.url), "utf8");
+  assert.match(callbackRoute, /content-length/);
+  assert.match(callbackRoute, /CALLBACK_PAYLOAD_TOO_LARGE/);
+  assert.match(callbackRoute, /Buffer\.byteLength\(rawBody, "utf8"\) > CALLBACK_MAX_BODY_BYTES/);
+  assert.ok(callbackRoute.lastIndexOf("CALLBACK_PAYLOAD_TOO_LARGE") < callbackRoute.lastIndexOf("verifyCallbackSignature"));
 });
 
 test("AI execution is server-guarded before history creation or an OpenAI call", async () => {
