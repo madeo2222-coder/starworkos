@@ -4,22 +4,22 @@
 
 既存の `run-ai` 実行経路と保存先を維持したまま、STEP 1のAI PMがCEOの依頼を、AI Architect・AI Developer・AI QAへ渡せる検証可能な要件へ変換する。
 
-この差分はOpenAI呼び出しを有効化せず、本番DB、Secret、外部dispatch、Vercel設定を変更しない。
+このPR準備ブランチはOpenAI呼び出しを有効化せず、本番DB、Secret、外部dispatch、Vercel設定を変更しない。安全強化用のDB migrationはローカルに作成するが、本番には未適用とする。
 
 ## 現行フローの調査結果
 
 `POST /api/workflow-steps/[stepId]/run-ai` は次の順で処理する。
 
-1. ログインユーザーを確認する。
-2. 対象STEPとWorkflowを取得する。
+1. ログインユーザーを確認してから、上限付きでリクエスト本文を読み取る。
+2. Workflow IDとSTEP IDを検証し、対象STEPとWorkflowを取得する。
 3. Workflowが `IN_PROGRESS`、対象STEPが現在工程かつ `IN_PROGRESS` であることを確認する。
 4. `requires_human_approval=true` かつ未承認なら409で停止する。
-5. `execution_history` に `RUNNING` を保存する。
-6. CEO指示、担当AI社員、前工程の成果物からプロンプトを作る。
-7. OpenAI Responses APIを呼ぶ。
-8. `workflow_steps.work_note` と `workflow_steps.deliverable` を更新する。
-9. `workflow_messages` にAI社員の引継ぎを保存する。
-10. `execution_history` を `SUCCESS` または `ERROR` に更新する。
+5. `start_workflow_ai_run` RPCで状態を再確認し、`execution_history` の `RUNNING` を原子的にclaimする。5分以上残った実行は監査履歴を `ERROR` にしてから再実行可能にする。
+6. CEO指示、担当AI社員、前工程の成果物から上限付きプロンプトを作る。
+7. OpenAI Responses APIを、2分タイムアウト・再試行なし・最大6,000出力トークン・保存なしで呼ぶ。
+8. 完了したJSON応答だけを検証し、文字数上限内の `work_note` と `deliverable` に正規化する。
+9. `finalize_workflow_ai_run` RPCでSTEP成果物、AI社員の引継ぎ、`SUCCESS`履歴を1トランザクションで確定する。
+10. 失敗時は、まだ `RUNNING` の実行履歴だけを `ERROR` に更新する。
 
 STEPの完了と次工程への遷移はAPI内では行わず、既存RPC `complete_current_workflow_step` が担当する。次工程が承認必須なら、同RPCがSTEPとWorkflowを `HUMAN_REVIEW` にしてCEO Inboxへ承認依頼を作成する。したがって、今回の要件整理用プロンプト変更で人間承認状態や遷移RPCは変更しない。
 
@@ -39,7 +39,9 @@ STEPの完了と次工程への遷移はAPI内では行わず、既存RPC `compl
   - リスク
   - 次工程への引継ぎ
 - mainマージ、Production deploy、本番DB migration、Secret・Environment変更、破壊的操作は「人間承認待ち」として出力させる。
-- 保存カラムとレスポンス契約は `work_note` / `deliverable` のままにし、DB migrationを不要にする。
+- 保存カラムとレスポンス契約は `work_note` / `deliverable` のまま維持する。原子的な開始・確定用RPCと二重実行防止インデックスはmigrationで追加する。
+- 失敗履歴にはOpenAI・DBの生メッセージを保存せず、タイムアウト、利用上限、設定、接続、回答形式、DB操作などの上限付き監査分類だけを保存する。詳細はサーバーログで確認する。
+- ブラウザから呼ぶSTEP完了・CEO承認RPCは、対象テーブルのRLS有効化をmigrationで事前確認し、`SECURITY INVOKER`で利用者のRLS権限を維持する。service-role専用callback RPCは対象外とする。
 - 後続STEPにはSTEP 1専用テンプレートを強制せず、共通の人間承認ルールだけを適用する。
 
 ## ローカルテスト設計
@@ -51,7 +53,9 @@ STEPの完了と次工程への遷移はAPI内では行わず、既存RPC `compl
 3. 後続STEPには要件整理専用契約を混入させない。
 4. JSONとJSONコードフェンスの応答を保存形式へ正規化できる。
 5. 空、JSON不正、必須項目不足、空文字の成果物を拒否する。
-6. Workflow状態、現在STEP、人間承認の全ガードが、実行履歴保存とOpenAI呼び出しより前に残っている。
+6. Workflow状態、現在STEP、人間承認の全ガードが、実行履歴claimとOpenAI呼び出しより前に残っている。
+7. 同じSTEPの同時実行を拒否し、5分以上残った実行だけを安全に復旧できる。
+8. STEP成果物、引継ぎメッセージ、成功履歴を原子的に確定できる。
 
 既存CIと同じ順番で `npm test`、`npm run lint`、`npm run build` を実行する。
 
@@ -64,17 +68,18 @@ STEPの完了と次工程への遷移はAPI内では行わず、既存RPC `compl
 
 ## PR準備状態
 
-想定ブランチ: `feat/phase-2b1-ai-pm-requirements`
+想定ブランチ: `feat/external-agent-boundary-hardening`
 
-想定タイトル: `feat: operationalize AI PM requirements step`
+想定タイトル: `feat: harden external-agent and Workflow AI boundaries`
 
 PR本文には次を明記する。
 
-- DB migrationなし
+- DB migrationは作成済み・未適用
 - Secret・Environment変更なし
 - 外部dispatchなし
 - 人間承認ガードとSTEP遷移RPCの変更なし
 - ローカルのtest / lint / build結果
+- 反映順はDB migration適用後にコードをデプロイ
 - Previewではログイン後にSTEP 1を手動実行し、要件10項目が保存・表示されることだけを確認する
 
 ## Preview確認項目
@@ -89,4 +94,4 @@ PR本文には次を明記する。
 
 ## 後続課題
 
-現在のAI実行は、複数ブラウザや重複リクエストをDB上で原子的にclaimしていない。二重実行防止はPhase 2-B1の要件整理品質とは分離し、既存テーブル定義と本番データを確認したうえで専用RPCとmigrationを別PRにする。Preview開始を止める課題ではないが、本格的な自動リレー運用前には対応する。
+複数ブラウザや重複リクエストのDB上のclaim、放置された `RUNNING` の復旧、成功結果の原子的確定は、このPR準備ブランチで対応済み。本番反映前に、追加migration内の事前検査が既存データに対して成功することを確認する。

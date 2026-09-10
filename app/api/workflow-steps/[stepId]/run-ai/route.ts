@@ -1,27 +1,17 @@
 import OpenAI from "openai";
 import { NextResponse } from "next/server";
+import { readUtf8BodyWithLimit } from "@/lib/request-body";
 import {
+  WORKFLOW_AI_REQUEST_MAX_BODY_BYTES,
+  WORKFLOW_AI_MAX_OUTPUT_TOKENS,
+  WORKFLOW_AI_TIMEOUT_MS,
   buildWorkflowAiPrompt,
+  getWorkflowAiAuditError,
+  isValidWorkflowIdentifier,
   parseWorkflowAiResult,
+  validateWorkflowAiRequest,
 } from "@/lib/workflow-ai";
-import { readJsonBodyWithLimit } from "@/lib/request-body";
 import { createClient } from "@/utils/supabase/server";
-
-const RUN_AI_MAX_BODY_BYTES = 4 * 1024;
-const UUID_PATTERN =
-  /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-
-function isRunAiRequestBody(value: unknown): value is { workflowId: string } {
-  if (!value || typeof value !== "object" || Array.isArray(value)) return false;
-
-  const body = value as Record<string, unknown>;
-  const entries = Object.entries(body);
-  return (
-    entries.length === 1 &&
-    typeof body.workflowId === "string" &&
-    UUID_PATTERN.test(body.workflowId)
-  );
-}
 
 export async function POST(
   request: Request,
@@ -31,7 +21,6 @@ export async function POST(
     }>;
   },
 ) {
-  const startedAt = new Date();
   const startedTime = Date.now();
 
   let executionHistoryId: string | null = null;
@@ -39,11 +28,12 @@ export async function POST(
 
   try {
     const { stepId } = await context.params;
-    if (!UUID_PATTERN.test(stepId)) {
+
+    if (!isValidWorkflowIdentifier(stepId)) {
       return NextResponse.json(
         {
           ok: false,
-          error: "Workflow STEPの情報が不正です。",
+          error: "Workflow STEPの情報が正しくありません。",
         },
         { status: 400 },
       );
@@ -65,23 +55,35 @@ export async function POST(
       );
     }
 
-    const parsedBody = await readJsonBodyWithLimit(
+    const parsedText = await readUtf8BodyWithLimit(
       request,
-      RUN_AI_MAX_BODY_BYTES,
+      WORKFLOW_AI_REQUEST_MAX_BODY_BYTES,
     );
-    if (!parsedBody.ok || !isRunAiRequestBody(parsedBody.value)) {
+    if (!parsedText.ok) {
       return NextResponse.json(
-        {
-          ok: false,
-          error: "リクエスト本文が不正です。",
-        },
+        { ok: false, error: "AI実行リクエストが大きすぎます。" },
+        { status: 413 },
+      );
+    }
+
+    const body: unknown = (() => {
+      try {
+        return JSON.parse(parsedText.text);
+      } catch {
+        return null;
+      }
+    })();
+    if (validateWorkflowAiRequest(body)) {
+      return NextResponse.json(
+        { ok: false, error: "AI実行リクエストが正しくありません。" },
         { status: 400 },
       );
     }
 
-    const workflowId = parsedBody.value.workflowId;
+    const workflowId = (body as { workflowId: string }).workflowId;
+    const model = process.env.OPENAI_MODEL ?? "gpt-5-mini";
+
     if (!process.env.OPENAI_API_KEY) {
-      console.error("OPENAI_API_KEY is not configured");
       return NextResponse.json(
         {
           ok: false,
@@ -90,8 +92,6 @@ export async function POST(
         { status: 503 },
       );
     }
-
-    const model = process.env.OPENAI_MODEL ?? "gpt-5-mini";
 
     const { data: step, error: stepError } = await supabase
       .from("workflow_steps")
@@ -188,28 +188,58 @@ export async function POST(
       );
     }
 
-    const { data: executionHistory, error: historyCreateError } =
-      await supabase
-        .from("execution_history")
-        .insert({
-          workflow_id: workflowId,
-          workflow_step_id: stepId,
-          ai_employee_id: step.assigned_ai_employee_id,
-          model,
-          action: `STEP ${step.step_order}：${step.name}`,
-          status: "RUNNING",
-          started_at: startedAt.toISOString(),
-        })
-        .select("id")
-        .single();
+    const { data: executionClaim, error: historyCreateError } =
+      await supabase.rpc("start_workflow_ai_run", {
+        p_workflow_id: workflowId,
+        p_workflow_step_id: stepId,
+        p_model: model,
+      });
 
     if (historyCreateError) {
+      if (
+        historyCreateError.code === "23505" ||
+        historyCreateError.message.includes("WORKFLOW_AI_ALREADY_RUNNING")
+      ) {
+        return NextResponse.json(
+          {
+            ok: false,
+            error: "このWorkflow STEPはすでにAI実行中です。",
+          },
+          { status: 409 },
+        );
+      }
+
+      if (
+        historyCreateError.message.includes("WORKFLOW_STEP_STATE_CHANGED") ||
+        historyCreateError.message.includes("HUMAN_APPROVAL_REQUIRED")
+      ) {
+        return NextResponse.json(
+          {
+            ok: false,
+            error: "Workflow STEPの状態が変更されたため、AI実行を開始できませんでした。",
+          },
+          { status: 409 },
+        );
+      }
+
       throw new Error(
         `実行履歴の開始記録に失敗しました: ${historyCreateError.message}`,
       );
     }
 
-    executionHistoryId = executionHistory.id;
+    const claimedExecutionId =
+      executionClaim &&
+      typeof executionClaim === "object" &&
+      !Array.isArray(executionClaim) &&
+      "execution_history_id" in executionClaim
+        ? executionClaim.execution_history_id
+        : null;
+
+    if (!isValidWorkflowIdentifier(claimedExecutionId)) {
+      throw new Error("実行履歴IDを取得できませんでした。");
+    }
+
+    executionHistoryId = claimedExecutionId;
 
     let employeeName = "AI社員";
     let employeeRole = "担当業務";
@@ -315,12 +345,25 @@ export async function POST(
 
     const openai = new OpenAI({
       apiKey: process.env.OPENAI_API_KEY,
+      timeout: WORKFLOW_AI_TIMEOUT_MS,
+      maxRetries: 0,
     });
 
-    const response = await openai.responses.create({
-      model,
-      input: prompt,
-    });
+    const response = await openai.responses.create(
+      {
+        model,
+        input: prompt,
+        max_output_tokens: WORKFLOW_AI_MAX_OUTPUT_TOKENS,
+        store: false,
+      },
+      {
+        idempotencyKey: `workflow-ai:${executionHistoryId}`,
+      },
+    );
+
+    if (response.status !== "completed") {
+      throw new Error("OpenAIの回答が完了しませんでした。");
+    }
 
     const outputText = response.output_text?.trim();
 
@@ -330,21 +373,6 @@ export async function POST(
 
     const aiResult = parseWorkflowAiResult(outputText);
 
-    const { error: stepUpdateError } = await supabase
-      .from("workflow_steps")
-      .update({
-        work_note: aiResult.work_note,
-        deliverable: aiResult.deliverable,
-      })
-      .eq("id", stepId)
-      .eq("workflow_id", workflowId);
-
-    if (stepUpdateError) {
-      throw new Error(
-        `AI回答の保存に失敗しました: ${stepUpdateError.message}`,
-      );
-    }
-
     const aiMessageContent = [
       "【作業メモ】",
       aiResult.work_note,
@@ -353,47 +381,31 @@ export async function POST(
       aiResult.deliverable,
     ].join("\n");
 
-    const { error: aiMessageError } = await supabase
-      .from("workflow_messages")
-      .insert({
-        workflow_id: workflowId,
-        workflow_step_id: stepId,
-        ai_employee_id: step.assigned_ai_employee_id,
-        sender_type: "AI_EMPLOYEE",
-        message_type: "HANDOFF",
-        content: aiMessageContent,
-        created_by_user_id: user.id,
-      });
-
-    if (aiMessageError) {
-      throw new Error(
-        `AI社員メッセージの保存に失敗しました: ${aiMessageError.message}`,
-      );
-    }
-
-    const completedAt = new Date();
     const durationMs = Date.now() - startedTime;
 
     const promptTokens = response.usage?.input_tokens ?? null;
     const completionTokens = response.usage?.output_tokens ?? null;
     const totalTokens = response.usage?.total_tokens ?? null;
 
-    const { error: historyCompleteError } = await supabase
-      .from("execution_history")
-      .update({
-        status: "SUCCESS",
-        duration_ms: durationMs,
-        prompt_tokens: promptTokens,
-        completion_tokens: completionTokens,
-        total_tokens: totalTokens,
-        completed_at: completedAt.toISOString(),
-        error_message: null,
-      })
-      .eq("id", executionHistoryId);
+    const { error: finalizeError } = await supabase.rpc(
+      "finalize_workflow_ai_run",
+      {
+        p_execution_history_id: executionHistoryId,
+        p_workflow_id: workflowId,
+        p_workflow_step_id: stepId,
+        p_work_note: aiResult.work_note,
+        p_deliverable: aiResult.deliverable,
+        p_message_content: aiMessageContent,
+        p_duration_ms: durationMs,
+        p_prompt_tokens: promptTokens,
+        p_completion_tokens: completionTokens,
+        p_total_tokens: totalTokens,
+      },
+    );
 
-    if (historyCompleteError) {
+    if (finalizeError) {
       throw new Error(
-        `実行履歴の完了記録に失敗しました: ${historyCompleteError.message}`,
+        `AI実行結果の確定に失敗しました: ${finalizeError.message}`,
       );
     }
 
@@ -410,9 +422,7 @@ export async function POST(
       },
     });
   } catch (error) {
-    const auditMessage =
-      error instanceof Error ? error.message.slice(0, 200) : "unexpected_error";
-    const message = "AI社員の実行中に問題が発生しました。";
+    const auditError = getWorkflowAiAuditError(error);
 
     if (supabase && executionHistoryId) {
       const durationMs = Date.now() - startedTime;
@@ -423,24 +433,27 @@ export async function POST(
           status: "ERROR",
           duration_ms: durationMs,
           completed_at: new Date().toISOString(),
-          error_message: auditMessage,
+          error_message: auditError,
         })
-        .eq("id", executionHistoryId);
+        .eq("id", executionHistoryId)
+        .eq("status", "RUNNING");
 
       if (historyError) {
-        console.error(
-          "Execution history update failed:",
-          historyError,
-        );
+        console.error("Execution history update failed", {
+          code: historyError.code ?? "unknown",
+        });
       }
     }
 
-    console.error("Workflow AI execution failed:", error);
+    console.error("Workflow AI execution failed", {
+      classification: auditError,
+    });
 
     return NextResponse.json(
       {
         ok: false,
-        error: message,
+        error:
+          "AI社員の実行に失敗しました。実行履歴の分類を確認してください。",
       },
       { status: 500 },
     );

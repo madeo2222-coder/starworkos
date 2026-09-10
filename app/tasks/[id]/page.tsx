@@ -1,6 +1,11 @@
 import Link from "next/link";
 import { revalidatePath } from "next/cache";
 import { notFound, redirect } from "next/navigation";
+import {
+  getWorkflowCreationRpcErrorMessage,
+  getWorkflowCreationValidationError,
+  isValidUuid,
+} from "@/lib/workflow-creation";
 import { createClient } from "@/utils/supabase/server";
 
 type Task = {
@@ -87,7 +92,7 @@ function toWorkflowPriority(priority: string) {
       return "高";
     default:
       throw new Error(
-        `Taskの優先度をWorkflow用に変換できません: ${priority}`,
+        "Taskの優先度をWorkflow用に変換できません。",
       );
   }
 }
@@ -97,8 +102,8 @@ async function createWorkflowFromTask(formData: FormData) {
 
   const taskId = String(formData.get("taskId") ?? "").trim();
 
-  if (!taskId) {
-    throw new Error("Taskの情報が不足しています。");
+  if (!isValidUuid(taskId)) {
+    throw new Error("Taskの情報が正しくありません。");
   }
 
   const supabase = await createClient();
@@ -126,7 +131,9 @@ async function createWorkflowFromTask(formData: FormData) {
     .maybeSingle();
 
   if (taskError) {
-    throw new Error(`Taskの取得に失敗しました: ${taskError.message}`);
+    throw new Error(
+      "Taskを取得できませんでした。画面を更新して、もう一度お試しください。",
+    );
   }
 
   if (!task) {
@@ -149,7 +156,7 @@ async function createWorkflowFromTask(formData: FormData) {
 
   if (existingWorkflowError) {
     throw new Error(
-      `関連Workflowの確認に失敗しました: ${existingWorkflowError.message}`,
+      "関連Workflowを確認できませんでした。画面を更新して、もう一度お試しください。",
     );
   }
 
@@ -170,7 +177,7 @@ async function createWorkflowFromTask(formData: FormData) {
 
     if (employeeError) {
       throw new Error(
-        `担当AIの取得に失敗しました: ${employeeError.message}`,
+        "担当AIを取得できませんでした。画面を更新して、もう一度お試しください。",
       );
     }
 
@@ -224,6 +231,19 @@ async function createWorkflowFromTask(formData: FormData) {
     "不明な情報は推測で確定せず、確認事項として明示してください。",
   ].join("\n");
 
+  const validationError = getWorkflowCreationValidationError({
+    title: task.title,
+    description: workflowDescription,
+    ceoInstruction,
+    priority: workflowPriority,
+    projectId: task.project_id,
+    taskId,
+  });
+
+  if (validationError) {
+    throw new Error(validationError);
+  }
+
   const { data: workflowId, error: workflowCreateError } =
     await supabase.rpc("create_development_workflow", {
       p_project_id: task.project_id,
@@ -237,11 +257,19 @@ async function createWorkflowFromTask(formData: FormData) {
   if (
     workflowCreateError ||
     !workflowId ||
-    typeof workflowId !== "string"
+    !isValidUuid(workflowId)
   ) {
+    if (
+      workflowCreateError?.message.includes(
+        "AUTHENTICATION_REQUIRED",
+      )
+    ) {
+      redirect("/login");
+    }
+
     throw new Error(
       workflowCreateError
-        ? `Workflowの作成に失敗しました: ${workflowCreateError.message}`
+        ? getWorkflowCreationRpcErrorMessage(workflowCreateError.message)
         : "Workflowの作成IDを取得できませんでした。",
     );
   }

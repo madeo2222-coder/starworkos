@@ -1,6 +1,8 @@
 -- STAR WORK OS Ver1.1 Task / Workflow status synchronization
 -- This migration is stored locally and has not been applied.
 
+begin;
+
 -- A Task owns at most one Workflow in Ver1.1.
 -- Migration intentionally fails here if duplicate task_id values already exist.
 create unique index if not exists workflows_task_id_unique_idx
@@ -145,3 +147,5 @@ from desired_task_status as desired
 where task.id = desired.task_id
   and task.status <> 'CANCELLED'
   and task.status is distinct from desired.status;
+
+commit;

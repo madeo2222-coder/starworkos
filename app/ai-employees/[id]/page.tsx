@@ -2,15 +2,6 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { createClient } from "@/utils/supabase/server";
 
-type AiEmployee = {
-  id: string;
-  name: string;
-  role: string | null;
-  description: string | null;
-  status: string | null;
-  created_at: string;
-};
-
 type ExecutionHistory = {
   id: string;
   workflow_id: string | null;

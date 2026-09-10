@@ -3,6 +3,8 @@ export const JOB_STATUSES: readonly ExternalAgentJobStatus[];
 export const SUPPORTED_PROVIDERS: readonly string[];
 export const SUPPORTED_CAPABILITIES: readonly string[];
 export const TERMINAL_STATUSES: readonly ExternalAgentJobStatus[];
+export const JOB_CREATE_MAX_BODY_BYTES: number;
+export const RESULT_FIELD_LIMITS: Readonly<Record<string, number>>;
 export const HUMAN_APPROVAL_ACTIONS: readonly string[];
 export function isValidTransition(from: ExternalAgentJobStatus, to: ExternalAgentJobStatus): boolean;
 export function validateCreateInput(value: unknown): string | null;

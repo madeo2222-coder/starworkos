@@ -8,6 +8,24 @@ type RunAiButtonProps = {
   stepId: string;
 };
 
+type RunAiResponse = {
+  ok?: boolean;
+};
+
+class RunAiUserError extends Error {}
+
+function getRunAiFailureMessage(status: number) {
+  if (status === 401) return "ログインし直して、もう一度お試しください。";
+  if (status === 404) return "対象のWorkflow STEPが見つかりません。";
+  if (status === 409) {
+    return "Workflow STEPの状態が変更されたか、すでにAI実行中です。画面を更新してください。";
+  }
+  if (status === 413) return "AI実行リクエストが大きすぎます。";
+  if (status === 503) return "AI実行の設定を確認してください。";
+
+  return "AI社員への依頼に失敗しました。時間を置いて、もう一度お試しください。";
+}
+
 export default function RunAiButton({
   workflowId,
   stepId,
@@ -34,24 +52,28 @@ export default function RunAiButton({
         },
       );
 
-      const result = (await response.json()) as {
-        ok?: boolean;
-        error?: string;
-      };
+      let result: RunAiResponse | null = null;
 
-      if (!response.ok || !result.ok) {
-        throw new Error(
-          result.error ?? "AI社員への依頼に失敗しました。",
-        );
+      try {
+        const parsed: unknown = await response.json();
+        if (parsed && typeof parsed === "object" && !Array.isArray(parsed)) {
+          result = parsed as RunAiResponse;
+        }
+      } catch {
+        // The response may be an HTML error page. Its parser error is not user-facing.
+      }
+
+      if (!response.ok || !result?.ok) {
+        throw new RunAiUserError(getRunAiFailureMessage(response.status));
       }
 
       setMessage("AI社員の作業が完了しました。");
       router.refresh();
     } catch (error) {
       setMessage(
-        error instanceof Error
+        error instanceof RunAiUserError
           ? error.message
-          : "AI社員の実行中にエラーが発生しました。",
+          : "AI社員の実行中に問題が発生しました。通信状態を確認して、もう一度お試しください。",
       );
     } finally {
       setIsRunning(false);

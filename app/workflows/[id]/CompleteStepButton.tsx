@@ -43,14 +43,33 @@ export default function CompleteStepButton({
       );
 
       if (error) {
-        if (error.message.includes("HUMAN_APPROVAL_REQUIRED")) {
+        const rpcMessage = error.message ?? "";
+
+        if (rpcMessage.includes("HUMAN_APPROVAL_REQUIRED")) {
           setMessage(
             "このSTEPは人間承認が必要です。先に承認処理を行ってください。",
           );
           return;
         }
 
-        setMessage(`STEPの更新に失敗しました：${error.message}`);
+        if (rpcMessage.includes("WORKFLOW_ALREADY_COMPLETED")) {
+          setMessage("このWorkflowはすでに完了しています。");
+          return;
+        }
+
+        if (rpcMessage.includes("WORKFLOW_NOT_FOUND")) {
+          setMessage("対象のWorkflowが見つかりません。");
+          return;
+        }
+
+        if (rpcMessage.includes("CURRENT_STEP_NOT_FOUND")) {
+          setMessage("現在のSTEPが見つかりません。");
+          return;
+        }
+
+        setMessage(
+          "STEPの更新に失敗しました。画面を更新して、もう一度お試しください。",
+        );
         return;
       }
 
