@@ -24,7 +24,9 @@ export default function LoginPage() {
       });
 
       if (error) {
-        setMessage(`送信に失敗しました：${error.message}`);
+        setMessage(
+          "ログインリンクを送信できませんでした。メールアドレスを確認して、もう一度お試しください。",
+        );
         return;
       }
 

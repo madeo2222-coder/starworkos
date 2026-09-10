@@ -1,6 +1,8 @@
 -- STAR WORK OS Ver1.1 Task Center
 -- This migration is intentionally stored locally and has not been applied.
 
+begin;
+
 alter table public.tasks
   add column if not exists content text,
   add column if not exists due_date date,
@@ -70,3 +72,5 @@ create trigger set_tasks_updated_at
 before update on public.tasks
 for each row
 execute function public.set_tasks_updated_at();
+
+commit;

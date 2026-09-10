@@ -2,6 +2,8 @@
 -- Atomic Task-to-Workflow creation and STEP-aware Task status correction.
 -- This migration is stored locally and has not been applied.
 
+begin;
+
 create or replace function public.create_development_workflow(
   p_project_id uuid,
   p_title text,
@@ -224,3 +226,5 @@ from desired_task_status as desired
 where task.id = desired.task_id
   and task.status <> 'CANCELLED'
   and task.status is distinct from desired.status;
+
+commit;

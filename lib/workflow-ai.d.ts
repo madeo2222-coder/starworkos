@@ -3,6 +3,23 @@ export type WorkflowAiResult = {
   deliverable: string;
 };
 
+export const WORKFLOW_AI_REQUEST_MAX_BODY_BYTES: number;
+export const WORKFLOW_AI_TIMEOUT_MS: number;
+export const WORKFLOW_AI_MAX_OUTPUT_TOKENS: number;
+export const WORKFLOW_AI_MAX_PROMPT_CHARS: number;
+export const WORKFLOW_AI_MAX_RESPONSE_CHARS: number;
+export const WORKFLOW_AI_MAX_AUDIT_ERROR_CHARS: number;
+export const WORKFLOW_AI_RESULT_FIELD_LIMITS: Readonly<{
+  work_note: number;
+  deliverable: number;
+}>;
+
+export function isValidWorkflowIdentifier(value: unknown): value is string;
+
+export function validateWorkflowAiRequest(value: unknown): string | null;
+
+export function getWorkflowAiAuditError(error: unknown): string;
+
 export type WorkflowAiPromptInput = {
   employee?: {
     name?: string | null;

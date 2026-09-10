@@ -1,5 +1,11 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import {
+  getWorkflowCreationRpcErrorMessage,
+  getWorkflowCreationValidationError,
+  isValidUuid,
+  WORKFLOW_CREATION_LIMITS,
+} from "@/lib/workflow-creation";
 import { createClient } from "@/utils/supabase/server";
 
 type Project = {
@@ -60,28 +66,16 @@ async function createWorkflow(formData: FormData) {
 
   const projectId = projectIdValue || null;
 
-  if (!title) {
-    throw new Error(
-      "Workflow名を入力してください。",
-    );
-  }
+  const validationError = getWorkflowCreationValidationError({
+    title,
+    description,
+    ceoInstruction,
+    priority,
+    projectId,
+  });
 
-  if (!ceoInstruction) {
-    throw new Error(
-      "CEOからの依頼内容を入力してください。",
-    );
-  }
-
-  const allowedPriorities = [
-    "低",
-    "中",
-    "高",
-  ];
-
-  if (!allowedPriorities.includes(priority)) {
-    throw new Error(
-      `優先度の指定が正しくありません。受信値：${priority}`,
-    );
+  if (validationError) {
+    throw new Error(validationError);
   }
 
   const supabase = await createClient();
@@ -111,110 +105,18 @@ async function createWorkflow(formData: FormData) {
 
     if (
       errorMessage.includes(
-        "WORKFLOW_TITLE_REQUIRED",
-      )
-    ) {
-      throw new Error(
-        "Workflow名を入力してください。",
-      );
-    }
-
-    if (
-      errorMessage.includes(
-        "CEO_INSTRUCTION_REQUIRED",
-      )
-    ) {
-      throw new Error(
-        "CEOからの依頼内容を入力してください。",
-      );
-    }
-
-    if (
-      errorMessage.includes(
-        "INVALID_PRIORITY",
-      )
-    ) {
-      throw new Error(
-        "優先度の指定が正しくありません。",
-      );
-    }
-
-    if (
-      errorMessage.includes(
-        "PROJECT_NOT_FOUND",
-      )
-    ) {
-      throw new Error(
-        "選択したプロジェクトが見つかりません。",
-      );
-    }
-
-    if (
-      errorMessage.includes(
-        "AI_PM_NOT_FOUND",
-      )
-    ) {
-      throw new Error(
-        "AI PMが登録されていません。",
-      );
-    }
-
-    if (
-      errorMessage.includes(
-        "AI_ARCHITECT_NOT_FOUND",
-      )
-    ) {
-      throw new Error(
-        "AI Architectが登録されていません。",
-      );
-    }
-
-    if (
-      errorMessage.includes(
-        "AI_DEVELOPER_NOT_FOUND",
-      )
-    ) {
-      throw new Error(
-        "AI Developerが登録されていません。",
-      );
-    }
-
-    if (
-      errorMessage.includes(
-        "AI_QA_NOT_FOUND",
-      )
-    ) {
-      throw new Error(
-        "AI QAが登録されていません。",
-      );
-    }
-
-    if (
-      errorMessage.includes(
-        "AI_KNOWLEDGE_NOT_FOUND",
-      )
-    ) {
-      throw new Error(
-        "AI Knowledgeが登録されていません。",
-      );
-    }
-
-    if (
-      errorMessage.includes(
         "AUTHENTICATION_REQUIRED",
       )
     ) {
       redirect("/login");
     }
 
-    throw new Error(
-      `Workflowの作成に失敗しました: ${errorMessage}`,
-    );
+    throw new Error(getWorkflowCreationRpcErrorMessage(errorMessage));
   }
 
   if (
     !workflowId ||
-    typeof workflowId !== "string"
+    !isValidUuid(workflowId)
   ) {
     throw new Error(
       "Workflowは作成されましたが、作成IDを取得できませんでした。",
@@ -247,7 +149,7 @@ export default async function NewWorkflowPage() {
 
   if (error) {
     throw new Error(
-      `プロジェクトの取得に失敗しました: ${error.message}`,
+      "プロジェクトを取得できませんでした。画面を更新して、もう一度お試しください。",
     );
   }
 
@@ -309,6 +211,7 @@ export default async function NewWorkflowPage() {
                 name="title"
                 type="text"
                 required
+                maxLength={WORKFLOW_CREATION_LIMITS.title}
                 placeholder="例：STAR WARRANTY代理店マニュアル作成"
                 className="mt-3 w-full rounded-xl border border-gray-300 px-4 py-3 text-sm text-gray-900 outline-none focus:border-blue-500"
               />
@@ -330,6 +233,7 @@ export default async function NewWorkflowPage() {
                 id="description"
                 name="description"
                 rows={4}
+                maxLength={WORKFLOW_CREATION_LIMITS.description}
                 placeholder="例：代理店が初めて利用する際に迷わない入力マニュアルを作成する。"
                 className="mt-3 w-full rounded-xl border border-gray-300 px-4 py-3 text-sm leading-6 text-gray-900 outline-none focus:border-blue-500"
               />
@@ -352,6 +256,7 @@ export default async function NewWorkflowPage() {
                 name="ceoInstruction"
                 rows={10}
                 required
+                maxLength={WORKFLOW_CREATION_LIMITS.ceoInstruction}
                 placeholder={[
                   "例：",
                   "STAR WARRANTYの代理店向け入力マニュアルを作成してください。",

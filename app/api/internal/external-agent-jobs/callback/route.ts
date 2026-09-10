@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { CALLBACK_MAX_BODY_BYTES, verifyCallbackSignature } from "@/lib/external-agent-callback";
+import { CALLBACK_MAX_BODY_BYTES, mapCallbackDatabaseError, verifyCallbackSignature } from "@/lib/external-agent-callback";
 import { validateResultInput } from "@/lib/external-agent-jobs";
 import { readUtf8BodyWithLimit } from "@/lib/request-body";
 import { createServiceClient } from "@/utils/supabase/service";
@@ -28,16 +28,9 @@ export async function POST(request: Request) {
   if (validationError) return NextResponse.json({ ok: false, error: "INVALID_CALLBACK_PAYLOAD" }, { status: 400 });
 
   const supabase = createServiceClient();
-  const { error: nonceError } = await supabase
-    .from("external_agent_callback_nonces")
-    .insert({ nonce, received_at: new Date().toISOString() });
-  if (nonceError) {
-    const isReplay = nonceError.code === "23505";
-    return NextResponse.json({ ok: false, error: isReplay ? "CALLBACK_REPLAY_DETECTED" : "CALLBACK_NONCE_RECORD_FAILED" }, { status: isReplay ? 409 : 500 });
-  }
-
   const input = body as Record<string, unknown>;
-  const { data, error } = await supabase.rpc("update_external_agent_job_result", {
+  const { data, error } = await supabase.rpc("apply_external_agent_job_callback", {
+    p_nonce: nonce,
     p_job_id: input.jobId,
     p_status: input.status,
     p_external_job_id: input.externalJobId ?? null,
@@ -51,6 +44,9 @@ export async function POST(request: Request) {
     p_started_at: input.startedAt ?? null,
     p_completed_at: input.completedAt ?? null,
   });
-  if (error) return NextResponse.json({ ok: false, error: "EXTERNAL_AGENT_JOB_RESULT_REJECTED" }, { status: 409 });
+  if (error) {
+    const mappedError = mapCallbackDatabaseError(error);
+    return NextResponse.json({ ok: false, error: mappedError.error }, { status: mappedError.status });
+  }
   return NextResponse.json({ ok: true, job: data });
 }

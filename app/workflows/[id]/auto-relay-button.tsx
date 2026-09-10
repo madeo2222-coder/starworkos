@@ -35,6 +35,8 @@ type CompleteStepResponse = {
 
 const MAX_RELAY_STEPS = 20;
 
+class AutoRelayUserError extends Error {}
+
 export default function AutoRelayButton({
   workflowId,
 }: AutoRelayButtonProps) {
@@ -86,13 +88,13 @@ export default function AutoRelayButton({
             .maybeSingle();
 
         if (workflowError) {
-          throw new Error(
-            `Workflowの取得に失敗しました：${workflowError.message}`,
+          throw new AutoRelayUserError(
+            "Workflowの取得に失敗しました。画面を更新して、もう一度お試しください。",
           );
         }
 
         if (!workflowData) {
-          throw new Error("対象のWorkflowが見つかりません。");
+          throw new AutoRelayUserError("対象のWorkflowが見つかりません。");
         }
 
         const workflow = workflowData as WorkflowRow;
@@ -121,13 +123,13 @@ export default function AutoRelayButton({
             .maybeSingle();
 
         if (stepError) {
-          throw new Error(
-            `現在STEPの取得に失敗しました：${stepError.message}`,
+          throw new AutoRelayUserError(
+            "現在STEPの取得に失敗しました。画面を更新して、もう一度お試しください。",
           );
         }
 
         if (!stepData) {
-          throw new Error(
+          throw new AutoRelayUserError(
             `STEP ${workflow.current_step_order}が見つかりません。`,
           );
         }
@@ -169,7 +171,7 @@ export default function AutoRelayButton({
           (await aiResponse.json()) as RunAiResponse;
 
         if (!aiResponse.ok || !aiResult.ok) {
-          throw new Error(
+          throw new AutoRelayUserError(
             [
               `STEP ${step.step_order}「${step.name}」でAI実行に失敗しました。`,
               aiResult.error ??
@@ -212,11 +214,8 @@ export default function AutoRelayButton({
             return;
           }
 
-          throw new Error(
-            [
-              `STEP ${step.step_order}「${step.name}」の完了処理に失敗しました。`,
-              completeError.message,
-            ].join("\n"),
+          throw new AutoRelayUserError(
+            `STEP ${step.step_order}「${step.name}」の完了処理に失敗しました。画面を更新して、もう一度お試しください。`,
           );
         }
 
@@ -248,14 +247,14 @@ export default function AutoRelayButton({
         router.refresh();
       }
 
-      throw new Error(
+      throw new AutoRelayUserError(
         `安全上の上限である${MAX_RELAY_STEPS}工程に到達したため停止しました。`,
       );
     } catch (error) {
       setCurrentAction("");
 
       setMessage(
-        error instanceof Error
+        error instanceof AutoRelayUserError
           ? error.message
           : "自動リレー中に予期しないエラーが発生しました。",
       );

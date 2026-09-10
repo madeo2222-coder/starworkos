@@ -1,12 +1,11 @@
 import { NextResponse } from "next/server";
-import { dispatchConfig, dispatchPayload, hasMinimumTokenLength, parseDispatchResponse, safeTokenEquals, validateDispatchRequest } from "@/lib/external-agent-dispatch";
+import { DISPATCH_MAX_BODY_BYTES, dispatchConfig, dispatchPayload, hasMinimumTokenLength, parseDispatchResponse, readBoundedJsonResponse, safeTokenEquals, validateDispatchRequest } from "@/lib/external-agent-dispatch";
 import { readJsonBodyWithLimit } from "@/lib/request-body";
 import { createServiceClient } from "@/utils/supabase/service";
 
 export const runtime = "nodejs";
 
 const DISPATCH_TIMEOUT_MS = 10_000;
-const DISPATCH_MAX_BODY_BYTES = 4 * 1024;
 
 export async function POST(request: Request) {
   const config = dispatchConfig();
@@ -37,9 +36,9 @@ export async function POST(request: Request) {
 
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), DISPATCH_TIMEOUT_MS);
-  let gatewayResponse: Response;
+  let dispatchResult: ReturnType<typeof parseDispatchResponse>;
   try {
-    gatewayResponse = await fetch(config.url, {
+    const gatewayResponse = await fetch(config.url, {
       method: "POST",
       headers: {
         authorization: `Bearer ${config.gatewayToken}`,
@@ -51,15 +50,15 @@ export async function POST(request: Request) {
       cache: "no-store",
       redirect: "error",
     });
+    if (!gatewayResponse.ok) return NextResponse.json({ ok: false, error: "EXTERNAL_AGENT_GATEWAY_REJECTED" }, { status: 502 });
+
+    dispatchResult = parseDispatchResponse(await readBoundedJsonResponse(gatewayResponse));
+    if (!dispatchResult) return NextResponse.json({ ok: false, error: "EXTERNAL_AGENT_GATEWAY_INVALID_RESPONSE" }, { status: 502 });
   } catch {
     return NextResponse.json({ ok: false, error: "EXTERNAL_AGENT_GATEWAY_UNAVAILABLE" }, { status: 502 });
   } finally {
     clearTimeout(timeout);
   }
-  if (!gatewayResponse.ok) return NextResponse.json({ ok: false, error: "EXTERNAL_AGENT_GATEWAY_REJECTED" }, { status: 502 });
-
-  const dispatchResult = parseDispatchResponse(await gatewayResponse.json().catch(() => null));
-  if (!dispatchResult) return NextResponse.json({ ok: false, error: "EXTERNAL_AGENT_GATEWAY_INVALID_RESPONSE" }, { status: 502 });
 
   const { data, error } = await supabase.rpc("update_external_agent_job_result", {
     p_job_id: job.id,
