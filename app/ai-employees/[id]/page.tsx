@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
+import { getExecutionErrorDisplayMessage } from "@/lib/execution-errors";
 import { createClient } from "@/utils/supabase/server";
 
 type ExecutionHistory = {
@@ -555,7 +556,9 @@ export default async function AiEmployeeDetailPage({
                           </p>
 
                           <p className="mt-2 whitespace-pre-wrap text-sm leading-6 text-red-700">
-                            {execution.error_message}
+                            {getExecutionErrorDisplayMessage(
+                              execution.error_message,
+                            )}
                           </p>
                         </div>
                       )}
