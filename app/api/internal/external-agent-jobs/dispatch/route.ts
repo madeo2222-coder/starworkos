@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { DISPATCH_MAX_BODY_BYTES, dispatchConfig, dispatchPayload, hasMinimumTokenLength, parseDispatchResponse, readBoundedJsonResponse, safeTokenEquals, validateDispatchRequest } from "@/lib/external-agent-dispatch";
+import { DISPATCH_MAX_BODY_BYTES, dispatchConfig, dispatchPayload, hasMinimumTokenLength, isAuthorizedDispatchTrigger, parseDispatchResponse, readBoundedJsonResponse, validateDispatchRequest } from "@/lib/external-agent-dispatch";
 import { readJsonBodyWithLimit } from "@/lib/request-body";
 import { createServiceClient } from "@/utils/supabase/service";
 
@@ -8,14 +8,14 @@ export const runtime = "nodejs";
 const DISPATCH_TIMEOUT_MS = 10_000;
 
 export async function POST(request: Request) {
-  const config = dispatchConfig();
-  if (!config.ok) return NextResponse.json({ ok: false, error: config.error }, { status: 503 });
-
   const suppliedToken = request.headers.get("authorization")?.replace(/^Bearer\s+/i, "");
   const triggerToken = process.env.EXTERNAL_AGENT_DISPATCH_TRIGGER_TOKEN;
-  if (!hasMinimumTokenLength(triggerToken) || !safeTokenEquals(triggerToken, suppliedToken)) {
+  if (!hasMinimumTokenLength(triggerToken) || !isAuthorizedDispatchTrigger(process.env, suppliedToken)) {
     return NextResponse.json({ ok: false, error: "DISPATCH_AUTHENTICATION_REQUIRED" }, { status: 401 });
   }
+
+  const config = dispatchConfig();
+  if (!config.ok) return NextResponse.json({ ok: false, error: config.error }, { status: 503 });
 
   const parsedBody = await readJsonBodyWithLimit(request, DISPATCH_MAX_BODY_BYTES);
   if (!parsedBody.ok) return NextResponse.json({ ok: false, error: "DISPATCH_PAYLOAD_TOO_LARGE" }, { status: 413 });
