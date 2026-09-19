@@ -276,13 +276,13 @@ test("internal dispatch authentication uses a constant-time equality check", () 
 
 test("dispatch route is fail-closed, idempotent at the gateway, and never returns raw errors", async () => {
   const route = await readFile(new URL("../app/api/internal/external-agent-jobs/dispatch/route.ts", import.meta.url), "utf8");
-  assert.match(route, /if \(!config\.ok\)/);
+  assert.match(route, /isAuthorizedDispatchTrigger/);
   assert.match(route, /DISPATCH_AUTHENTICATION_REQUIRED/);
-  assert.match(route, /EXTERNAL_AGENT_DISPATCH_TRIGGER_TOKEN/);
+  assert.match(route, /if \(!config\.ok\)/);
+  assert.ok(route.indexOf("DISPATCH_AUTHENTICATION_REQUIRED") < route.indexOf("const config = dispatchConfig()"));
   assert.match(route, /config\.gatewayToken/);
   assert.match(route, /idempotency-key/);
   assert.match(route, /external-agent-job:\$\{job\.id\}/);
-  assert.match(route, /hasMinimumTokenLength\(triggerToken\)/);
   assert.match(route, /redirect: "error"/);
   assert.match(route, /readBoundedJsonResponse\(gatewayResponse\)/);
   assert.ok(route.indexOf("readBoundedJsonResponse(gatewayResponse)") < route.indexOf("clearTimeout(timeout)"));
