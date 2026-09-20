@@ -5,14 +5,16 @@ import {
   CODEX_GITHUB_API_VERSION,
   buildCodexDelegationComment,
   buildCodexIssue,
-  codexIssueMarker,
+  codexIssueContractDigest,
   findExistingCodexIssue,
   hasCodexDelegationComment,
+  isTrustedCodexIssue,
   parseRepository,
   validateCodexGatewayPayload,
 } from "@/lib/codex-cloud-github";
 import { hasMinimumTokenLength, safeTokenEquals } from "@/lib/external-agent-dispatch";
 import { readJsonBodyWithLimit } from "@/lib/request-body";
+import { createServiceClient } from "@/utils/supabase/service";
 
 export const runtime = "nodejs";
 
@@ -36,6 +38,12 @@ type CodexGatewayPayload = {
   executionPolicy?: {
     protectedActionsRequireHumanApproval?: string[];
   };
+};
+
+type DispatchClaim = {
+  claimed?: boolean;
+  issue_number?: number | null;
+  issue_url?: string | null;
 };
 
 function githubHeaders(token: string) {
@@ -75,7 +83,6 @@ export async function POST(request: Request) {
   if (!hasMinimumTokenLength(githubToken, 20)) {
     return NextResponse.json({ ok: false, error: "CODEX_GATEWAY_NOT_CONFIGURED" }, { status: 503 });
   }
-
   const githubTokenValue = githubToken as string;
 
   const parsedBody = await readJsonBodyWithLimit(request, CODEX_GATEWAY_MAX_BODY_BYTES);
@@ -90,29 +97,79 @@ export async function POST(request: Request) {
   if (!repository) return NextResponse.json({ ok: false, error: "UNSUPPORTED_CODEX_GATEWAY_JOB" }, { status: 400 });
 
   const issueContract = buildCodexIssue(payload);
-  const marker = codexIssueMarker(payload.job.id);
+  const contractDigest = codexIssueContractDigest(issueContract);
   const repoApi = `${GITHUB_API_BASE}/repos/${encodeURIComponent(repository.owner)}/${encodeURIComponent(repository.repo)}`;
+  const supabase = createServiceClient();
 
-  let issue;
+  const { data: claimData, error: claimError } = await supabase.rpc("claim_codex_gateway_dispatch", {
+    p_job_id: payload.job.id,
+    p_contract_digest: contractDigest,
+  });
+  if (claimError) return NextResponse.json({ ok: false, error: "CODEX_GATEWAY_CLAIM_FAILED" }, { status: 409 });
+  const claim = (claimData ?? {}) as DispatchClaim;
+
+  let actorLogin: string;
+  let issue: {
+    number: number;
+    title?: string;
+    body?: string;
+    html_url?: string;
+    user?: { login?: string };
+    pull_request?: unknown;
+  };
+
   try {
-    const listResponse = await githubRequest(
-      `${repoApi}/issues?state=all&sort=created&direction=desc&per_page=${CODEX_GATEWAY_MAX_ISSUES_TO_SCAN}`,
-      githubTokenValue,
-    );
-    if (!listResponse.ok) return NextResponse.json({ ok: false, error: "CODEX_GITHUB_ISSUE_LOOKUP_FAILED" }, { status: 502 });
-    const issues = await listResponse.json();
-    issue = findExistingCodexIssue(issues, marker);
+    const actorResponse = await githubRequest(`${GITHUB_API_BASE}/user`, githubTokenValue);
+    if (!actorResponse.ok) return NextResponse.json({ ok: false, error: "CODEX_GITHUB_IDENTITY_FAILED" }, { status: 502 });
+    const actor = await actorResponse.json();
+    if (typeof actor?.login !== "string" || !actor.login) {
+      return NextResponse.json({ ok: false, error: "CODEX_GITHUB_IDENTITY_FAILED" }, { status: 502 });
+    }
+    actorLogin = actor.login;
 
-    if (!issue) {
-      const createResponse = await githubRequest(`${repoApi}/issues`, githubTokenValue, {
-        method: "POST",
-        body: JSON.stringify({ title: issueContract.title, body: issueContract.body }),
+    if (Number.isInteger(claim.issue_number) && (claim.issue_number ?? 0) > 0) {
+      const issueResponse = await githubRequest(`${repoApi}/issues/${claim.issue_number}`, githubTokenValue);
+      if (!issueResponse.ok) return NextResponse.json({ ok: false, error: "CODEX_GITHUB_ISSUE_LOOKUP_FAILED" }, { status: 502 });
+      issue = await issueResponse.json();
+      if (!isTrustedCodexIssue(issue, issueContract, actorLogin)) {
+        return NextResponse.json({ ok: false, error: "CODEX_GITHUB_ISSUE_IDENTITY_MISMATCH" }, { status: 409 });
+      }
+    } else {
+      if (!claim.claimed) {
+        return NextResponse.json({ ok: false, error: "CODEX_GATEWAY_DISPATCH_IN_PROGRESS" }, { status: 409 });
+      }
+
+      const listResponse = await githubRequest(
+        `${repoApi}/issues?state=all&sort=created&direction=desc&per_page=${CODEX_GATEWAY_MAX_ISSUES_TO_SCAN}`,
+        githubTokenValue,
+      );
+      if (!listResponse.ok) return NextResponse.json({ ok: false, error: "CODEX_GITHUB_ISSUE_LOOKUP_FAILED" }, { status: 502 });
+      const issues = await listResponse.json();
+      issue = findExistingCodexIssue(issues, issueContract, actorLogin);
+
+      if (!issue) {
+        const createResponse = await githubRequest(`${repoApi}/issues`, githubTokenValue, {
+          method: "POST",
+          body: JSON.stringify({ title: issueContract.title, body: issueContract.body }),
+        });
+        if (!createResponse.ok) return NextResponse.json({ ok: false, error: "CODEX_GITHUB_ISSUE_CREATE_FAILED" }, { status: 502 });
+        issue = await createResponse.json();
+      }
+
+      if (!isTrustedCodexIssue(issue, issueContract, actorLogin) || !Number.isInteger(issue.number) || issue.number < 1 || typeof issue.html_url !== "string") {
+        return NextResponse.json({ ok: false, error: "CODEX_GITHUB_INVALID_ISSUE_RESPONSE" }, { status: 502 });
+      }
+
+      const { error: recordError } = await supabase.rpc("record_codex_gateway_issue", {
+        p_job_id: payload.job.id,
+        p_contract_digest: contractDigest,
+        p_issue_number: issue.number,
+        p_issue_url: issue.html_url,
       });
-      if (!createResponse.ok) return NextResponse.json({ ok: false, error: "CODEX_GITHUB_ISSUE_CREATE_FAILED" }, { status: 502 });
-      issue = await createResponse.json();
+      if (recordError) return NextResponse.json({ ok: false, error: "CODEX_GATEWAY_ISSUE_RECORD_FAILED" }, { status: 409 });
     }
 
-    if (!Number.isInteger(issue?.number) || issue.number < 1) {
+    if (!Number.isInteger(issue.number) || issue.number < 1) {
       return NextResponse.json({ ok: false, error: "CODEX_GITHUB_INVALID_ISSUE_RESPONSE" }, { status: 502 });
     }
 
