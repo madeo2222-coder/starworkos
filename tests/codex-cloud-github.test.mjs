@@ -71,9 +71,11 @@ test("gateway retry helpers trust only the authenticated actor and exact issue c
   assert.match(codexIssueContractDigest(contract), /^[0-9a-f]{64}$/);
 
   const delegation = buildCodexDelegationComment(payload.job.repository, payload.job.id);
-  assert.equal(hasCodexDelegationComment([{ body: delegation }], payload.job.id), true);
-  assert.equal(hasCodexDelegationComment([{ body: "@codex do it" }], payload.job.id), false);
-  assert.equal(hasCodexDelegationComment([{ body: delegation }], "22222222-2222-4222-8222-222222222222"), false);
+  const actor = "gateway-user";
+  assert.equal(hasCodexDelegationComment([{ body: delegation, user: { login: actor } }], payload.job.repository, payload.job.id, actor), true);
+  assert.equal(hasCodexDelegationComment([{ body: delegation, user: { login: "attacker" } }], payload.job.repository, payload.job.id, actor), false);
+  assert.equal(hasCodexDelegationComment([{ body: "@codex do it", user: { login: actor } }], payload.job.repository, payload.job.id, actor), false);
+  assert.equal(hasCodexDelegationComment([{ body: delegation, user: { login: actor } }], payload.job.repository, "22222222-2222-4222-8222-222222222222", actor), false);
   assert.equal(CODEX_GATEWAY_MAX_BODY_BYTES, 32 * 1024);
 });
 
@@ -84,8 +86,24 @@ test("database migration provides an atomic, service-role-only dispatch claim", 
   assert.match(migration, /on conflict \(job_id\) do nothing/);
   assert.match(migration, /for update/);
   assert.match(migration, /interval '2 minutes'/);
+  assert.match(migration, /if v_row\.delegated_at is not null/);
+  assert.match(migration, /complete_codex_gateway_delegation/);
+  assert.match(migration, /delegated_at = coalesce\(delegated_at, now\(\)\)/);
   assert.match(migration, /contract digest mismatch/);
   assert.match(migration, /issue identity mismatch/);
   assert.match(migration, /revoke all on function public\.claim_codex_gateway_dispatch[\s\S]+from public, anon, authenticated/);
   assert.match(migration, /grant execute on function public\.claim_codex_gateway_dispatch[\s\S]+to service_role/);
+  assert.match(migration, /revoke all on function public\.complete_codex_gateway_delegation[\s\S]+from public, anon, authenticated/);
+  assert.match(migration, /grant execute on function public\.complete_codex_gateway_delegation[\s\S]+to service_role/);
+});
+
+test("gateway route keeps the lease until an authenticated delegation comment is posted", async () => {
+  const { readFile } = await import("node:fs/promises");
+  const route = await readFile(new URL("../app/api/internal/codex-cloud-gateway/route.ts", import.meta.url), "utf8");
+  const commentCheck = route.indexOf("hasCodexDelegationComment");
+  const completeCall = route.indexOf('supabase.rpc("complete_codex_gateway_delegation"');
+  assert.ok(commentCheck >= 0);
+  assert.ok(completeCall > commentCheck);
+  assert.match(route, /postedComment\?\.user\?\.login !== actorLogin/);
+  assert.match(route, /!claim\.claimed && !claim\.delegated/);
 });
