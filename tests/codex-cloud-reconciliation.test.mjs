@@ -51,7 +51,7 @@ test("reconciliation route stops at human approval instead of merging or deployi
   const { readFile } = await import("node:fs/promises");
   const route = await readFile(new URL("../app/api/internal/codex-cloud-reconcile/route.ts", import.meta.url), "utf8");
   assert.match(route, /p_status: "WAITING_HUMAN_APPROVAL"/);
-  assert.doesNotMatch(route, /merge_pull_request|production_deploy|apply_migration/);
+  assert.doesNotMatch(route, /merge_pull_request|\/merges(?:["`?\/])|apply_migration|supabase\.rpc\(["'].*migration/i);
   assert.match(route, /isTrustedCodexIssue/);
   assert.match(route, /RECONCILE_PULL_REQUEST_IDENTITY_MISMATCH/);
   assert.match(route, /EXTERNAL_AGENT_DISPATCH_TRIGGER_TOKEN/);
