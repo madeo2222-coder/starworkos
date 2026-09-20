@@ -5,9 +5,11 @@ import {
   buildCodexDelegationComment,
   buildCodexIssue,
   codexDelegationMarker,
+  codexIssueContractDigest,
   codexIssueMarker,
   findExistingCodexIssue,
   hasCodexDelegationComment,
+  isTrustedCodexIssue,
   parseRepository,
   validateCodexGatewayPayload,
 } from "../lib/codex-cloud-github.js";
@@ -34,6 +36,8 @@ const payload = {
 test("Codex gateway accepts only a valid OpenAI Codex job contract", () => {
   assert.equal(validateCodexGatewayPayload(payload), null);
   assert.equal(validateCodexGatewayPayload({ ...payload, job: { ...payload.job, provider: "anthropic_claude_code" } }), "UNSUPPORTED_CODEX_GATEWAY_JOB");
+  assert.equal(validateCodexGatewayPayload({ ...payload, job: { ...payload.job, capability: "code_review" } }), "UNSUPPORTED_CODEX_GATEWAY_JOB");
+  assert.equal(validateCodexGatewayPayload({ ...payload, job: { ...payload.job, capability: "repository_analysis" } }), "UNSUPPORTED_CODEX_GATEWAY_JOB");
   assert.equal(validateCodexGatewayPayload({ ...payload, task: { ...payload.task, title: "" } }), "INVALID_CODEX_GATEWAY_TASK");
   assert.deepEqual(parseRepository("madeo2222-coder/starworkos"), { owner: "madeo2222-coder", repo: "starworkos" });
   assert.equal(parseRepository("https://github.com/madeo2222-coder/starworkos"), null);
@@ -57,17 +61,31 @@ test("Codex delegation comment names the repository and preserves protected-acti
   assert.match(comment, /human approval/);
 });
 
-test("gateway retry helpers reuse the marked issue and avoid duplicate Codex comments", () => {
-  const marker = codexIssueMarker(payload.job.id);
-  const issues = [
-    { number: 4, body: "other" },
-    { number: 5, body: marker + "\njob" },
-    { number: 6, body: marker, pull_request: {} },
-  ];
-  assert.equal(findExistingCodexIssue(issues, marker)?.number, 5);
+test("gateway retry helpers trust only the authenticated actor and exact issue contract", () => {
+  const contract = buildCodexIssue(payload);
+  const trusted = { number: 5, title: contract.title, body: contract.body, user: { login: "gateway-user" } };
+  const forged = { number: 6, title: contract.title, body: contract.body, user: { login: "attacker" } };
+  assert.equal(isTrustedCodexIssue(trusted, contract, "gateway-user"), true);
+  assert.equal(isTrustedCodexIssue(forged, contract, "gateway-user"), false);
+  assert.equal(findExistingCodexIssue([forged, trusted], contract, "gateway-user")?.number, 5);
+  assert.match(codexIssueContractDigest(contract), /^[0-9a-f]{64}$/);
+
   const delegation = buildCodexDelegationComment(payload.job.repository, payload.job.id);
   assert.equal(hasCodexDelegationComment([{ body: delegation }], payload.job.id), true);
   assert.equal(hasCodexDelegationComment([{ body: "@codex do it" }], payload.job.id), false);
   assert.equal(hasCodexDelegationComment([{ body: delegation }], "22222222-2222-4222-8222-222222222222"), false);
   assert.equal(CODEX_GATEWAY_MAX_BODY_BYTES, 32 * 1024);
+});
+
+test("database migration provides an atomic, service-role-only dispatch claim", async () => {
+  const { readFile } = await import("node:fs/promises");
+  const migration = await readFile(new URL("../supabase/migrations/20260920090000_codex_gateway_dispatch_claim.sql", import.meta.url), "utf8");
+  assert.match(migration, /job_id uuid primary key/);
+  assert.match(migration, /on conflict \(job_id\) do nothing/);
+  assert.match(migration, /for update/);
+  assert.match(migration, /interval '2 minutes'/);
+  assert.match(migration, /contract digest mismatch/);
+  assert.match(migration, /issue identity mismatch/);
+  assert.match(migration, /revoke all on function public\.claim_codex_gateway_dispatch[\s\S]+from public, anon, authenticated/);
+  assert.match(migration, /grant execute on function public\.claim_codex_gateway_dispatch[\s\S]+to service_role/);
 });
