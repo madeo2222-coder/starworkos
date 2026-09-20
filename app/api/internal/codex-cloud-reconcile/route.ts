@@ -132,6 +132,9 @@ export async function POST(request: Request) {
 
     const summary = summarizeCodexResult(finalComment.body);
     const prReference = extractRepositoryPullRequest(finalComment.body, job.repository);
+    if (!prReference) {
+      return NextResponse.json({ ok: true, state: "RUNNING", jobId: job.id, reason: "WAITING_FOR_REVIEWABLE_PULL_REQUEST" }, { status: 202 });
+    }
 
     let branchName: string | null = null;
     let commitSha: string | null = null;
