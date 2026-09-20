@@ -141,25 +141,23 @@ export async function POST(request: Request) {
     let pullRequestNumber: number | null = null;
     let pullRequestUrl: string | null = null;
 
-    if (prReference) {
-      const prResponse = await githubRequest(`${repoApi}/pulls/${prReference.number}`, githubTokenValue);
-      if (!prResponse.ok) return NextResponse.json({ ok: false, error: "RECONCILE_PULL_REQUEST_LOOKUP_FAILED" }, { status: 502 });
-      const pr = await prResponse.json();
-      if (
-        pr?.html_url?.toLowerCase() !== prReference.url.toLowerCase() ||
-        pr?.base?.ref !== job.base_branch ||
-        pr?.state !== "open" ||
-        pr?.head?.repo?.full_name?.toLowerCase() !== job.repository.toLowerCase() ||
-        typeof pr?.head?.ref !== "string" ||
-        !/^[0-9a-f]{40}$/i.test(pr?.head?.sha ?? "")
-      ) {
-        return NextResponse.json({ ok: false, error: "RECONCILE_PULL_REQUEST_IDENTITY_MISMATCH" }, { status: 409 });
-      }
-      branchName = pr.head.ref;
-      commitSha = pr.head.sha;
-      pullRequestNumber = pr.number;
-      pullRequestUrl = pr.html_url;
+    const prResponse = await githubRequest(`${repoApi}/pulls/${prReference.number}`, githubTokenValue);
+    if (!prResponse.ok) return NextResponse.json({ ok: false, error: "RECONCILE_PULL_REQUEST_LOOKUP_FAILED" }, { status: 502 });
+    const pr = await prResponse.json();
+    if (
+      pr?.html_url?.toLowerCase() !== prReference.url.toLowerCase() ||
+      pr?.base?.ref !== job.base_branch ||
+      pr?.state !== "open" ||
+      pr?.head?.repo?.full_name?.toLowerCase() !== job.repository.toLowerCase() ||
+      typeof pr?.head?.ref !== "string" ||
+      !/^[0-9a-f]{40}$/i.test(pr?.head?.sha ?? "")
+    ) {
+      return NextResponse.json({ ok: false, error: "RECONCILE_PULL_REQUEST_IDENTITY_MISMATCH" }, { status: 409 });
     }
+    branchName = pr.head.ref;
+    commitSha = pr.head.sha;
+    pullRequestNumber = pr.number;
+    pullRequestUrl = pr.html_url;
 
     const { data: updated, error: updateError } = await supabase.rpc("update_external_agent_job_result", {
       p_job_id: job.id,
