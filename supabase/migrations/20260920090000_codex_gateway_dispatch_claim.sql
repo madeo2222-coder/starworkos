@@ -60,9 +60,10 @@ begin
     raise exception 'codex gateway contract digest mismatch';
   end if;
 
-  if v_row.issue_number is not null then
+  if v_row.delegated_at is not null then
     return jsonb_build_object(
       'claimed', false,
+      'delegated', true,
       'issue_number', v_row.issue_number,
       'issue_url', v_row.issue_url
     );
@@ -73,10 +74,20 @@ begin
     set claimed_at = now(), updated_at = now()
     where job_id = p_job_id;
 
-    return jsonb_build_object('claimed', true, 'issue_number', null, 'issue_url', null);
+    return jsonb_build_object(
+      'claimed', true,
+      'delegated', false,
+      'issue_number', v_row.issue_number,
+      'issue_url', v_row.issue_url
+    );
   end if;
 
-  return jsonb_build_object('claimed', false, 'issue_number', null, 'issue_url', null);
+  return jsonb_build_object(
+    'claimed', false,
+    'delegated', false,
+    'issue_number', v_row.issue_number,
+    'issue_url', v_row.issue_url
+  );
 end;
 $$;
 
@@ -110,7 +121,6 @@ begin
   update public.codex_gateway_dispatches
   set issue_number = p_issue_number,
       issue_url = p_issue_url,
-      delegated_at = coalesce(delegated_at, now()),
       updated_at = now()
   where job_id = p_job_id
   returning * into v_row;
@@ -122,9 +132,48 @@ begin
 end;
 $$;
 
+create or replace function public.complete_codex_gateway_delegation(
+  p_job_id uuid,
+  p_contract_digest text,
+  p_issue_number bigint
+) returns jsonb
+language plpgsql
+security definer
+set search_path = ''
+as $
+declare
+  v_row public.codex_gateway_dispatches%rowtype;
+begin
+  select * into v_row
+  from public.codex_gateway_dispatches
+  where job_id = p_job_id
+  for update;
+
+  if not found then raise exception 'codex gateway dispatch claim not found'; end if;
+  if v_row.contract_digest <> p_contract_digest then raise exception 'codex gateway contract digest mismatch'; end if;
+  if v_row.issue_number is null or v_row.issue_number <> p_issue_number then
+    raise exception 'codex gateway issue identity mismatch';
+  end if;
+
+  update public.codex_gateway_dispatches
+  set delegated_at = coalesce(delegated_at, now()),
+      updated_at = now()
+  where job_id = p_job_id
+  returning * into v_row;
+
+  return jsonb_build_object(
+    'delegated', true,
+    'issue_number', v_row.issue_number,
+    'issue_url', v_row.issue_url
+  );
+end;
+$;
+
 revoke all on function public.claim_codex_gateway_dispatch(uuid, text) from public, anon, authenticated;
 grant execute on function public.claim_codex_gateway_dispatch(uuid, text) to service_role;
 revoke all on function public.record_codex_gateway_issue(uuid, text, bigint, text) from public, anon, authenticated;
 grant execute on function public.record_codex_gateway_issue(uuid, text, bigint, text) to service_role;
+revoke all on function public.complete_codex_gateway_delegation(uuid, text, bigint) from public, anon, authenticated;
+grant execute on function public.complete_codex_gateway_delegation(uuid, text, bigint) to service_role;
 
 commit;
