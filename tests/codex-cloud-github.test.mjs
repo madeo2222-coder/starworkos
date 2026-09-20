@@ -4,7 +4,7 @@ import {
   CODEX_GATEWAY_MAX_BODY_BYTES,
   buildCodexDelegationComment,
   buildCodexIssue,
-  codexIssueMarker,
+  codexDelegationMarker,\n  codexIssueMarker,
   findExistingCodexIssue,
   hasCodexDelegationComment,
   parseRepository,
@@ -48,8 +48,8 @@ test("Codex issue contains a deterministic idempotency marker and safety constra
 });
 
 test("Codex delegation comment names the repository and preserves protected-action boundaries", () => {
-  const comment = buildCodexDelegationComment("madeo2222-coder/starworkos");
-  assert.match(comment, /^@codex /i);
+  const comment = buildCodexDelegationComment("madeo2222-coder/starworkos", payload.job.id);
+  assert.equal(comment.includes(codexDelegationMarker(payload.job.id)), true);\n  assert.match(comment, /@codex /i);
   assert.match(comment, /madeo2222-coder\/starworkos/);
   assert.match(comment, /Do not merge/);
   assert.match(comment, /human approval/);
