@@ -19,6 +19,25 @@ export const runtime = "nodejs";
 const GITHUB_API_BASE = "https://api.github.com";
 const GITHUB_TIMEOUT_MS = 10_000;
 
+type CodexGatewayPayload = {
+  job: {
+    id: string;
+    provider: string;
+    capability: string;
+    repository: string;
+    baseBranch: string;
+  };
+  task: {
+    title: string;
+    content?: string | null;
+    priority?: string | null;
+    dueDate?: string | null;
+  };
+  executionPolicy?: {
+    protectedActionsRequireHumanApproval?: string[];
+  };
+};
+
 function githubHeaders(token: string) {
   return {
     accept: "application/vnd.github+json",
@@ -57,12 +76,15 @@ export async function POST(request: Request) {
     return NextResponse.json({ ok: false, error: "CODEX_GATEWAY_NOT_CONFIGURED" }, { status: 503 });
   }
 
+  const githubTokenValue = githubToken as string;
+
   const parsedBody = await readJsonBodyWithLimit(request, CODEX_GATEWAY_MAX_BODY_BYTES);
   if (!parsedBody.ok) return NextResponse.json({ ok: false, error: "CODEX_GATEWAY_PAYLOAD_TOO_LARGE" }, { status: 413 });
 
-  const payload = parsedBody.value;
-  const validationError = validateCodexGatewayPayload(payload);
+  const rawPayload = parsedBody.value;
+  const validationError = validateCodexGatewayPayload(rawPayload);
   if (validationError) return NextResponse.json({ ok: false, error: validationError }, { status: 400 });
+  const payload = rawPayload as CodexGatewayPayload;
 
   const repository = parseRepository(payload.job.repository);
   if (!repository) return NextResponse.json({ ok: false, error: "UNSUPPORTED_CODEX_GATEWAY_JOB" }, { status: 400 });
@@ -82,7 +104,7 @@ export async function POST(request: Request) {
     issue = findExistingCodexIssue(issues, marker);
 
     if (!issue) {
-      const createResponse = await githubRequest(`${repoApi}/issues`, githubToken, {
+      const createResponse = await githubRequest(`${repoApi}/issues`, githubTokenValue, {
         method: "POST",
         body: JSON.stringify({ title: issueContract.title, body: issueContract.body }),
       });
@@ -94,12 +116,12 @@ export async function POST(request: Request) {
       return NextResponse.json({ ok: false, error: "CODEX_GITHUB_INVALID_ISSUE_RESPONSE" }, { status: 502 });
     }
 
-    const commentsResponse = await githubRequest(`${repoApi}/issues/${issue.number}/comments?per_page=100`, githubToken);
+    const commentsResponse = await githubRequest(`${repoApi}/issues/${issue.number}/comments?per_page=100`, githubTokenValue);
     if (!commentsResponse.ok) return NextResponse.json({ ok: false, error: "CODEX_GITHUB_COMMENT_LOOKUP_FAILED" }, { status: 502 });
     const comments = await commentsResponse.json();
 
     if (!hasCodexDelegationComment(comments, payload.job.id)) {
-      const commentResponse = await githubRequest(`${repoApi}/issues/${issue.number}/comments`, githubToken, {
+      const commentResponse = await githubRequest(`${repoApi}/issues/${issue.number}/comments`, githubTokenValue, {
         method: "POST",
         body: JSON.stringify({ body: buildCodexDelegationComment(payload.job.repository, payload.job.id) }),
       });
