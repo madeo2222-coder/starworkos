@@ -248,8 +248,18 @@ test("dispatch request and gateway response contracts are strictly minimal", () 
   assert.equal(validateDispatchRequest({ jobId: "b2916606-3298-4457-a3ee-6e52340e925b" }), null);
   assert.equal(parseDispatchResponse({ externalJobId: "remote-123" }).externalJobId, "remote-123");
   assert.equal(parseDispatchResponse({}), null);
-  assert.deepEqual(dispatchPayload({ id: "job", task_id: "task", ai_employee_id: "employee", provider: "openai_codex", capability: "software_development", repository: "madeo2222-coder/starworkos", base_branch: "main", requested_action: "software_development" }, "https://work.example.test/callback"), {
+  assert.deepEqual(dispatchPayload(
+    { id: "job", task_id: "task", ai_employee_id: "employee", provider: "openai_codex", capability: "software_development", repository: "madeo2222-coder/starworkos", base_branch: "main", requested_action: "software_development" },
+    { title: "Implement feature", content: "Do the work safely", priority: "高", due_date: "2026-09-30" },
+    "https://work.example.test/callback",
+  ), {
     job: { id: "job", taskId: "task", aiEmployeeId: "employee", provider: "openai_codex", capability: "software_development", repository: "madeo2222-coder/starworkos", baseBranch: "main", requestedAction: "software_development" },
+    task: { title: "Implement feature", content: "Do the work safely", priority: "高", dueDate: "2026-09-30" },
+    executionPolicy: {
+      protectedActionsRequireHumanApproval: ["main_merge", "production_deploy", "production_database_migration", "secret_or_environment_change", "destructive_operation"],
+      mustUseNonProductionBranch: true,
+      mustStopBeforeProtectedAction: true,
+    },
     callbackUrl: "https://work.example.test/callback",
   });
 });
