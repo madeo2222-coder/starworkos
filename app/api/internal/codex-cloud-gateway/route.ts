@@ -42,6 +42,7 @@ type CodexGatewayPayload = {
 
 type DispatchClaim = {
   claimed?: boolean;
+  delegated?: boolean;
   issue_number?: number | null;
   issue_url?: string | null;
 };
@@ -107,6 +108,9 @@ export async function POST(request: Request) {
   });
   if (claimError) return NextResponse.json({ ok: false, error: "CODEX_GATEWAY_CLAIM_FAILED" }, { status: 409 });
   const claim = (claimData ?? {}) as DispatchClaim;
+  if (!claim.claimed && !claim.delegated) {
+    return NextResponse.json({ ok: false, error: "CODEX_GATEWAY_DISPATCH_IN_PROGRESS" }, { status: 409 });
+  }
 
   let actorLogin: string;
   let issue: {
@@ -134,11 +138,10 @@ export async function POST(request: Request) {
       if (!isTrustedCodexIssue(issue, issueContract, actorLogin)) {
         return NextResponse.json({ ok: false, error: "CODEX_GITHUB_ISSUE_IDENTITY_MISMATCH" }, { status: 409 });
       }
-    } else {
-      if (!claim.claimed) {
-        return NextResponse.json({ ok: false, error: "CODEX_GATEWAY_DISPATCH_IN_PROGRESS" }, { status: 409 });
+      if (claim.delegated) {
+        return NextResponse.json({ externalJobId: `github-issue:${issue.number}` }, { status: 202 });
       }
-
+    } else {
       const listResponse = await githubRequest(
         `${repoApi}/issues?state=all&sort=created&direction=desc&per_page=${CODEX_GATEWAY_MAX_ISSUES_TO_SCAN}`,
         githubTokenValue,
@@ -177,13 +180,27 @@ export async function POST(request: Request) {
     if (!commentsResponse.ok) return NextResponse.json({ ok: false, error: "CODEX_GITHUB_COMMENT_LOOKUP_FAILED" }, { status: 502 });
     const comments = await commentsResponse.json();
 
-    if (!hasCodexDelegationComment(comments, payload.job.id)) {
+    if (!hasCodexDelegationComment(comments, payload.job.repository, payload.job.id, actorLogin)) {
       const commentResponse = await githubRequest(`${repoApi}/issues/${issue.number}/comments`, githubTokenValue, {
         method: "POST",
         body: JSON.stringify({ body: buildCodexDelegationComment(payload.job.repository, payload.job.id) }),
       });
       if (!commentResponse.ok) return NextResponse.json({ ok: false, error: "CODEX_GITHUB_DELEGATION_FAILED" }, { status: 502 });
+      const postedComment = await commentResponse.json();
+      if (
+        postedComment?.user?.login !== actorLogin ||
+        postedComment?.body !== buildCodexDelegationComment(payload.job.repository, payload.job.id)
+      ) {
+        return NextResponse.json({ ok: false, error: "CODEX_GITHUB_DELEGATION_IDENTITY_MISMATCH" }, { status: 502 });
+      }
     }
+
+    const { error: completeError } = await supabase.rpc("complete_codex_gateway_delegation", {
+      p_job_id: payload.job.id,
+      p_contract_digest: contractDigest,
+      p_issue_number: issue.number,
+    });
+    if (completeError) return NextResponse.json({ ok: false, error: "CODEX_GATEWAY_DELEGATION_COMPLETE_FAILED" }, { status: 409 });
   } catch {
     return NextResponse.json({ ok: false, error: "CODEX_GITHUB_UNAVAILABLE" }, { status: 502 });
   }
