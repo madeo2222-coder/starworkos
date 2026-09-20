@@ -55,6 +55,8 @@ test("reconciliation route stops at human approval instead of merging or deployi
   assert.match(route, /codexIssueContractDigest/);
   assert.match(route, /codex_gateway_dispatches/);
   assert.match(route, /dispatchRecord\.delegated_at === null/);
+  assert.match(route, /WAITING_FOR_REVIEWABLE_PULL_REQUEST/);
+  assert.match(route, /if \(!prReference\)/);
   assert.match(route, /RECONCILE_PULL_REQUEST_IDENTITY_MISMATCH/);
   assert.match(route, /pr\?\.head\?\.repo\?\.full_name/);
   assert.match(route, /pr\?\.state !== "open"/);
