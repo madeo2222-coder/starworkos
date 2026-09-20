@@ -65,7 +65,9 @@ test("gateway retry helpers reuse the marked issue and avoid duplicate Codex com
     { number: 6, body: marker, pull_request: {} },
   ];
   assert.equal(findExistingCodexIssue(issues, marker)?.number, 5);
-  assert.equal(hasCodexDelegationComment([{ body: "@codex do it" }]), true);
-  assert.equal(hasCodexDelegationComment([{ body: "not delegated" }]), false);
+  const delegation = buildCodexDelegationComment(payload.job.repository, payload.job.id);
+  assert.equal(hasCodexDelegationComment([{ body: delegation }], payload.job.id), true);
+  assert.equal(hasCodexDelegationComment([{ body: "@codex do it" }], payload.job.id), false);
+  assert.equal(hasCodexDelegationComment([{ body: delegation }], "22222222-2222-4222-8222-222222222222"), false);
   assert.equal(CODEX_GATEWAY_MAX_BODY_BYTES, 32 * 1024);
 });
