@@ -91,8 +91,8 @@ test("database migration provides an atomic, service-role-only dispatch claim", 
   assert.match(migration, /delegated_at = coalesce\(delegated_at, now\(\)\)/);
   assert.equal(migration.split("\n").some((line) => line.trim() === "as $"), false);
   assert.equal(migration.split("\n").some((line) => line.trim() === "$;"), false);
-  assert.equal((migration.match(/as \\$\\$/g) ?? []).length, 3);
-  assert.equal((migration.match(/^\\$\\$;$/gm) ?? []).length, 3);
+  assert.equal((migration.match(/as \$\$/g) ?? []).length, 3);
+  assert.equal((migration.match(/^\$\$;$/gm) ?? []).length, 3);
   assert.match(migration, /contract digest mismatch/);
   assert.match(migration, /issue identity mismatch/);
   assert.match(migration, /revoke all on function public\.claim_codex_gateway_dispatch[\s\S]+from public, anon, authenticated/);
