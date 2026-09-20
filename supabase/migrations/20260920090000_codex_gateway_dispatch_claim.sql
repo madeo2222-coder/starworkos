@@ -36,7 +36,8 @@ begin
   insert into public.codex_gateway_dispatches(job_id, contract_digest)
   values (p_job_id, p_contract_digest)
   on conflict (job_id) do nothing
-  returning *, true into v_row, v_inserted;
+  returning * into v_row;
+  v_inserted := found;
 
   if v_inserted then
     return jsonb_build_object(
