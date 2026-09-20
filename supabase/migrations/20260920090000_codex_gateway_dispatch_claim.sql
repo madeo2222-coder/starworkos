@@ -140,7 +140,7 @@ create or replace function public.complete_codex_gateway_delegation(
 language plpgsql
 security definer
 set search_path = ''
-as $
+as $$
 declare
   v_row public.codex_gateway_dispatches%rowtype;
 begin
@@ -167,7 +167,7 @@ begin
     'issue_url', v_row.issue_url
   );
 end;
-$;
+$$;
 
 revoke all on function public.claim_codex_gateway_dispatch(uuid, text) from public, anon, authenticated;
 grant execute on function public.claim_codex_gateway_dispatch(uuid, text) to service_role;
