@@ -34,6 +34,14 @@ export async function POST(request: Request) {
   if (!job) return NextResponse.json({ ok: false, error: "EXTERNAL_AGENT_JOB_NOT_FOUND" }, { status: 404 });
   if (job.status !== "QUEUED") return NextResponse.json({ ok: false, error: "EXTERNAL_AGENT_JOB_NOT_QUEUED" }, { status: 409 });
 
+  const { data: task, error: taskError } = await supabase
+    .from("tasks")
+    .select("id, title, content, priority, due_date")
+    .eq("id", job.task_id)
+    .maybeSingle();
+  if (taskError) return NextResponse.json({ ok: false, error: "EXTERNAL_AGENT_TASK_LOOKUP_FAILED" }, { status: 500 });
+  if (!task) return NextResponse.json({ ok: false, error: "EXTERNAL_AGENT_TASK_NOT_FOUND" }, { status: 409 });
+
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), DISPATCH_TIMEOUT_MS);
   let dispatchResult: ReturnType<typeof parseDispatchResponse>;
@@ -45,7 +53,7 @@ export async function POST(request: Request) {
         "content-type": "application/json",
         "idempotency-key": `external-agent-job:${job.id}`,
       },
-      body: JSON.stringify(dispatchPayload(job, config.callbackUrl)),
+      body: JSON.stringify(dispatchPayload(job, task, config.callbackUrl)),
       signal: controller.signal,
       cache: "no-store",
       redirect: "error",
