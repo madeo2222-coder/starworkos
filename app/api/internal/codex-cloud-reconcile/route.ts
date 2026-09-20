@@ -9,8 +9,7 @@ import {
 } from "@/lib/codex-cloud-reconciliation";
 import {
   CODEX_GITHUB_API_VERSION,
-  buildCodexIssue,
-  isTrustedCodexIssue,
+  codexIssueContractDigest,
   parseRepository,
 } from "@/lib/codex-cloud-github";
 import { hasMinimumTokenLength, isAuthorizedDispatchTrigger } from "@/lib/external-agent-dispatch";
@@ -83,32 +82,21 @@ export async function POST(request: Request) {
   const repository = parseRepository(job.repository);
   if (!issueNumber || !repository) return NextResponse.json({ ok: false, error: "RECONCILE_INVALID_EXTERNAL_JOB" }, { status: 409 });
 
-  const { data: task, error: taskError } = await supabase
-    .from("tasks")
-    .select("id, title, content, priority, due_date")
-    .eq("id", job.task_id)
+  const { data: dispatchRecord, error: dispatchRecordError } = await supabase
+    .from("codex_gateway_dispatches")
+    .select("job_id, contract_digest, issue_number, issue_url, delegated_at")
+    .eq("job_id", job.id)
     .maybeSingle();
-  if (taskError) return NextResponse.json({ ok: false, error: "RECONCILE_TASK_LOOKUP_FAILED" }, { status: 500 });
-  if (!task) return NextResponse.json({ ok: false, error: "RECONCILE_TASK_NOT_FOUND" }, { status: 409 });
+  if (dispatchRecordError) return NextResponse.json({ ok: false, error: "RECONCILE_DISPATCH_LOOKUP_FAILED" }, { status: 500 });
+  if (
+    !dispatchRecord ||
+    dispatchRecord.delegated_at === null ||
+    dispatchRecord.issue_number !== issueNumber ||
+    typeof dispatchRecord.contract_digest !== "string"
+  ) {
+    return NextResponse.json({ ok: false, error: "RECONCILE_DISPATCH_IDENTITY_MISMATCH" }, { status: 409 });
+  }
 
-  const issueContract = buildCodexIssue({
-    job: {
-      id: job.id,
-      provider: job.provider,
-      capability: job.capability,
-      repository: job.repository,
-      baseBranch: job.base_branch,
-    },
-    task: {
-      title: task.title,
-      content: task.content,
-      priority: task.priority,
-      dueDate: task.due_date,
-    },
-    executionPolicy: {
-      protectedActionsRequireHumanApproval: ["main_merge", "production_deploy", "production_database_migration", "secret_or_environment_change", "destructive_operation"],
-    },
-  });
   const repoApi = `${GITHUB_API_BASE}/repos/${encodeURIComponent(repository.owner)}/${encodeURIComponent(repository.repo)}`;
 
   try {
@@ -122,7 +110,17 @@ export async function POST(request: Request) {
     const issueResponse = await githubRequest(`${repoApi}/issues/${issueNumber}`, githubTokenValue);
     if (!issueResponse.ok) return NextResponse.json({ ok: false, error: "RECONCILE_ISSUE_LOOKUP_FAILED" }, { status: 502 });
     const issue = await issueResponse.json();
-    if (!isTrustedCodexIssue(issue, issueContract, actor.login)) {
+    const issueDigest = (
+      typeof issue?.title === "string" && typeof issue?.body === "string"
+        ? codexIssueContractDigest({ title: issue.title, body: issue.body })
+        : null
+    );
+    if (
+      issue?.pull_request ||
+      issue?.user?.login !== actor.login ||
+      issueDigest !== dispatchRecord.contract_digest ||
+      issue?.html_url !== dispatchRecord.issue_url
+    ) {
       return NextResponse.json({ ok: false, error: "RECONCILE_ISSUE_IDENTITY_MISMATCH" }, { status: 409 });
     }
 
@@ -147,6 +145,8 @@ export async function POST(request: Request) {
       if (
         pr?.html_url?.toLowerCase() !== prReference.url.toLowerCase() ||
         pr?.base?.ref !== job.base_branch ||
+        pr?.state !== "open" ||
+        pr?.head?.repo?.full_name?.toLowerCase() !== job.repository.toLowerCase() ||
         typeof pr?.head?.ref !== "string" ||
         !/^[0-9a-f]{40}$/i.test(pr?.head?.sha ?? "")
       ) {
