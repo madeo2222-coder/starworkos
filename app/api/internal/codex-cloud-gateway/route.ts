@@ -97,7 +97,7 @@ export async function POST(request: Request) {
   try {
     const listResponse = await githubRequest(
       `${repoApi}/issues?state=all&sort=created&direction=desc&per_page=${CODEX_GATEWAY_MAX_ISSUES_TO_SCAN}`,
-      githubToken,
+      githubTokenValue,
     );
     if (!listResponse.ok) return NextResponse.json({ ok: false, error: "CODEX_GITHUB_ISSUE_LOOKUP_FAILED" }, { status: 502 });
     const issues = await listResponse.json();
