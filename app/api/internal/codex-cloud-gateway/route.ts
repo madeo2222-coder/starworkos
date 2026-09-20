@@ -98,10 +98,10 @@ export async function POST(request: Request) {
     if (!commentsResponse.ok) return NextResponse.json({ ok: false, error: "CODEX_GITHUB_COMMENT_LOOKUP_FAILED" }, { status: 502 });
     const comments = await commentsResponse.json();
 
-    if (!hasCodexDelegationComment(comments)) {
+    if (!hasCodexDelegationComment(comments, payload.job.id)) {
       const commentResponse = await githubRequest(`${repoApi}/issues/${issue.number}/comments`, githubToken, {
         method: "POST",
-        body: JSON.stringify({ body: buildCodexDelegationComment(payload.job.repository) }),
+        body: JSON.stringify({ body: buildCodexDelegationComment(payload.job.repository, payload.job.id) }),
       });
       if (!commentResponse.ok) return NextResponse.json({ ok: false, error: "CODEX_GITHUB_DELEGATION_FAILED" }, { status: 502 });
     }
