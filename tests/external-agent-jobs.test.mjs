@@ -284,6 +284,12 @@ test("internal dispatch authentication uses a constant-time equality check", () 
   assert.equal(hasMinimumTokenLength("short"), false);
 });
 
+test("dispatch loads only stable task fields so optional task columns cannot block dispatch", async () => {
+  const route = await readFile(new URL("../app/api/internal/external-agent-jobs/dispatch/route.ts", import.meta.url), "utf8");
+  assert.match(route, /\.from\("tasks"\)[\s\S]+\.select\("id, title"\)/);
+  assert.doesNotMatch(route, /\.select\("id, title, content, priority, due_date"\)/);
+});
+
 test("dispatch route is fail-closed, idempotent at the gateway, and never returns raw errors", async () => {
   const route = await readFile(new URL("../app/api/internal/external-agent-jobs/dispatch/route.ts", import.meta.url), "utf8");
   assert.match(route, /isAuthorizedDispatchTrigger/);

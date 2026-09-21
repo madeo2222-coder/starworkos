@@ -36,7 +36,7 @@ export async function POST(request: Request) {
 
   const { data: task, error: taskError } = await supabase
     .from("tasks")
-    .select("id, title, content, priority, due_date")
+    .select("id, title")
     .eq("id", job.task_id)
     .maybeSingle();
   if (taskError) return NextResponse.json({ ok: false, error: "EXTERNAL_AGENT_TASK_LOOKUP_FAILED" }, { status: 500 });
