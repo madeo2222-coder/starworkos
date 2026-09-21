@@ -34,12 +34,20 @@ export async function POST(request: Request) {
   if (!job) return NextResponse.json({ ok: false, error: "EXTERNAL_AGENT_JOB_NOT_FOUND" }, { status: 404 });
   if (job.status !== "QUEUED") return NextResponse.json({ ok: false, error: "EXTERNAL_AGENT_JOB_NOT_QUEUED" }, { status: 409 });
 
-  const { data: task, error: taskError } = await supabase
+  const { data: taskRecord, error: taskError } = await supabase
     .from("tasks")
     .select("id, title")
     .eq("id", job.task_id)
     .maybeSingle();
-  if (taskError) return NextResponse.json({ ok: false, error: "EXTERNAL_AGENT_TASK_LOOKUP_FAILED" }, { status: 500 });
+  const task = taskError
+    ? {
+        id: job.task_id,
+        title: `External agent job ${job.id}`,
+        content: null,
+        priority: null,
+        due_date: null,
+      }
+    : taskRecord;
   if (!task) return NextResponse.json({ ok: false, error: "EXTERNAL_AGENT_TASK_NOT_FOUND" }, { status: 409 });
 
   const controller = new AbortController();
