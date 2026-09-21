@@ -293,7 +293,7 @@ test("dispatch loads only stable task fields so optional task columns cannot blo
 test("dispatch falls back to bounded synthetic task context when production task lookup fails", async () => {
   const route = await readFile(new URL("../app/api/internal/external-agent-jobs/dispatch/route.ts", import.meta.url), "utf8");
   assert.match(route, /const task = taskError/);
-  assert.match(route, /External agent job \\${job\.id}/);
+  assert.match(route, /External agent job \$\{job\.id\}/);
   assert.doesNotMatch(route, /EXTERNAL_AGENT_TASK_LOOKUP_FAILED/);
 });
 
