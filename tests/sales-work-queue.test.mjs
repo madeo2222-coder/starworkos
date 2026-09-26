@@ -41,6 +41,18 @@ test("keeps manual send recording visible but omits genuinely completed or waiti
   assert.equal(result.counts.noAction, 2);
 });
 
+test("keeps approved reply delivery recording visible", () => {
+  const result = buildSalesWorkQueue([{
+    id: "reply-record", companyName: "返信記録待ち", ...sentLead,
+    replies: [{ type: "GENERAL_QUESTION", receivedAt: "2026-09-26T00:00:00Z" }],
+    replyApproved: true,
+  }], { now: NOW });
+
+  assert.equal(result.items.length, 1);
+  assert.equal(result.items[0].leadId, "reply-record");
+  assert.equal(result.items[0].reason, "WAIT_FOR_HUMAN_REPLY_SEND_RECORD");
+});
+
 test("deduplicates lead ids and reports malformed records without throwing", () => {
   const hostile = new Proxy({}, { get() { throw new Error("blocked"); } });
   const result = buildSalesWorkQueue([
