@@ -28,6 +28,7 @@ The authenticated `/sales` page now supports:
 4. Save a draft, then review the persisted preview and explicitly approve it.
 5. Remain at approved-but-unsent. Editing an unsent approved draft clears its approval.
 6. After sending outside WORK OS, record email or LINE delivery with explicit confirmation.
+7. Record one inbound email or LINE reply and route its next work by a bounded category.
 
 Approval stores the authenticated reviewer ID and server timestamp. Both save and
 approval re-read the authorized Task and condition the update on its ID, timestamp,
@@ -36,12 +37,16 @@ produces a generic conflict notice. No service-role client or schema changes are
 These operations describe intended roles; they do not dispatch an AI employee.
 Delivery recording requires the stored approval audit, records the authenticated operator
 and server time, and cannot be repeated. It never calls an external messaging service.
+Reply intake stores the received text, channel, category, authenticated operator and server
+time. Material requests, general questions and scheduling are preparation candidates only;
+price, discount, contract, complaint, personal data, opt-out and unknown replies stop for
+human review. An opt-out also becomes a sticky lead flag.
 
 ## Validation and remaining work
 
-- 139 local Node tests, lint and production build (including TypeScript) pass.
+- 142 local Node tests, lint and production build (including TypeScript) pass.
 - Live authenticated database writes and browser interaction remain unverified.
-- Next: replies and appointment flow; authorized integration
+- Next: reviewed reply drafts and appointment flow; authorized integration
   tests with isolated data; actual research/delivery providers and their execution gates.
 - The template has no model generation, researched company claims, prices or coverage promises.
 
