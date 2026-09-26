@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/utils/supabase/server";
 import { buildSalesWorkQueue } from "@/lib/sales-work-queue.js";
 import {
+  completeSalesResearch,
   createSalesLeadRecord,
   parseSalesLeadRecord,
   SALES_LEAD_RECORD_PREFIX,
@@ -12,7 +13,32 @@ import {
 type SalesTask = {
   id: string;
   content: string | null;
+  updated_at: string;
 };
+
+async function recordResearch(formData: FormData) {
+  "use server";
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) redirect("/login");
+  const id = String(formData.get("id") ?? "");
+  const version = String(formData.get("version") ?? "");
+  if (!/^[0-9a-f-]{36}$/i.test(id) || version.length > 64) redirect("/sales?notice=conflict");
+  const { data: task, error } = await supabase.from("tasks")
+    .select("id, content, updated_at, status").eq("id", id).single();
+  if (error || !task || task.updated_at !== version || task.status !== "NEW")
+    redirect("/sales?notice=conflict");
+  const content = completeSalesResearch(id, task.content, String(formData.get("notes") ?? ""));
+  if (!content) redirect("/sales?notice=invalid");
+  const result = await supabase.from("tasks")
+    .update({ content, status: "PLANNING" })
+    .eq("id", id).eq("updated_at", version).eq("content", task.content).eq("status", "NEW")
+    .select("id").maybeSingle();
+  if (result.error || !result.data) redirect("/sales?notice=conflict");
+  revalidatePath("/sales");
+  revalidatePath("/tasks");
+  redirect("/sales?notice=research-saved");
+}
 
 const actionLabels: Record<string, string> = {
   STOP_CONTACT: "配信停止を確認",
@@ -63,14 +89,17 @@ async function createSalesLead(formData: FormData) {
   revalidatePath("/sales");
 }
 
-export default async function SalesCommandCenterPage() {
+export default async function SalesCommandCenterPage({ searchParams }: {
+  searchParams: Promise<{ notice?: string }>;
+}) {
+  const { notice } = await searchParams;
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect("/login");
 
   const { data, error } = await supabase
     .from("tasks")
-    .select("id, content")
+    .select("id, content, updated_at")
     .like("content", `${SALES_LEAD_RECORD_PREFIX}%`)
     .order("created_at", { ascending: false })
     .limit(100);
@@ -82,6 +111,12 @@ export default async function SalesCommandCenterPage() {
     .filter((lead) => lead !== null);
   const queue = buildSalesWorkQueue(leads);
   const leadMap = new Map(leads.map((lead) => [lead.id, lead]));
+  const versions = new Map(((data ?? []) as SalesTask[]).map((task) => [task.id, task.updated_at]));
+  const notices: Record<string, string> = {
+    "research-saved": "調査結果を保存しました。次は初回提案の準備です。",
+    conflict: "保存できませんでした。他の更新や権限を確認し、再読み込みしてください。",
+    invalid: "調査結果を入力してください。この案件はすでに進行している可能性があります。",
+  };
 
   return (
     <main className="min-h-screen bg-[#f7f7f5] px-4 py-5 md:px-8 md:py-8">
@@ -98,6 +133,7 @@ export default async function SalesCommandCenterPage() {
             <Link href="/dashboard" className="rounded-xl border border-zinc-200 bg-white px-4 py-2.5 text-sm font-semibold text-zinc-700 hover:bg-zinc-50">Dashboardへ戻る</Link>
           </div>
         </header>
+        {notice && notices[notice] && <p role="status" className="mt-4 rounded-xl bg-blue-50 p-4 text-sm text-blue-900">{notices[notice]}</p>}
 
         <section className="mt-6 grid gap-4 sm:grid-cols-3">
           <Summary label="見込み企業" value={leads.length} />
@@ -117,7 +153,7 @@ export default async function SalesCommandCenterPage() {
                 提案できそうな理由
                 <textarea name="proposalFit" maxLength={2000} rows={4} className="mt-2 w-full rounded-xl border border-zinc-200 bg-white px-4 py-3 text-sm outline-none focus:border-zinc-500" placeholder="相手企業に響きそうなポイント" />
               </label>
-              <button type="submit" className="w-full rounded-xl bg-zinc-950 px-4 py-3 text-sm font-semibold text-white hover:bg-zinc-800">登録して担当AIへ振り分ける</button>
+              <button type="submit" className="w-full rounded-xl bg-zinc-950 px-4 py-3 text-sm font-semibold text-white hover:bg-zinc-800">登録して次の作業を確認</button>
             </form>
           </div>
 
@@ -144,6 +180,18 @@ export default async function SalesCommandCenterPage() {
                         </div>
                         <p className="mt-2 text-sm font-semibold text-zinc-800">{actionLabels[item.action] ?? item.action}</p>
                         {lead?.proposalFit && <p className="mt-1 line-clamp-2 text-xs leading-5 text-zinc-500">{lead.proposalFit}</p>}
+                        {lead?.researchNotes && <p className="mt-2 whitespace-pre-wrap text-sm text-zinc-600">調査結果：{lead.researchNotes}</p>}
+                        {item.action === "RESEARCH_COMPANY" && (
+                          <form action={recordResearch} className="mt-3 space-y-2">
+                            <input type="hidden" name="id" value={item.leadId} />
+                            <input type="hidden" name="version" value={versions.get(item.leadId) ?? ""} />
+                            <label className="block text-xs font-semibold text-zinc-700">
+                              調査結果（確認した情報・出典）
+                              <textarea name="notes" required maxLength={2000} rows={3} className="mt-1 w-full rounded-lg border border-zinc-300 p-2 text-sm" />
+                            </label>
+                            <button className="rounded-lg bg-zinc-900 px-3 py-2 text-xs font-semibold text-white">調査完了・提案準備へ</button>
+                          </form>
+                        )}
                       </div>
                     </div>
                   </article>
