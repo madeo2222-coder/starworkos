@@ -7,6 +7,7 @@ import {
   completeSalesResearch,
   saveSalesOutreachDraft,
   approveSalesOutreachDraft,
+  recordSalesOutreachDelivery,
   createSalesLeadRecord,
   parseSalesLeadRecord,
   SALES_LEAD_RECORD_PREFIX,
@@ -17,6 +18,35 @@ type SalesTask = {
   content: string | null;
   updated_at: string;
 };
+
+async function recordOutreachDelivery(formData: FormData) {
+  "use server";
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) redirect("/login");
+  const id = String(formData.get("id") ?? "");
+  const version = String(formData.get("version") ?? "");
+  const channel = formData.get("channel");
+  if (!/^[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i.test(id)
+    || !version || version.length > 64
+    || (channel !== "EMAIL" && channel !== "LINE")
+    || formData.get("confirmed") !== "yes") redirect("/sales?notice=delivery-invalid");
+  const { data: task, error } = await supabase.from("tasks")
+    .select("id, content, updated_at, status").eq("id", id).single();
+  if (error || !task || task.updated_at !== version || task.status !== "PLANNING")
+    redirect("/sales?notice=conflict");
+  const content = recordSalesOutreachDelivery(
+    id, task.content, user.id, new Date().toISOString(), channel,
+  );
+  if (!content) redirect("/sales?notice=delivery-invalid");
+  const result = await supabase.from("tasks").update({ content })
+    .eq("id", id).eq("updated_at", version).eq("content", task.content).eq("status", "PLANNING")
+    .select("id").maybeSingle();
+  if (result.error || !result.data) redirect("/sales?notice=conflict");
+  revalidatePath("/sales");
+  revalidatePath("/tasks");
+  redirect("/sales?notice=delivery-recorded");
+}
 
 async function reviewOutreach(formData: FormData) {
   "use server";
@@ -149,6 +179,8 @@ export default async function SalesCommandCenterPage({ searchParams }: {
   const notices: Record<string, string> = {
     "draft-saved": "提案文を保存しました。保存済みの内容を確認して承認してください。",
     "draft-approved": "文面を承認しました。まだ送信されていません。",
+    "delivery-recorded": "外部での送信完了を記録しました。WORK OSからの送信は行っていません。",
+    "delivery-invalid": "承認済み文面・送信手段・送信確認を見直してください。二重記録はできません。",
     "outreach-invalid": "件名・本文・署名と確認チェックを見直してください。進行済みの案件は変更できません。",
     "research-saved": "調査結果を保存しました。次は初回提案の準備です。",
     conflict: "保存できませんでした。他の更新や権限を確認し、再読み込みしてください。",
@@ -255,6 +287,24 @@ export default async function SalesCommandCenterPage({ searchParams }: {
                                       上の保存済み文面と署名を確認しました（未保存の編集内容は対象外）。
                                     </label>
                                     <button disabled={!lead.outreachDraft.signature} className="rounded-lg bg-zinc-900 px-3 py-2 text-xs font-semibold text-white disabled:opacity-40">保存済み文面を承認（送信なし）</button>
+                                  </form>
+                                )}
+                                {lead.outreachApproved && item.reason === "WAIT_FOR_HUMAN_SEND_RECORD" && (
+                                  <form action={recordOutreachDelivery} className="mt-3 space-y-3 rounded-lg border border-amber-200 bg-amber-50 p-3">
+                                    <input type="hidden" name="id" value={item.leadId} />
+                                    <input type="hidden" name="version" value={versions.get(item.leadId) ?? ""} />
+                                    <label className="block text-xs font-semibold">外部で送信した手段
+                                      <select name="channel" required defaultValue="EMAIL" className="mt-1 w-full rounded-lg border border-amber-300 bg-white p-2 text-sm">
+                                        <option value="EMAIL">メール</option>
+                                        <option value="LINE">LINE</option>
+                                      </select>
+                                    </label>
+                                    <label className="flex items-start gap-2 text-xs">
+                                      <input type="checkbox" name="confirmed" value="yes" required />
+                                      上の承認済み文面を、選択した手段で実際に送信しました。
+                                    </label>
+                                    <p className="text-[11px] leading-4 text-amber-800">この操作は送信処理ではなく、外部で送った事実の記録だけを行います。</p>
+                                    <button className="rounded-lg bg-amber-900 px-3 py-2 text-xs font-semibold text-white">送信済みとして記録</button>
                                   </form>
                                 )}
                               </section>
