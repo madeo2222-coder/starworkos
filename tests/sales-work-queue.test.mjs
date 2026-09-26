@@ -53,6 +53,18 @@ test("keeps approved reply delivery recording visible", () => {
   assert.equal(result.items[0].reason, "WAIT_FOR_HUMAN_REPLY_SEND_RECORD");
 });
 
+test("omits a reply after its manual delivery has been recorded", () => {
+  const result = buildSalesWorkQueue([{
+    id: "reply-done", companyName: "返信完了", ...sentLead,
+    replies: [{ type: "GENERAL_QUESTION", receivedAt: "2026-09-26T00:00:00Z" }],
+    replyApproved: true,
+    replyRecordedAt: "2026-09-26T01:00:00Z",
+  }], { now: NOW });
+
+  assert.equal(result.items.length, 0);
+  assert.equal(result.counts.noAction, 1);
+});
+
 test("deduplicates lead ids and reports malformed records without throwing", () => {
   const hostile = new Proxy({}, { get() { throw new Error("blocked"); } });
   const result = buildSalesWorkQueue([
