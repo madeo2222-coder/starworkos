@@ -319,6 +319,7 @@ export default async function DashboardPage() {
 
             <nav className="flex flex-wrap items-center gap-1 text-sm font-medium text-zinc-600">
               <Link href="/tasks" className="rounded-lg px-3 py-2 hover:bg-zinc-100 hover:text-zinc-950">Tasks</Link>
+              <Link href="/sales" className="rounded-lg px-3 py-2 hover:bg-zinc-100 hover:text-zinc-950">Sales</Link>
               <Link href="/workflows" className="rounded-lg px-3 py-2 hover:bg-zinc-100 hover:text-zinc-950">Workflows</Link>
               <Link href="/ai-employees" className="rounded-lg px-3 py-2 hover:bg-zinc-100 hover:text-zinc-950">AI Employees</Link>
               <Link href="/ceo-inbox" className="rounded-lg px-3 py-2 hover:bg-zinc-100 hover:text-zinc-950">CEO Inbox</Link>
