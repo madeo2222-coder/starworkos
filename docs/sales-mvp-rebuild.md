@@ -27,18 +27,21 @@ The authenticated `/sales` page now supports:
 3. Edit the outreach subject, body and separate signature from a fixed template.
 4. Save a draft, then review the persisted preview and explicitly approve it.
 5. Remain at approved-but-unsent. Editing an unsent approved draft clears its approval.
+6. After sending outside WORK OS, record email or LINE delivery with explicit confirmation.
 
 Approval stores the authenticated reviewer ID and server timestamp. Both save and
 approval re-read the authorized Task and condition the update on its ID, timestamp,
 previous content and status. A stale form, zero affected rows or inaccessible row
 produces a generic conflict notice. No service-role client or schema changes are used.
 These operations describe intended roles; they do not dispatch an AI employee.
+Delivery recording requires the stored approval audit, records the authenticated operator
+and server time, and cannot be repeated. It never calls an external messaging service.
 
 ## Validation and remaining work
 
-- 136 local Node tests, lint and production build (including TypeScript) pass.
+- 139 local Node tests, lint and production build (including TypeScript) pass.
 - Live authenticated database writes and browser interaction remain unverified.
-- Next: sent-message recording, replies and appointment flow; authorized integration
+- Next: replies and appointment flow; authorized integration
   tests with isolated data; actual research/delivery providers and their execution gates.
 - The template has no model generation, researched company claims, prices or coverage promises.
 
