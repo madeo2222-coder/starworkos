@@ -7,6 +7,7 @@ import {
   approveSalesOutreachDraft,
   saveSalesReplyDraft,
   approveSalesReplyDraft,
+  recordSalesReplyDelivery,
   recordSalesOutreachDelivery,
   recordSalesReply,
   parseSalesLeadRecord,
@@ -40,6 +41,7 @@ test("creates a bounded initial sales lead record", () => {
     replyApproved: false,
     replyApproval: null,
     replyRecordedAt: null,
+    replyDelivery: null,
     followUps: [],
     replies: [],
   });
@@ -157,14 +159,15 @@ test("records one inbound reply and preserves its bounded audit fields", () => {
   assert.equal(lead.replyDraft, null);
   assert.equal(lead.replyApproved, false);
   assert.equal(lead.replyRecordedAt, null);
+  assert.equal(lead.replyDelivery, null);
   assert.equal(recordSalesReply("lead-1", recorded, {
     channel: "EMAIL", type: "GENERAL_QUESTION", message: "追加質問",
   }, "operator-2", receivedAt), null);
 });
 
-function repliedRecord(type = "MATERIAL_REQUEST") {
-  return recordSalesReply("lead-1", deliveredRecord(), {
-    channel: "EMAIL", type, message: "資料について確認したいです。",
+function repliedRecord(type = "MATERIAL_REQUEST", channel = "EMAIL") {
+  return recordSalesReply("lead-1", deliveredRecord(channel), {
+    channel, type, message: "資料について確認したいです。",
   }, "operator-2", "2026-09-27T02:00:00.000Z");
 }
 
@@ -173,6 +176,11 @@ const replyDraft = {
   body: "ご返信ありがとうございます。資料を準備いたします。",
   signature: "テスト株式会社 営業担当\nsales@example.com",
 };
+
+function approvedReplyRecord(type = "MATERIAL_REQUEST", channel = "EMAIL") {
+  const saved = saveSalesReplyDraft("lead-1", repliedRecord(type, channel), replyDraft);
+  return approveSalesReplyDraft("lead-1", saved, "reviewer-2", approvalTime);
+}
 
 test("saves and approves a safe reply draft without recording a delivery", () => {
   const saved = saveSalesReplyDraft("lead-1", repliedRecord(), replyDraft);
@@ -211,6 +219,29 @@ test("parser rejects forged reply approval and reply delivery state", () => {
   const safe = repliedRecord();
   assert.equal(parseSalesLeadRecord("lead-1", changeRecord(safe, { replyApproved: true })), null);
   assert.equal(parseSalesLeadRecord("lead-1", changeRecord(safe, { replyRecordedAt: approvalTime })), null);
+});
+
+test("records a manually completed safe reply delivery with the inbound channel", () => {
+  const recordedAt = "2026-09-27T03:00:00.000Z";
+  const recorded = recordSalesReplyDelivery(
+    "lead-1", approvedReplyRecord("GENERAL_QUESTION", "LINE"), "operator-3", recordedAt,
+  );
+  const lead = parseSalesLeadRecord("lead-1", recorded);
+  assert.equal(lead.replyApproved, true);
+  assert.equal(lead.replyRecordedAt, recordedAt);
+  assert.deepEqual(lead.replyDelivery, {
+    actorId: "operator-3", recordedAt, channel: "LINE",
+  });
+  assert.equal(recordSalesReplyDelivery("lead-1", recorded, "operator-3", recordedAt), null);
+});
+
+test("reply delivery recording requires approved safe content and valid server audit", () => {
+  assert.equal(recordSalesReplyDelivery("lead-1", repliedRecord(), "operator", approvalTime), null);
+  assert.equal(recordSalesReplyDelivery("lead-1", approvedReplyRecord(), "", approvalTime), null);
+  assert.equal(recordSalesReplyDelivery("lead-1", approvedReplyRecord(), "operator", "invalid"), null);
+  assert.equal(recordSalesReplyDelivery("lead-1", approvedReplyRecord("SCHEDULING"), "operator", approvalTime), null);
+  const missingApproval = changeRecord(approvedReplyRecord(), { replyApproval: null });
+  assert.equal(recordSalesReplyDelivery("lead-1", missingApproval, "operator", approvalTime), null);
 });
 
 test("opt-out reply becomes sticky and unsafe reply input fails closed", () => {
