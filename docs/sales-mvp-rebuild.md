@@ -31,6 +31,8 @@ The authenticated `/sales` page now supports:
 7. Record one inbound email or LINE reply and route its next work by a bounded category.
 8. For material requests and general questions, edit a fixed reply template, save it,
    review the persisted preview and explicitly approve it without sending.
+9. After sending that approved reply outside WORK OS through the original channel,
+   record the delivery with a second explicit confirmation.
 
 Approval stores the authenticated reviewer ID and server timestamp. Both save and
 approval re-read the authorized Task and condition the update on its ID, timestamp,
@@ -45,14 +47,15 @@ price, discount, contract, complaint, personal data, opt-out and unknown replies
 human review. An opt-out also becomes a sticky lead flag.
 Reply-draft approval stores a separate authenticated reviewer audit. Editing the reply
 draft clears that approval. Scheduling and every sensitive category are ineligible for
-this transition, and an approved reply remains visibly unsent.
+this transition. Reply delivery records the authenticated operator and server time,
+inherits the received channel, and cannot be repeated. It does not call a mail or LINE API.
 
 ## Validation and remaining work
 
-- 147 local Node tests pass; lint and production build (including TypeScript) are
+- 150 local Node tests pass; lint and production build (including TypeScript) are
   re-run for each reviewable milestone.
 - Live authenticated database writes and browser interaction remain unverified.
-- Next: safe manual reply-delivery recording and appointment flow; authorized integration
+- Next: appointment candidate and confirmation flow; authorized integration
   tests with isolated data; actual research/delivery providers and their execution gates.
 - The template has no model generation, researched company claims, prices or coverage promises.
 
