@@ -5,6 +5,7 @@ import {
   completeSalesResearch,
   saveSalesOutreachDraft,
   approveSalesOutreachDraft,
+  recordSalesOutreachDelivery,
   parseSalesLeadRecord,
   SALES_LEAD_RECORD_PREFIX,
 } from "../lib/sales-lead-record.js";
@@ -31,6 +32,7 @@ test("creates a bounded initial sales lead record", () => {
     researchComplete: false,
     outreachApproved: false,
     outreachRecordedAt: null,
+    outreachDelivery: null,
     followUps: [],
     replies: [],
   });
@@ -89,6 +91,43 @@ test("approval requires a saved draft, signature and server audit fields", () =>
   const saved = saveSalesOutreachDraft("lead-1", record, outreach);
   assert.equal(approveSalesOutreachDraft("lead-1", saved, "", approvalTime), null);
   assert.equal(approveSalesOutreachDraft("lead-1", saved, "reviewer", "invalid"), null);
+});
+
+test("records a manually completed delivery without changing the approved draft", () => {
+  const saved = saveSalesOutreachDraft("lead-1", researchedRecord(), outreach);
+  const approved = approveSalesOutreachDraft("lead-1", saved, "reviewer-1", approvalTime);
+  const sentAt = "2026-09-27T01:00:00.000Z";
+  const recorded = recordSalesOutreachDelivery("lead-1", approved, "operator-1", sentAt, "EMAIL");
+  const lead = parseSalesLeadRecord("lead-1", recorded);
+  assert.equal(lead.outreachApproved, true);
+  assert.equal(lead.outreachRecordedAt, sentAt);
+  assert.deepEqual(lead.outreachDraft, outreach);
+  assert.deepEqual(lead.outreachDelivery, {
+    actorId: "operator-1", recordedAt: sentAt, channel: "EMAIL",
+  });
+  assert.equal(recordSalesOutreachDelivery("lead-1", recorded, "operator-1", sentAt, "EMAIL"), null);
+});
+
+test("delivery recording requires approval audit, actor, timestamp, and a supported channel", () => {
+  const saved = saveSalesOutreachDraft("lead-1", researchedRecord(), outreach);
+  const approved = approveSalesOutreachDraft("lead-1", saved, "reviewer-1", approvalTime);
+  assert.equal(recordSalesOutreachDelivery("lead-1", saved, "operator", approvalTime, "EMAIL"), null);
+  assert.equal(recordSalesOutreachDelivery("lead-1", approved, "", approvalTime, "EMAIL"), null);
+  assert.equal(recordSalesOutreachDelivery("lead-1", approved, "operator", "invalid", "EMAIL"), null);
+  assert.equal(recordSalesOutreachDelivery("lead-1", approved, "operator", approvalTime, "SMS"), null);
+  const missingAudit = changeRecord(approved, { outreachApproval: null });
+  assert.equal(recordSalesOutreachDelivery("lead-1", missingAudit, "operator", approvalTime, "LINE"), null);
+});
+
+test("delivery recording stops for suppressed and progressed leads", () => {
+  const saved = saveSalesOutreachDraft("lead-1", researchedRecord(), outreach);
+  const approved = approveSalesOutreachDraft("lead-1", saved, "reviewer-1", approvalTime);
+  for (const changes of [
+    { optedOut: true }, { appointmentConfirmed: true }, { researchComplete: false },
+    { replies: [{}] }, { followUps: [{}] },
+  ]) assert.equal(recordSalesOutreachDelivery(
+    "lead-1", changeRecord(approved, changes), "operator", approvalTime, "EMAIL",
+  ), null);
 });
 
 test("draft edits and approvals stop on contact suppression and progressed records", () => {
