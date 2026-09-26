@@ -6,6 +6,7 @@ import {
   saveSalesOutreachDraft,
   approveSalesOutreachDraft,
   recordSalesOutreachDelivery,
+  recordSalesReply,
   parseSalesLeadRecord,
   SALES_LEAD_RECORD_PREFIX,
 } from "../lib/sales-lead-record.js";
@@ -64,6 +65,12 @@ function changeRecord(content, changes) {
   return SALES_LEAD_RECORD_PREFIX + JSON.stringify({
     ...JSON.parse(content.slice(SALES_LEAD_RECORD_PREFIX.length)), ...changes,
   });
+}
+
+function deliveredRecord(channel = "EMAIL") {
+  const saved = saveSalesOutreachDraft("lead-1", researchedRecord(), outreach);
+  const approved = approveSalesOutreachDraft("lead-1", saved, "reviewer-1", approvalTime);
+  return recordSalesOutreachDelivery("lead-1", approved, "operator-1", approvalTime, channel);
 }
 
 test("draft approval applies to saved text and editing revokes it without losing research", () => {
@@ -128,6 +135,50 @@ test("delivery recording stops for suppressed and progressed leads", () => {
   ]) assert.equal(recordSalesOutreachDelivery(
     "lead-1", changeRecord(approved, changes), "operator", approvalTime, "EMAIL",
   ), null);
+});
+
+test("records one inbound reply and preserves its bounded audit fields", () => {
+  const receivedAt = "2026-09-27T02:00:00.000Z";
+  const recorded = recordSalesReply("lead-1", deliveredRecord(), {
+    channel: "EMAIL", type: "MATERIAL_REQUEST", message: " 資料を送ってください。 ",
+  }, "operator-2", receivedAt);
+  const lead = parseSalesLeadRecord("lead-1", recorded);
+  assert.deepEqual(lead.replies, [{
+    channel: "EMAIL", type: "MATERIAL_REQUEST", message: "資料を送ってください。",
+    actorId: "operator-2", receivedAt,
+  }]);
+  assert.equal(lead.optedOut, false);
+  assert.equal(recordSalesReply("lead-1", recorded, {
+    channel: "EMAIL", type: "GENERAL_QUESTION", message: "追加質問",
+  }, "operator-2", receivedAt), null);
+});
+
+test("opt-out reply becomes sticky and unsafe reply input fails closed", () => {
+  const receivedAt = "2026-09-27T02:00:00.000Z";
+  const optedOut = recordSalesReply("lead-1", deliveredRecord("LINE"), {
+    channel: "LINE", type: "OPT_OUT", message: "今後の案内は不要です。",
+  }, "operator-2", receivedAt);
+  assert.equal(parseSalesLeadRecord("lead-1", optedOut).optedOut, true);
+  for (const input of [
+    { channel: "SMS", type: "UNKNOWN", message: "本文" },
+    { channel: "EMAIL", type: "OTHER", message: "本文" },
+    { channel: "EMAIL", type: "GENERAL_QUESTION", message: " " },
+    { channel: "EMAIL", type: "GENERAL_QUESTION", message: "x".repeat(4_001) },
+    null,
+  ]) assert.equal(recordSalesReply(
+    "lead-1", deliveredRecord(), input, "operator-2", receivedAt,
+  ), null);
+});
+
+test("reply intake requires a valid persisted delivery and server audit", () => {
+  const receivedAt = "2026-09-27T02:00:00.000Z";
+  const input = { channel: "EMAIL", type: "SCHEDULING", message: "来週を希望します。" };
+  const saved = saveSalesOutreachDraft("lead-1", researchedRecord(), outreach);
+  assert.equal(recordSalesReply("lead-1", saved, input, "operator", receivedAt), null);
+  assert.equal(recordSalesReply("lead-1", deliveredRecord(), input, "", receivedAt), null);
+  assert.equal(recordSalesReply("lead-1", deliveredRecord(), input, "operator", "invalid"), null);
+  const deliveryMismatch = changeRecord(deliveredRecord(), { outreachRecordedAt: "2026-09-27T03:00:00.000Z" });
+  assert.equal(recordSalesReply("lead-1", deliveryMismatch, input, "operator", receivedAt), null);
 });
 
 test("draft edits and approvals stop on contact suppression and progressed records", () => {
