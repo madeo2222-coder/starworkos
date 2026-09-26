@@ -9,6 +9,7 @@ import {
   approveSalesOutreachDraft,
   saveSalesReplyDraft,
   approveSalesReplyDraft,
+  recordSalesReplyDelivery,
   recordSalesOutreachDelivery,
   recordSalesReply,
   createSalesLeadRecord,
@@ -141,6 +142,31 @@ async function reviewReplyDraft(formData: FormData) {
   revalidatePath("/sales");
   revalidatePath("/tasks");
   redirect(operation === "save" ? "/sales?notice=reply-draft-saved" : "/sales?notice=reply-draft-approved");
+}
+
+async function recordReplyDelivery(formData: FormData) {
+  "use server";
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) redirect("/login");
+  const id = String(formData.get("id") ?? "");
+  const version = String(formData.get("version") ?? "");
+  if (!/^[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i.test(id)
+    || !version || version.length > 64
+    || formData.get("confirmed") !== "yes") redirect("/sales?notice=reply-delivery-invalid");
+  const { data: task, error } = await supabase.from("tasks")
+    .select("id, content, updated_at, status").eq("id", id).single();
+  if (error || !task || task.updated_at !== version || task.status !== "PLANNING")
+    redirect("/sales?notice=conflict");
+  const content = recordSalesReplyDelivery(id, task.content, user.id, new Date().toISOString());
+  if (!content) redirect("/sales?notice=reply-delivery-invalid");
+  const result = await supabase.from("tasks").update({ content })
+    .eq("id", id).eq("updated_at", version).eq("content", task.content).eq("status", "PLANNING")
+    .select("id").maybeSingle();
+  if (result.error || !result.data) redirect("/sales?notice=conflict");
+  revalidatePath("/sales");
+  revalidatePath("/tasks");
+  redirect("/sales?notice=reply-delivery-recorded");
 }
 
 function defaultReplyDraft(companyName: string, replyType: string, signature: string) {
@@ -277,6 +303,8 @@ export default async function SalesCommandCenterPage({ searchParams }: {
     "reply-draft-saved": "一次返信案を保存しました。保存済みの内容を確認して承認してください。",
     "reply-draft-approved": "一次返信案を承認しました。まだ送信されていません。",
     "reply-draft-invalid": "安全対象の返信、件名、本文、署名と確認チェックを見直してください。",
+    "reply-delivery-recorded": "外部での一次返信送信を記録しました。WORK OSからの送信は行っていません。",
+    "reply-delivery-invalid": "承認済み返信案と送信確認を見直してください。二重記録はできません。",
     "outreach-invalid": "件名・本文・署名と確認チェックを見直してください。進行済みの案件は変更できません。",
     "research-saved": "調査結果を保存しました。次は初回提案の準備です。",
     conflict: "保存できませんでした。他の更新や権限を確認し、再読み込みしてください。",
@@ -398,10 +426,20 @@ export default async function SalesCommandCenterPage({ searchParams }: {
                                     <button disabled={!lead.replyDraft.signature} className="rounded-lg bg-zinc-900 px-3 py-2 text-xs font-semibold text-white disabled:opacity-40">保存済み返信案を承認（送信なし）</button>
                                   </form>
                                 )}
-                                {lead.replyApproved && (
-                                  <p className="mt-3 rounded-lg border border-amber-200 bg-amber-50 p-3 text-xs leading-5 text-amber-900">
-                                    承認済みです。外部での返信送信と送信済み記録は、次の安全な連携機能を追加するまで実行しません。
-                                  </p>
+                                {lead.replyApproved && item.reason === "WAIT_FOR_HUMAN_REPLY_SEND_RECORD" && (
+                                  <form action={recordReplyDelivery} className="mt-3 space-y-3 rounded-lg border border-amber-200 bg-amber-50 p-3">
+                                    <input type="hidden" name="id" value={item.leadId} />
+                                    <input type="hidden" name="version" value={versions.get(item.leadId) ?? ""} />
+                                    <p className="text-xs font-semibold text-amber-950">
+                                      受信元と同じ{latestReply.channel === "EMAIL" ? "メール" : "LINE"}で外部送信した場合だけ記録してください。
+                                    </p>
+                                    <label className="flex items-start gap-2 text-xs text-amber-950">
+                                      <input type="checkbox" name="confirmed" value="yes" required />
+                                      上の承認済み返信案を、受信元と同じ手段で実際に送信しました。
+                                    </label>
+                                    <p className="text-[11px] leading-4 text-amber-800">この操作は送信処理ではなく、外部で送った事実の記録だけを行います。</p>
+                                    <button className="rounded-lg bg-amber-900 px-3 py-2 text-xs font-semibold text-white">一次返信を送信済みとして記録</button>
+                                  </form>
                                 )}
                               </section>
                             )}
