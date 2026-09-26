@@ -42,6 +42,12 @@ test("processes only the newest valid reply", () => {
   ] }, SALES_ROLES.SALES_WRITER, SALES_ACTIONS.PREPARE_REPLY, "SAFE_REPLY_MATERIAL_REQUEST");
 });
 
+test("approved safe replies wait for human delivery and recorded replies leave the queue", () => {
+  const reply = [{ type: "GENERAL_QUESTION", receivedAt: "2026-09-21T00:00:00Z" }];
+  expectPlan({ ...sentLead, replies: reply, replyApproved: true }, SALES_ROLES.DELIVERY_OPERATOR, SALES_ACTIONS.NO_ACTION, "WAIT_FOR_HUMAN_REPLY_SEND_RECORD");
+  expectPlan({ ...sentLead, replies: reply, replyApproved: true, replyRecordedAt: "2026-09-21T01:00:00Z" }, null, SALES_ACTIONS.NO_ACTION, "REPLY_RECORDED");
+});
+
 test("routes scheduling reply to the scheduler without confirming anything", () => {
   expectPlan({ ...sentLead, replies: [{ type: "SCHEDULING", receivedAt: "2026-09-21T00:00:00Z" }] }, SALES_ROLES.SCHEDULER, SALES_ACTIONS.PREPARE_MEETING_OPTIONS, "SCHEDULING_REPLY");
 });
