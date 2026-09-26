@@ -8,6 +8,7 @@ import {
   saveSalesOutreachDraft,
   approveSalesOutreachDraft,
   recordSalesOutreachDelivery,
+  recordSalesReply,
   createSalesLeadRecord,
   parseSalesLeadRecord,
   SALES_LEAD_RECORD_PREFIX,
@@ -18,6 +19,34 @@ type SalesTask = {
   content: string | null;
   updated_at: string;
 };
+
+async function recordInboundReply(formData: FormData) {
+  "use server";
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) redirect("/login");
+  const id = String(formData.get("id") ?? "");
+  const version = String(formData.get("version") ?? "");
+  if (!/^[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i.test(id)
+    || !version || version.length > 64) redirect("/sales?notice=reply-invalid");
+  const { data: task, error } = await supabase.from("tasks")
+    .select("id, content, updated_at, status").eq("id", id).single();
+  if (error || !task || task.updated_at !== version || task.status !== "PLANNING")
+    redirect("/sales?notice=conflict");
+  const content = recordSalesReply(id, task.content, {
+    channel: formData.get("channel"),
+    type: formData.get("type"),
+    message: formData.get("message"),
+  }, user.id, new Date().toISOString());
+  if (!content) redirect("/sales?notice=reply-invalid");
+  const result = await supabase.from("tasks").update({ content })
+    .eq("id", id).eq("updated_at", version).eq("content", task.content).eq("status", "PLANNING")
+    .select("id").maybeSingle();
+  if (result.error || !result.data) redirect("/sales?notice=conflict");
+  revalidatePath("/sales");
+  revalidatePath("/tasks");
+  redirect("/sales?notice=reply-recorded");
+}
 
 async function recordOutreachDelivery(formData: FormData) {
   "use server";
@@ -123,6 +152,19 @@ const roleLabels: Record<string, string> = {
   delivery_operator: "送信管理担当",
 };
 
+const replyTypeLabels: Record<string, string> = {
+  MATERIAL_REQUEST: "資料希望",
+  GENERAL_QUESTION: "一般的な質問",
+  SCHEDULING: "日程調整",
+  PRICE: "価格・見積",
+  DISCOUNT: "値引き相談",
+  CONTRACT: "契約・条件",
+  COMPLAINT: "クレーム",
+  PERSONAL_DATA: "個人情報を含む",
+  OPT_OUT: "配信停止",
+  UNKNOWN: "分類できない",
+};
+
 async function createSalesLead(formData: FormData) {
   "use server";
 
@@ -176,11 +218,15 @@ export default async function SalesCommandCenterPage({ searchParams }: {
   const queue = buildSalesWorkQueue(leads);
   const leadMap = new Map(leads.map((lead) => [lead.id, lead]));
   const versions = new Map(((data ?? []) as SalesTask[]).map((task) => [task.id, task.updated_at]));
+  const replyWaitingLeads = leads.filter((lead) => lead.outreachRecordedAt !== null
+    && lead.replies.length === 0 && !lead.optedOut && !lead.appointmentConfirmed);
   const notices: Record<string, string> = {
     "draft-saved": "提案文を保存しました。保存済みの内容を確認して承認してください。",
     "draft-approved": "文面を承認しました。まだ送信されていません。",
     "delivery-recorded": "外部での送信完了を記録しました。WORK OSからの送信は行っていません。",
     "delivery-invalid": "承認済み文面・送信手段・送信確認を見直してください。二重記録はできません。",
+    "reply-recorded": "返信を記録し、次の担当と対応方針を整理しました。返信送信は行っていません。",
+    "reply-invalid": "送信済み案件、返信手段、分類、本文を確認してください。返信は1件ずつ処理します。",
     "outreach-invalid": "件名・本文・署名と確認チェックを見直してください。進行済みの案件は変更できません。",
     "research-saved": "調査結果を保存しました。次は初回提案の準備です。",
     conflict: "保存できませんでした。他の更新や権限を確認し、再読み込みしてください。",
@@ -238,6 +284,7 @@ export default async function SalesCommandCenterPage({ searchParams }: {
             <div className="mt-5 space-y-3">
               {queue.items.map((item, index) => {
                 const lead = leadMap.get(item.leadId);
+                const latestReply = lead?.replies[lead.replies.length - 1];
                 return (
                   <article key={item.leadId} className="rounded-2xl border border-zinc-200 bg-white p-4">
                     <div className="flex items-start gap-4">
@@ -250,6 +297,12 @@ export default async function SalesCommandCenterPage({ searchParams }: {
                         <p className="mt-2 text-sm font-semibold text-zinc-800">{actionLabels[item.action] ?? item.action}</p>
                         {lead?.proposalFit && <p className="mt-1 line-clamp-2 text-xs leading-5 text-zinc-500">{lead.proposalFit}</p>}
                         {lead?.researchNotes && <p className="mt-2 whitespace-pre-wrap text-sm text-zinc-600">調査結果：{lead.researchNotes}</p>}
+                        {latestReply && (
+                          <div className="mt-3 rounded-xl border border-blue-100 bg-blue-50 p-3 text-sm">
+                            <p className="text-xs font-semibold text-blue-900">受信返信：{replyTypeLabels[latestReply.type] ?? "要確認"}／{latestReply.channel === "EMAIL" ? "メール" : "LINE"}</p>
+                            <p className="mt-1 whitespace-pre-wrap break-words text-blue-950">{latestReply.message}</p>
+                          </div>
+                        )}
                         {lead?.researchComplete && (item.action === "PREPARE_OUTREACH" || item.reason === "WAIT_FOR_HUMAN_SEND_RECORD") && (
                           <div className="mt-4 space-y-3">
                             <details className="rounded-xl border border-zinc-200 p-3">
@@ -331,6 +384,46 @@ export default async function SalesCommandCenterPage({ searchParams }: {
                 <div className="rounded-2xl bg-zinc-50 px-4 py-10 text-center text-sm text-zinc-500">見込み企業を登録すると、次の作業がここに並びます。</div>
               )}
             </div>
+          </div>
+        </section>
+
+        <section className="os-surface mt-6 rounded-[22px] p-6">
+          <div className="flex flex-wrap items-end justify-between gap-3">
+            <div>
+              <p className="os-eyebrow">Inbound replies</p>
+              <h2 className="mt-2 text-xl font-semibold text-zinc-950">送信済み・返信受付</h2>
+              <p className="mt-2 text-sm text-zinc-500">外部で受信した返信を記録します。価格・契約・クレーム等は必ず人間確認で停止します。</p>
+            </div>
+            <span className="rounded-full bg-zinc-100 px-3 py-1 text-xs font-semibold text-zinc-600">返信待ち {replyWaitingLeads.length}件</span>
+          </div>
+          <div className="mt-5 grid gap-4 lg:grid-cols-2">
+            {replyWaitingLeads.map((lead) => (
+              <form key={lead.id} action={recordInboundReply} className="rounded-2xl border border-zinc-200 bg-white p-4">
+                <input type="hidden" name="id" value={lead.id} />
+                <input type="hidden" name="version" value={versions.get(lead.id) ?? ""} />
+                <h3 className="font-semibold text-zinc-950">{lead.companyName}</h3>
+                <div className="mt-3 grid gap-3 sm:grid-cols-2">
+                  <label className="text-xs font-semibold">受信手段
+                    <select name="channel" required defaultValue={lead.outreachDelivery?.channel ?? "EMAIL"} className="mt-1 w-full rounded-lg border border-zinc-300 bg-white p-2 text-sm">
+                      <option value="EMAIL">メール</option>
+                      <option value="LINE">LINE</option>
+                    </select>
+                  </label>
+                  <label className="text-xs font-semibold">返信の種類
+                    <select name="type" required defaultValue="UNKNOWN" className="mt-1 w-full rounded-lg border border-zinc-300 bg-white p-2 text-sm">
+                      {Object.entries(replyTypeLabels).map(([value, label]) => <option key={value} value={value}>{label}</option>)}
+                    </select>
+                  </label>
+                </div>
+                <label className="mt-3 block text-xs font-semibold">受信した本文
+                  <textarea name="message" required maxLength={4000} rows={5} className="mt-1 w-full rounded-lg border border-zinc-300 p-2 text-sm" />
+                </label>
+                <button className="mt-3 rounded-lg bg-zinc-900 px-3 py-2 text-xs font-semibold text-white">返信を記録・次の対応を判定</button>
+              </form>
+            ))}
+            {replyWaitingLeads.length === 0 && (
+              <p className="rounded-2xl bg-zinc-50 px-4 py-8 text-center text-sm text-zinc-500 lg:col-span-2">返信待ちとして記録できる送信済み案件はありません。</p>
+            )}
           </div>
         </section>
       </div>
