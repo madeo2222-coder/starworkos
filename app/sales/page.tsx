@@ -7,6 +7,8 @@ import {
   completeSalesResearch,
   saveSalesOutreachDraft,
   approveSalesOutreachDraft,
+  saveSalesReplyDraft,
+  approveSalesReplyDraft,
   recordSalesOutreachDelivery,
   recordSalesReply,
   createSalesLeadRecord,
@@ -109,6 +111,51 @@ async function reviewOutreach(formData: FormData) {
   redirect(operation === "save" ? "/sales?notice=draft-saved" : "/sales?notice=draft-approved");
 }
 
+async function reviewReplyDraft(formData: FormData) {
+  "use server";
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) redirect("/login");
+  const id = String(formData.get("id") ?? "");
+  const version = String(formData.get("version") ?? "");
+  const operation = formData.get("operation");
+  if (!/^[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i.test(id)
+    || !version || version.length > 64
+    || (operation !== "save" && operation !== "approve")) redirect("/sales?notice=reply-draft-invalid");
+  const { data: task, error } = await supabase.from("tasks")
+    .select("id, content, updated_at, status").eq("id", id).single();
+  if (error || !task || task.updated_at !== version || task.status !== "PLANNING")
+    redirect("/sales?notice=conflict");
+  if (operation === "approve" && formData.get("confirmed") !== "yes")
+    redirect("/sales?notice=reply-draft-invalid");
+  const content = operation === "save"
+    ? saveSalesReplyDraft(id, task.content, {
+      subject: formData.get("subject"), body: formData.get("body"), signature: formData.get("signature"),
+    })
+    : approveSalesReplyDraft(id, task.content, user.id, new Date().toISOString());
+  if (!content) redirect("/sales?notice=reply-draft-invalid");
+  const result = await supabase.from("tasks").update({ content })
+    .eq("id", id).eq("updated_at", version).eq("content", task.content).eq("status", "PLANNING")
+    .select("id").maybeSingle();
+  if (result.error || !result.data) redirect("/sales?notice=conflict");
+  revalidatePath("/sales");
+  revalidatePath("/tasks");
+  redirect(operation === "save" ? "/sales?notice=reply-draft-saved" : "/sales?notice=reply-draft-approved");
+}
+
+function defaultReplyDraft(companyName: string, replyType: string, signature: string) {
+  if (replyType === "MATERIAL_REQUEST") return {
+    subject: "Re: 資料のご希望について",
+    body: `${companyName} ご担当者様\n\nご返信ありがとうございます。\nご希望の資料を確認し、別途お送りできるよう準備いたします。\nご不明点がございましたらお知らせください。\n\nどうぞよろしくお願いいたします。`,
+    signature,
+  };
+  return {
+    subject: "Re: お問い合わせについて",
+    body: `${companyName} ご担当者様\n\nご返信ありがとうございます。\nお問い合わせの内容を確認のうえ、改めてご案内いたします。\n差し支えなければ、特に確認されたい点をお知らせください。\n\nどうぞよろしくお願いいたします。`,
+    signature,
+  };
+}
+
 async function recordResearch(formData: FormData) {
   "use server";
   const supabase = await createClient();
@@ -141,7 +188,7 @@ const actionLabels: Record<string, string> = {
   PREPARE_OUTREACH: "初回提案を作成",
   PREPARE_FOLLOW_UP: "追客案を作成",
   RESEARCH_COMPANY: "企業調査を実施",
-  NO_ACTION: "送信記録を確認",
+  NO_ACTION: "外部送信・記録を確認",
 };
 
 const roleLabels: Record<string, string> = {
@@ -227,6 +274,9 @@ export default async function SalesCommandCenterPage({ searchParams }: {
     "delivery-invalid": "承認済み文面・送信手段・送信確認を見直してください。二重記録はできません。",
     "reply-recorded": "返信を記録し、次の担当と対応方針を整理しました。返信送信は行っていません。",
     "reply-invalid": "送信済み案件、返信手段、分類、本文を確認してください。返信は1件ずつ処理します。",
+    "reply-draft-saved": "一次返信案を保存しました。保存済みの内容を確認して承認してください。",
+    "reply-draft-approved": "一次返信案を承認しました。まだ送信されていません。",
+    "reply-draft-invalid": "安全対象の返信、件名、本文、署名と確認チェックを見直してください。",
     "outreach-invalid": "件名・本文・署名と確認チェックを見直してください。進行済みの案件は変更できません。",
     "research-saved": "調査結果を保存しました。次は初回提案の準備です。",
     conflict: "保存できませんでした。他の更新や権限を確認し、再読み込みしてください。",
@@ -285,6 +335,9 @@ export default async function SalesCommandCenterPage({ searchParams }: {
               {queue.items.map((item, index) => {
                 const lead = leadMap.get(item.leadId);
                 const latestReply = lead?.replies[lead.replies.length - 1];
+                const replyDefaults = lead && latestReply
+                  ? defaultReplyDraft(lead.companyName, latestReply.type, lead.outreachDraft?.signature ?? "")
+                  : null;
                 return (
                   <article key={item.leadId} className="rounded-2xl border border-zinc-200 bg-white p-4">
                     <div className="flex items-start gap-4">
@@ -301,6 +354,57 @@ export default async function SalesCommandCenterPage({ searchParams }: {
                           <div className="mt-3 rounded-xl border border-blue-100 bg-blue-50 p-3 text-sm">
                             <p className="text-xs font-semibold text-blue-900">受信返信：{replyTypeLabels[latestReply.type] ?? "要確認"}／{latestReply.channel === "EMAIL" ? "メール" : "LINE"}</p>
                             <p className="mt-1 whitespace-pre-wrap break-words text-blue-950">{latestReply.message}</p>
+                          </div>
+                        )}
+                        {lead && latestReply && replyDefaults
+                          && (item.action === "PREPARE_REPLY" || item.reason === "WAIT_FOR_HUMAN_REPLY_SEND_RECORD") && (
+                          <div className="mt-4 space-y-3">
+                            <details className="rounded-xl border border-zinc-200 p-3" open={!lead.replyDraft}>
+                              <summary className="cursor-pointer text-sm font-semibold">一次返信案を作成・編集</summary>
+                              <p className="mt-2 text-xs text-zinc-500">
+                                安全対象の定型案です。保存すると以前の承認は解除されます。LINEでは件名を使用しません。
+                              </p>
+                              <form action={reviewReplyDraft} className="mt-3 space-y-3">
+                                <input type="hidden" name="id" value={item.leadId} />
+                                <input type="hidden" name="version" value={versions.get(item.leadId) ?? ""} />
+                                <input type="hidden" name="operation" value="save" />
+                                <label className="block text-xs font-semibold">件名
+                                  <input name="subject" required maxLength={160} defaultValue={lead.replyDraft?.subject ?? replyDefaults.subject} className="mt-1 w-full rounded-lg border border-zinc-300 p-2 text-sm" />
+                                </label>
+                                <label className="block text-xs font-semibold">本文
+                                  <textarea name="body" required maxLength={4000} rows={7} defaultValue={lead.replyDraft?.body ?? replyDefaults.body} className="mt-1 w-full rounded-lg border border-zinc-300 p-2 text-sm" />
+                                </label>
+                                <label className="block text-xs font-semibold">署名（会社名・氏名・連絡先）
+                                  <textarea name="signature" maxLength={500} rows={3} defaultValue={lead.replyDraft?.signature ?? replyDefaults.signature} className="mt-1 w-full rounded-lg border border-zinc-300 p-2 text-sm" />
+                                </label>
+                                <button className="rounded-lg bg-zinc-900 px-3 py-2 text-xs font-semibold text-white">返信案を保存・承認待ちへ</button>
+                              </form>
+                            </details>
+                            {lead.replyDraft && (
+                              <section className="rounded-xl bg-zinc-50 p-3" aria-label="保存済み一次返信案">
+                                <p className="text-xs font-semibold">{lead.replyApproved ? "返信案承認済み・未送信" : "保存済み・承認待ち"}</p>
+                                <p className="mt-2 text-sm font-semibold">{lead.replyDraft.subject}</p>
+                                <p className="mt-2 whitespace-pre-wrap break-words text-sm">{lead.replyDraft.body}</p>
+                                <p className="mt-3 whitespace-pre-wrap text-sm">{lead.replyDraft.signature || "署名を入力して保存してください。"}</p>
+                                {!lead.replyApproved && (
+                                  <form action={reviewReplyDraft} className="mt-3 space-y-3">
+                                    <input type="hidden" name="id" value={item.leadId} />
+                                    <input type="hidden" name="version" value={versions.get(item.leadId) ?? ""} />
+                                    <input type="hidden" name="operation" value="approve" />
+                                    <label className="flex items-start gap-2 text-xs">
+                                      <input type="checkbox" name="confirmed" value="yes" required />
+                                      上の保存済み返信案と署名を確認しました（未保存の編集内容は対象外）。
+                                    </label>
+                                    <button disabled={!lead.replyDraft.signature} className="rounded-lg bg-zinc-900 px-3 py-2 text-xs font-semibold text-white disabled:opacity-40">保存済み返信案を承認（送信なし）</button>
+                                  </form>
+                                )}
+                                {lead.replyApproved && (
+                                  <p className="mt-3 rounded-lg border border-amber-200 bg-amber-50 p-3 text-xs leading-5 text-amber-900">
+                                    承認済みです。外部での返信送信と送信済み記録は、次の安全な連携機能を追加するまで実行しません。
+                                  </p>
+                                )}
+                              </section>
+                            )}
                           </div>
                         )}
                         {lead?.researchComplete && (item.action === "PREPARE_OUTREACH" || item.reason === "WAIT_FOR_HUMAN_SEND_RECORD") && (
