@@ -52,6 +52,14 @@ test("routes scheduling reply to the scheduler without confirming anything", () 
   expectPlan({ ...sentLead, replies: [{ type: "SCHEDULING", receivedAt: "2026-09-21T00:00:00Z" }] }, SALES_ROLES.SCHEDULER, SALES_ACTIONS.PREPARE_MEETING_OPTIONS, "SCHEDULING_REPLY");
 });
 
+test("approved meeting options wait for external sending without confirming an appointment", () => {
+  expectPlan({
+    ...sentLead,
+    replies: [{ type: "SCHEDULING", receivedAt: "2026-09-21T00:00:00Z" }],
+    meetingOptionsApproved: true,
+  }, SALES_ROLES.DELIVERY_OPERATOR, SALES_ACTIONS.NO_ACTION, "WAIT_FOR_HUMAN_MEETING_OPTIONS_SEND_RECORD");
+});
+
 test("does not offer follow-up before three days", () => {
   expectPlan({ ...sentLead, outreachRecordedAt: "2026-09-20T00:00:00Z" }, null, SALES_ACTIONS.NO_ACTION, "FOLLOW_UP_NOT_DUE");
 });
