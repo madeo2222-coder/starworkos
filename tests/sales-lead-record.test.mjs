@@ -11,6 +11,7 @@ import {
   saveSalesMeetingOptions,
   approveSalesMeetingOptions,
   recordSalesMeetingOptionsDelivery,
+  confirmSalesAppointment,
   recordSalesOutreachDelivery,
   recordSalesReply,
   parseSalesLeadRecord,
@@ -36,6 +37,7 @@ test("creates a bounded initial sales lead record", () => {
     researchNotes: "",
     outreachDraft: null,
     appointmentConfirmed: false,
+    appointment: null,
     researchComplete: false,
     outreachApproved: false,
     outreachRecordedAt: null,
@@ -368,6 +370,74 @@ test("meeting-option delivery rejects unapproved, stale, forged, and invalid aud
   assert.equal(parseSalesLeadRecord("lead-1", changeRecord(approvedMeetingRecord(), {
     meetingOptionsRecordedAt: approvalTime,
     meetingOptionsDelivery: { actorId: "operator", recordedAt: approvalTime, channel: "LINE" },
+  })), null);
+});
+
+function deliveredMeetingRecord(channel = "EMAIL") {
+  return recordSalesMeetingOptionsDelivery(
+    "lead-1", approvedMeetingRecord(channel), "operator-4", "2026-09-27T03:00:00.000Z",
+  );
+}
+
+test("confirms a prospect-selected appointment with a bounded web meeting URL", () => {
+  const confirmedAt = "2026-09-27T04:00:00.000Z";
+  const confirmed = confirmSalesAppointment("lead-1", deliveredMeetingRecord(), {
+    selectedSlot: "2026-09-28T01:00:00.000Z",
+    meetingUrl: " https://zoom.us/j/123456789 ",
+    notes: " 営業責任者が参加 ",
+  }, "scheduler-2", confirmedAt);
+  const lead = parseSalesLeadRecord("lead-1", confirmed);
+  assert.equal(lead.appointmentConfirmed, true);
+  assert.deepEqual(lead.appointment, {
+    selectedSlot: "2026-09-28T01:00:00.000Z",
+    timeZone: "Asia/Tokyo",
+    durationMinutes: 30,
+    meetingUrl: "https://zoom.us/j/123456789",
+    notes: "営業責任者が参加",
+    confirmedBy: "scheduler-2",
+    confirmedAt,
+  });
+  assert.equal(confirmSalesAppointment("lead-1", confirmed, {
+    selectedSlot: "2026-09-28T01:00:00.000Z", meetingUrl: "https://zoom.us/j/1", notes: "",
+  }, "scheduler-2", confirmedAt), null);
+});
+
+test("appointment confirmation rejects unsent, unknown, stale, and unsafe meeting data", () => {
+  const input = {
+    selectedSlot: "2026-09-28T01:00:00.000Z", meetingUrl: "https://meet.google.com/abc-defg-hij", notes: "",
+  };
+  assert.equal(confirmSalesAppointment("lead-1", approvedMeetingRecord(), input, "scheduler", approvalTime), null);
+  assert.equal(confirmSalesAppointment("lead-1", deliveredMeetingRecord(), {
+    ...input, selectedSlot: "2026-10-01T01:00:00.000Z",
+  }, "scheduler", "2026-09-27T04:00:00.000Z"), null);
+  for (const meetingUrl of ["http://zoom.us/j/1", "javascript:alert(1)", "https://user:pass@zoom.us/j/1"])
+    assert.equal(confirmSalesAppointment("lead-1", deliveredMeetingRecord(), {
+      ...input, meetingUrl,
+    }, "scheduler", "2026-09-27T04:00:00.000Z"), null);
+  assert.equal(confirmSalesAppointment(
+    "lead-1", deliveredMeetingRecord(), input, "scheduler", "2026-09-28T00:50:00.000Z",
+  ), null);
+  assert.equal(confirmSalesAppointment(
+    "lead-1", deliveredMeetingRecord(), input, "scheduler", "2026-09-27T02:00:00.000Z",
+  ), null);
+});
+
+test("parser rejects forged or mismatched appointment state", () => {
+  const delivered = deliveredMeetingRecord();
+  const appointment = {
+    selectedSlot: "2026-09-28T01:00:00.000Z", timeZone: "Asia/Tokyo", durationMinutes: 30,
+    meetingUrl: "https://zoom.us/j/123", notes: "", confirmedBy: "scheduler",
+    confirmedAt: "2026-09-27T04:00:00.000Z",
+  };
+  assert.equal(parseSalesLeadRecord("lead-1", changeRecord(delivered, { appointment })), null);
+  assert.equal(parseSalesLeadRecord("lead-1", changeRecord(delivered, {
+    appointmentConfirmed: true, appointment: { ...appointment, selectedSlot: "2026-10-01T01:00:00.000Z" },
+  })), null);
+  assert.equal(parseSalesLeadRecord("lead-1", changeRecord(delivered, {
+    appointmentConfirmed: true, appointment: { ...appointment, durationMinutes: 60 },
+  })), null);
+  assert.equal(parseSalesLeadRecord("lead-1", changeRecord(delivered, {
+    appointmentConfirmed: true, appointment: { ...appointment, notes: undefined },
   })), null);
 });
 
