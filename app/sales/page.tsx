@@ -12,6 +12,7 @@ import {
   recordSalesReplyDelivery,
   saveSalesMeetingOptions,
   approveSalesMeetingOptions,
+  recordSalesMeetingOptionsDelivery,
   recordSalesOutreachDelivery,
   recordSalesReply,
   createSalesLeadRecord,
@@ -207,6 +208,33 @@ async function reviewMeetingOptions(formData: FormData) {
   redirect(operation === "save" ? "/sales?notice=meeting-options-saved" : "/sales?notice=meeting-options-approved");
 }
 
+async function recordMeetingOptionsDelivery(formData: FormData) {
+  "use server";
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) redirect("/login");
+  const id = String(formData.get("id") ?? "");
+  const version = String(formData.get("version") ?? "");
+  if (!/^[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i.test(id)
+    || !version || version.length > 64
+    || formData.get("confirmed") !== "yes") redirect("/sales?notice=meeting-options-delivery-invalid");
+  const { data: task, error } = await supabase.from("tasks")
+    .select("id, content, updated_at, status").eq("id", id).single();
+  if (error || !task || task.updated_at !== version || task.status !== "PLANNING")
+    redirect("/sales?notice=conflict");
+  const content = recordSalesMeetingOptionsDelivery(
+    id, task.content, user.id, new Date().toISOString(),
+  );
+  if (!content) redirect("/sales?notice=meeting-options-delivery-invalid");
+  const result = await supabase.from("tasks").update({ content })
+    .eq("id", id).eq("updated_at", version).eq("content", task.content).eq("status", "PLANNING")
+    .select("id").maybeSingle();
+  if (result.error || !result.data) redirect("/sales?notice=conflict");
+  revalidatePath("/sales");
+  revalidatePath("/tasks");
+  redirect("/sales?notice=meeting-options-delivery-recorded");
+}
+
 function jstLocalToIso(value: string) {
   const match = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})$/.exec(value);
   if (!match) return null;
@@ -371,6 +399,8 @@ export default async function SalesCommandCenterPage({ searchParams }: {
     "meeting-options-saved": "面談候補日時を保存しました。保存済み候補を確認して承認してください。",
     "meeting-options-approved": "面談候補日時を承認しました。まだ相手への送信やカレンダー登録は行っていません。",
     "meeting-options-invalid": "日程調整返信と候補日時を確認してください。30分以上先から180日以内の異なる2〜3枠が必要です。",
+    "meeting-options-delivery-recorded": "外部での面談候補送信を記録しました。相手の候補選択待ちです。",
+    "meeting-options-delivery-invalid": "承認済み候補と送信確認を見直してください。期限間近の候補や二重記録は保存できません。",
     "outreach-invalid": "件名・本文・署名と確認チェックを見直してください。進行済みの案件は変更できません。",
     "research-saved": "調査結果を保存しました。次は初回提案の準備です。",
     conflict: "保存できませんでした。他の更新や権限を確認し、再読み込みしてください。",
@@ -505,9 +535,20 @@ export default async function SalesCommandCenterPage({ searchParams }: {
                                   </form>
                                 )}
                                 {lead.meetingOptionsApproved && (
-                                  <p className="mt-3 rounded-lg border border-amber-200 bg-amber-50 p-3 text-xs leading-5 text-amber-900">
-                                    承認済みです。相手への候補送信、カレンダー登録、面談確定はまだ行いません。
-                                  </p>
+                                  <div className="mt-3 rounded-lg border border-amber-200 bg-amber-50 p-3 text-xs leading-5 text-amber-900">
+                                    <p>承認済みです。WORK OSからの候補送信、カレンダー登録、面談確定は行いません。</p>
+                                    {!lead.meetingOptionsRecordedAt && (
+                                      <form action={recordMeetingOptionsDelivery} className="mt-3 space-y-3">
+                                        <input type="hidden" name="id" value={item.leadId} />
+                                        <input type="hidden" name="version" value={versions.get(item.leadId) ?? ""} />
+                                        <label className="flex items-start gap-2">
+                                          <input type="checkbox" name="confirmed" value="yes" required />
+                                          上の候補日時を外部で{latestReply.channel === "EMAIL" ? "メール" : "LINE"}送信済みです。
+                                        </label>
+                                        <button className="rounded-lg bg-amber-900 px-3 py-2 font-semibold text-white">外部送信済みとして記録</button>
+                                      </form>
+                                    )}
+                                  </div>
                                 )}
                               </section>
                             )}
