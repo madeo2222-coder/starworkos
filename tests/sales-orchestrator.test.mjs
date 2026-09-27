@@ -60,13 +60,13 @@ test("approved meeting options wait for external sending without confirming an a
   }, SALES_ROLES.DELIVERY_OPERATOR, SALES_ACTIONS.NO_ACTION, "WAIT_FOR_HUMAN_MEETING_OPTIONS_SEND_RECORD");
 });
 
-test("recorded meeting options wait for the prospect selection and leave the work queue", () => {
+test("recorded meeting options require explicit appointment confirmation", () => {
   expectPlan({
     ...sentLead,
     replies: [{ type: "SCHEDULING", receivedAt: "2026-09-21T00:00:00Z" }],
     meetingOptionsApproved: true,
     meetingOptionsRecordedAt: "2026-09-21T01:00:00Z",
-  }, null, SALES_ACTIONS.NO_ACTION, "WAIT_FOR_PROSPECT_MEETING_SELECTION");
+  }, SALES_ROLES.SCHEDULER, SALES_ACTIONS.CONFIRM_MEETING, "WAIT_FOR_MEETING_CONFIRMATION");
 });
 
 test("does not offer follow-up before three days", () => {
