@@ -33,6 +33,8 @@ The authenticated `/sales` page now supports:
    review the persisted preview and explicitly approve it without sending.
 9. After sending that approved reply outside WORK OS through the original channel,
    record the delivery with a second explicit confirmation.
+10. For a scheduling reply, save two or three Japan-time meeting candidates,
+    review the persisted options and explicitly approve them without sending.
 
 Approval stores the authenticated reviewer ID and server timestamp. Both save and
 approval re-read the authorized Task and condition the update on its ID, timestamp,
@@ -49,13 +51,16 @@ Reply-draft approval stores a separate authenticated reviewer audit. Editing the
 draft clears that approval. Scheduling and every sensitive category are ineligible for
 this transition. Reply delivery records the authenticated operator and server time,
 inherits the received channel, and cannot be repeated. It does not call a mail or LINE API.
+Meeting candidates are limited to 30, 45 or 60 minutes and a window from 30 minutes
+to 180 days after preparation. Editing clears approval. Approval does not send the
+options, create a calendar event or confirm an appointment.
 
 ## Validation and remaining work
 
-- 150 local Node tests pass; lint and production build (including TypeScript) are
+- 155 local Node tests pass; lint and production build (including TypeScript) are
   re-run for each reviewable milestone.
 - Live authenticated database writes and browser interaction remain unverified.
-- Next: appointment candidate and confirmation flow; authorized integration
+- Next: candidate delivery audit and appointment confirmation; authorized integration
   tests with isolated data; actual research/delivery providers and their execution gates.
 - The template has no model generation, researched company claims, prices or coverage promises.
 
