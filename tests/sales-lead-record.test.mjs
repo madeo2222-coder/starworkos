@@ -8,6 +8,8 @@ import {
   saveSalesReplyDraft,
   approveSalesReplyDraft,
   recordSalesReplyDelivery,
+  saveSalesMeetingOptions,
+  approveSalesMeetingOptions,
   recordSalesOutreachDelivery,
   recordSalesReply,
   parseSalesLeadRecord,
@@ -42,6 +44,9 @@ test("creates a bounded initial sales lead record", () => {
     replyApproval: null,
     replyRecordedAt: null,
     replyDelivery: null,
+    meetingOptionsDraft: null,
+    meetingOptionsApproved: false,
+    meetingOptionsApproval: null,
     followUps: [],
     replies: [],
   });
@@ -242,6 +247,79 @@ test("reply delivery recording requires approved safe content and valid server a
   assert.equal(recordSalesReplyDelivery("lead-1", approvedReplyRecord("SCHEDULING"), "operator", approvalTime), null);
   const missingApproval = changeRecord(approvedReplyRecord(), { replyApproval: null });
   assert.equal(recordSalesReplyDelivery("lead-1", missingApproval, "operator", approvalTime), null);
+});
+
+const meetingSlots = [
+  "2026-09-29T01:00:00.000Z",
+  "2026-09-28T01:00:00.000Z",
+  "2026-09-30T01:00:00.000Z",
+];
+
+test("saves sorted meeting options and requires a separate approval", () => {
+  const scheduling = repliedRecord("SCHEDULING");
+  const saved = saveSalesMeetingOptions(
+    "lead-1", scheduling, meetingSlots, 45, "scheduler-1", approvalTime,
+  );
+  let lead = parseSalesLeadRecord("lead-1", saved);
+  assert.deepEqual(lead.meetingOptionsDraft, {
+    slots: meetingSlots.slice().sort(),
+    timeZone: "Asia/Tokyo",
+    durationMinutes: 45,
+    savedBy: "scheduler-1",
+    savedAt: approvalTime,
+  });
+  assert.equal(lead.meetingOptionsApproved, false);
+
+  const approved = approveSalesMeetingOptions("lead-1", saved, "reviewer-3", approvalTime);
+  lead = parseSalesLeadRecord("lead-1", approved);
+  assert.equal(lead.meetingOptionsApproved, true);
+  assert.deepEqual(lead.meetingOptionsApproval, { actorId: "reviewer-3", approvedAt: approvalTime });
+
+  const edited = saveSalesMeetingOptions(
+    "lead-1", approved, meetingSlots.slice(0, 2), 30, "scheduler-1", approvalTime,
+  );
+  lead = parseSalesLeadRecord("lead-1", edited);
+  assert.equal(lead.meetingOptionsApproved, false);
+  assert.equal(lead.meetingOptionsApproval, null);
+});
+
+test("meeting options reject unsafe states, invalid windows, duplicates, and invalid duration", () => {
+  const scheduling = repliedRecord("SCHEDULING");
+  for (const [slots, duration] of [
+    [[meetingSlots[0]], 30],
+    [[meetingSlots[0], meetingSlots[0]], 30],
+    [["2026-09-27T00:10:00.000Z", meetingSlots[0]], 30],
+    [[meetingSlots[0], "2027-04-01T00:00:00.000Z"], 30],
+    [meetingSlots.slice(0, 2), 90],
+  ]) assert.equal(saveSalesMeetingOptions(
+    "lead-1", scheduling, slots, duration, "scheduler", approvalTime,
+  ), null);
+  assert.equal(saveSalesMeetingOptions(
+    "lead-1", repliedRecord("GENERAL_QUESTION"), meetingSlots, 30, "scheduler", approvalTime,
+  ), null);
+  assert.equal(saveSalesMeetingOptions(
+    "lead-1", scheduling, meetingSlots, 30, "", approvalTime,
+  ), null);
+});
+
+test("meeting approval rejects missing drafts, forged audits, and repeated approval", () => {
+  const scheduling = repliedRecord("SCHEDULING");
+  assert.equal(approveSalesMeetingOptions("lead-1", scheduling, "reviewer", approvalTime), null);
+  const saved = saveSalesMeetingOptions(
+    "lead-1", scheduling, meetingSlots, 30, "scheduler", approvalTime,
+  );
+  assert.equal(approveSalesMeetingOptions("lead-1", saved, "", approvalTime), null);
+  assert.equal(approveSalesMeetingOptions(
+    "lead-1", saved, "reviewer", "2026-09-28T00:45:00.000Z",
+  ), null);
+  assert.equal(approveSalesMeetingOptions(
+    "lead-1", saved, "reviewer", "2026-09-26T00:00:00.000Z",
+  ), null);
+  const approved = approveSalesMeetingOptions("lead-1", saved, "reviewer", approvalTime);
+  assert.equal(approveSalesMeetingOptions("lead-1", approved, "reviewer", approvalTime), null);
+  assert.equal(parseSalesLeadRecord("lead-1", changeRecord(saved, {
+    meetingOptionsApproved: true, meetingOptionsApproval: null,
+  })), null);
 });
 
 test("opt-out reply becomes sticky and unsafe reply input fails closed", () => {
