@@ -13,6 +13,7 @@ import {
   saveSalesMeetingOptions,
   approveSalesMeetingOptions,
   recordSalesMeetingOptionsDelivery,
+  confirmSalesAppointment,
   recordSalesOutreachDelivery,
   recordSalesReply,
   createSalesLeadRecord,
@@ -235,6 +236,35 @@ async function recordMeetingOptionsDelivery(formData: FormData) {
   redirect("/sales?notice=meeting-options-delivery-recorded");
 }
 
+async function confirmAppointment(formData: FormData) {
+  "use server";
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) redirect("/login");
+  const id = String(formData.get("id") ?? "");
+  const version = String(formData.get("version") ?? "");
+  if (!/^[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i.test(id)
+    || !version || version.length > 64
+    || formData.get("confirmed") !== "yes") redirect("/sales?notice=appointment-invalid");
+  const { data: task, error } = await supabase.from("tasks")
+    .select("id, content, updated_at, status").eq("id", id).single();
+  if (error || !task || task.updated_at !== version || task.status !== "PLANNING")
+    redirect("/sales?notice=conflict");
+  const content = confirmSalesAppointment(id, task.content, {
+    selectedSlot: formData.get("selectedSlot"),
+    meetingUrl: formData.get("meetingUrl"),
+    notes: formData.get("notes"),
+  }, user.id, new Date().toISOString());
+  if (!content) redirect("/sales?notice=appointment-invalid");
+  const result = await supabase.from("tasks").update({ content })
+    .eq("id", id).eq("updated_at", version).eq("content", task.content).eq("status", "PLANNING")
+    .select("id").maybeSingle();
+  if (result.error || !result.data) redirect("/sales?notice=conflict");
+  revalidatePath("/sales");
+  revalidatePath("/tasks");
+  redirect("/sales?notice=appointment-confirmed");
+}
+
 function jstLocalToIso(value: string) {
   const match = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})$/.exec(value);
   if (!match) return null;
@@ -301,6 +331,7 @@ const actionLabels: Record<string, string> = {
   STOP_CONTACT: "配信停止を確認",
   HUMAN_REVIEW: "人間が判断",
   PREPARE_MEETING_OPTIONS: "面談候補を作成",
+  CONFIRM_MEETING: "アポ確定を記録",
   PREPARE_REPLY: "一次返信案を作成",
   PREPARE_OUTREACH: "初回提案を作成",
   PREPARE_FOLLOW_UP: "追客案を作成",
@@ -384,6 +415,7 @@ export default async function SalesCommandCenterPage({ searchParams }: {
   const versions = new Map(((data ?? []) as SalesTask[]).map((task) => [task.id, task.updated_at]));
   const replyWaitingLeads = leads.filter((lead) => lead.outreachRecordedAt !== null
     && lead.replies.length === 0 && !lead.optedOut && !lead.appointmentConfirmed);
+  const confirmedAppointments = leads.filter((lead) => lead.appointmentConfirmed && lead.appointment);
   const notices: Record<string, string> = {
     "draft-saved": "提案文を保存しました。保存済みの内容を確認して承認してください。",
     "draft-approved": "文面を承認しました。まだ送信されていません。",
@@ -401,6 +433,8 @@ export default async function SalesCommandCenterPage({ searchParams }: {
     "meeting-options-invalid": "日程調整返信と候補日時を確認してください。30分以上先から180日以内の異なる2〜3枠が必要です。",
     "meeting-options-delivery-recorded": "外部での面談候補送信を記録しました。相手の候補選択待ちです。",
     "meeting-options-delivery-invalid": "承認済み候補と送信確認を見直してください。期限間近の候補や二重記録は保存できません。",
+    "appointment-confirmed": "アポイントを確定しました。カレンダー登録や招待送信は行っていません。",
+    "appointment-invalid": "送信済み候補から日時を選び、有効なHTTPSのWeb面談URLを入力してください。期限直前や二重確定は保存できません。",
     "outreach-invalid": "件名・本文・署名と確認チェックを見直してください。進行済みの案件は変更できません。",
     "research-saved": "調査結果を保存しました。次は初回提案の準備です。",
     conflict: "保存できませんでした。他の更新や権限を確認し、再読み込みしてください。",
@@ -424,9 +458,10 @@ export default async function SalesCommandCenterPage({ searchParams }: {
         </header>
         {notice && notices[notice] && <p role="status" className="mt-4 rounded-xl bg-blue-50 p-4 text-sm text-blue-900">{notices[notice]}</p>}
 
-        <section className="mt-6 grid gap-4 sm:grid-cols-3">
+        <section className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <Summary label="見込み企業" value={leads.length} />
           <Summary label="次の作業" value={queue.counts.queued} />
+          <Summary label="確定アポ" value={confirmedAppointments.length} />
           <Summary label="要確認データ" value={queue.counts.invalid + queue.counts.duplicate} tone="amber" />
         </section>
 
@@ -482,9 +517,10 @@ export default async function SalesCommandCenterPage({ searchParams }: {
                         )}
                         {lead && latestReply?.type === "SCHEDULING"
                           && (item.action === "PREPARE_MEETING_OPTIONS"
+                            || item.action === "CONFIRM_MEETING"
                             || item.reason === "WAIT_FOR_HUMAN_MEETING_OPTIONS_SEND_RECORD") && (
                           <div className="mt-4 space-y-3">
-                            <details className="rounded-xl border border-zinc-200 p-3" open={!lead.meetingOptionsDraft}>
+                            {!lead.meetingOptionsRecordedAt && <details className="rounded-xl border border-zinc-200 p-3" open={!lead.meetingOptionsDraft}>
                               <summary className="cursor-pointer text-sm font-semibold">面談候補日時を作成・編集</summary>
                               <p className="mt-2 text-xs text-zinc-500">
                                 日本時間で異なる2〜3枠を指定します。保存すると以前の承認は解除されます。
@@ -514,10 +550,12 @@ export default async function SalesCommandCenterPage({ searchParams }: {
                                 </label>
                                 <button className="rounded-lg bg-zinc-900 px-3 py-2 text-xs font-semibold text-white">候補日時を保存・承認待ちへ</button>
                               </form>
-                            </details>
+                            </details>}
                             {lead.meetingOptionsDraft && (
                               <section className="rounded-xl bg-zinc-50 p-3" aria-label="保存済み面談候補">
-                                <p className="text-xs font-semibold">{lead.meetingOptionsApproved ? "候補日時承認済み・未送信" : "保存済み・承認待ち"}</p>
+                                <p className="text-xs font-semibold">{lead.meetingOptionsRecordedAt
+                                  ? "候補送信済み・アポ確定待ち"
+                                  : lead.meetingOptionsApproved ? "候補日時承認済み・未送信" : "保存済み・承認待ち"}</p>
                                 <ul className="mt-2 list-inside list-decimal space-y-1 text-sm">
                                   {lead.meetingOptionsDraft.slots.map((slot: string) => <li key={slot}>{formatMeetingSlot(slot)}</li>)}
                                 </ul>
@@ -534,21 +572,44 @@ export default async function SalesCommandCenterPage({ searchParams }: {
                                     <button className="rounded-lg bg-zinc-900 px-3 py-2 text-xs font-semibold text-white">保存済み候補を承認（送信・登録なし）</button>
                                   </form>
                                 )}
-                                {lead.meetingOptionsApproved && (
+                                {lead.meetingOptionsApproved && !lead.meetingOptionsRecordedAt && (
                                   <div className="mt-3 rounded-lg border border-amber-200 bg-amber-50 p-3 text-xs leading-5 text-amber-900">
                                     <p>承認済みです。WORK OSからの候補送信、カレンダー登録、面談確定は行いません。</p>
-                                    {!lead.meetingOptionsRecordedAt && (
-                                      <form action={recordMeetingOptionsDelivery} className="mt-3 space-y-3">
-                                        <input type="hidden" name="id" value={item.leadId} />
-                                        <input type="hidden" name="version" value={versions.get(item.leadId) ?? ""} />
-                                        <label className="flex items-start gap-2">
-                                          <input type="checkbox" name="confirmed" value="yes" required />
-                                          上の候補日時を外部で{latestReply.channel === "EMAIL" ? "メール" : "LINE"}送信済みです。
-                                        </label>
-                                        <button className="rounded-lg bg-amber-900 px-3 py-2 font-semibold text-white">外部送信済みとして記録</button>
-                                      </form>
-                                    )}
+                                    <form action={recordMeetingOptionsDelivery} className="mt-3 space-y-3">
+                                      <input type="hidden" name="id" value={item.leadId} />
+                                      <input type="hidden" name="version" value={versions.get(item.leadId) ?? ""} />
+                                      <label className="flex items-start gap-2">
+                                        <input type="checkbox" name="confirmed" value="yes" required />
+                                        上の候補日時を外部で{latestReply.channel === "EMAIL" ? "メール" : "LINE"}送信済みです。
+                                      </label>
+                                      <button className="rounded-lg bg-amber-900 px-3 py-2 font-semibold text-white">外部送信済みとして記録</button>
+                                    </form>
                                   </div>
+                                )}
+                                {lead.meetingOptionsRecordedAt && !lead.appointmentConfirmed && (
+                                  <form action={confirmAppointment} className="mt-3 space-y-3 rounded-lg border border-emerald-200 bg-emerald-50 p-3 text-xs text-emerald-950">
+                                    <input type="hidden" name="id" value={item.leadId} />
+                                    <input type="hidden" name="version" value={versions.get(item.leadId) ?? ""} />
+                                    <label className="block font-semibold">先方が選んだ日時
+                                      <select name="selectedSlot" required className="mt-1 w-full rounded-lg border border-emerald-300 bg-white p-2 text-sm">
+                                        {lead.meetingOptionsDraft.slots.map((slot: string) => (
+                                          <option key={slot} value={slot}>{formatMeetingSlot(slot)}</option>
+                                        ))}
+                                      </select>
+                                    </label>
+                                    <label className="block font-semibold">Web面談URL
+                                      <input type="url" name="meetingUrl" required maxLength={512} placeholder="https://zoom.us/j/..." className="mt-1 w-full rounded-lg border border-emerald-300 bg-white p-2 text-sm" />
+                                    </label>
+                                    <label className="block font-semibold">面談メモ（任意）
+                                      <textarea name="notes" maxLength={1000} rows={3} className="mt-1 w-full rounded-lg border border-emerald-300 bg-white p-2 text-sm" />
+                                    </label>
+                                    <label className="flex items-start gap-2">
+                                      <input type="checkbox" name="confirmed" value="yes" required />
+                                      先方が選んだ候補日時とWeb面談URLを確認しました。
+                                    </label>
+                                    <p className="text-[11px] leading-4 text-emerald-800">カレンダー登録や招待送信は行わず、確定情報の保存だけを行います。</p>
+                                    <button className="rounded-lg bg-emerald-800 px-3 py-2 font-semibold text-white">アポイントを確定</button>
+                                  </form>
                                 )}
                               </section>
                             )}
@@ -735,6 +796,33 @@ export default async function SalesCommandCenterPage({ searchParams }: {
             ))}
             {replyWaitingLeads.length === 0 && (
               <p className="rounded-2xl bg-zinc-50 px-4 py-8 text-center text-sm text-zinc-500 lg:col-span-2">返信待ちとして記録できる送信済み案件はありません。</p>
+            )}
+          </div>
+        </section>
+
+        <section className="os-surface mt-6 rounded-[22px] p-6">
+          <div className="flex flex-wrap items-end justify-between gap-3">
+            <div>
+              <p className="os-eyebrow">Confirmed appointments</p>
+              <h2 className="mt-2 text-xl font-semibold text-zinc-950">確定アポイント</h2>
+              <p className="mt-2 text-sm text-zinc-500">確定日時とWeb面談URLを確認します。カレンダー登録・招待送信は行いません。</p>
+            </div>
+            <span className="rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-800">{confirmedAppointments.length}件</span>
+          </div>
+          <div className="mt-5 grid gap-4 lg:grid-cols-2">
+            {confirmedAppointments.map((lead) => lead.appointment && (
+              <article key={lead.id} className="rounded-2xl border border-emerald-200 bg-emerald-50 p-4">
+                <h3 className="font-semibold text-zinc-950">{lead.companyName}</h3>
+                <p className="mt-2 text-sm font-semibold text-emerald-950">{formatMeetingSlot(lead.appointment.selectedSlot)}</p>
+                <p className="mt-1 text-xs text-emerald-800">{lead.appointment.durationMinutes}分／日本時間</p>
+                <a href={lead.appointment.meetingUrl} target="_blank" rel="noreferrer" className="mt-3 inline-block break-all text-sm font-semibold text-blue-700 underline">
+                  Web面談URLを開く
+                </a>
+                {lead.appointment.notes && <p className="mt-3 whitespace-pre-wrap text-sm text-zinc-700">{lead.appointment.notes}</p>}
+              </article>
+            ))}
+            {confirmedAppointments.length === 0 && (
+              <p className="rounded-2xl bg-zinc-50 px-4 py-8 text-center text-sm text-zinc-500 lg:col-span-2">確定済みのアポイントはありません。</p>
             )}
           </div>
         </section>
