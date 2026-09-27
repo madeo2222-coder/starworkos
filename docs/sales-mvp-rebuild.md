@@ -37,6 +37,8 @@ The authenticated `/sales` page now supports:
     review the persisted options and explicitly approve them without sending.
 11. After sending approved candidates outside WORK OS through the original channel,
     record the delivery and wait for the prospect to select a candidate.
+12. Select the prospect-chosen candidate, add a required HTTPS web-meeting URL and
+    explicitly confirm the appointment without creating a calendar event or invitation.
 
 Approval stores the authenticated reviewer ID and server timestamp. Both save and
 approval re-read the authorized Task and condition the update on its ID, timestamp,
@@ -58,14 +60,18 @@ to 180 days after preparation. Editing clears approval. Approval does not send t
 options, create a calendar event or confirm an appointment.
 Candidate delivery records the authenticated operator, server time and original reply
 channel. Unapproved, duplicate or nearly expired candidate deliveries are rejected.
+Appointment confirmation accepts only a previously sent candidate, requires a valid
+HTTPS URL, records the authenticated operator and server time, and rejects duplicate,
+forged or last-minute confirmation data. Confirmed appointments remain visible in a
+read-only list.
 
 ## Validation and remaining work
 
-- 159 local Node tests pass; lint and production build (including TypeScript) are
+- 162 local Node tests pass; lint and production build (including TypeScript) are
   re-run for each reviewable milestone.
 - Live authenticated database writes and browser interaction remain unverified.
-- Next: appointment confirmation; authorized integration
-  tests with isolated data; actual research/delivery providers and their execution gates.
+- Next: authorized integration tests with isolated data; actual research/delivery
+  providers, calendar synchronization and their execution gates.
 - The template has no model generation, researched company claims, prices or coverage promises.
 
 Revert this PR to remove the UI and planning code. Existing sales Task records are
