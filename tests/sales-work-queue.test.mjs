@@ -77,6 +77,18 @@ test("keeps approved meeting-option sending visible", () => {
   assert.equal(result.items[0].reason, "WAIT_FOR_HUMAN_MEETING_OPTIONS_SEND_RECORD");
 });
 
+test("omits meeting options after external delivery has been recorded", () => {
+  const result = buildSalesWorkQueue([{
+    id: "meeting-wait", companyName: "候補回答待ち", ...sentLead,
+    replies: [{ type: "SCHEDULING", receivedAt: "2026-09-26T00:00:00Z" }],
+    meetingOptionsApproved: true,
+    meetingOptionsRecordedAt: "2026-09-26T01:00:00Z",
+  }], { now: NOW });
+
+  assert.equal(result.items.length, 0);
+  assert.equal(result.counts.noAction, 1);
+});
+
 test("deduplicates lead ids and reports malformed records without throwing", () => {
   const hostile = new Proxy({}, { get() { throw new Error("blocked"); } });
   const result = buildSalesWorkQueue([
