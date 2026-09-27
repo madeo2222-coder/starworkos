@@ -35,6 +35,8 @@ The authenticated `/sales` page now supports:
    record the delivery with a second explicit confirmation.
 10. For a scheduling reply, save two or three Japan-time meeting candidates,
     review the persisted options and explicitly approve them without sending.
+11. After sending approved candidates outside WORK OS through the original channel,
+    record the delivery and wait for the prospect to select a candidate.
 
 Approval stores the authenticated reviewer ID and server timestamp. Both save and
 approval re-read the authorized Task and condition the update on its ID, timestamp,
@@ -54,13 +56,15 @@ inherits the received channel, and cannot be repeated. It does not call a mail o
 Meeting candidates are limited to 30, 45 or 60 minutes and a window from 30 minutes
 to 180 days after preparation. Editing clears approval. Approval does not send the
 options, create a calendar event or confirm an appointment.
+Candidate delivery records the authenticated operator, server time and original reply
+channel. Unapproved, duplicate or nearly expired candidate deliveries are rejected.
 
 ## Validation and remaining work
 
-- 155 local Node tests pass; lint and production build (including TypeScript) are
+- 159 local Node tests pass; lint and production build (including TypeScript) are
   re-run for each reviewable milestone.
 - Live authenticated database writes and browser interaction remain unverified.
-- Next: candidate delivery audit and appointment confirmation; authorized integration
+- Next: appointment confirmation; authorized integration
   tests with isolated data; actual research/delivery providers and their execution gates.
 - The template has no model generation, researched company claims, prices or coverage promises.
 
