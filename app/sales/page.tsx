@@ -10,6 +10,8 @@ import {
   saveSalesReplyDraft,
   approveSalesReplyDraft,
   recordSalesReplyDelivery,
+  saveSalesMeetingOptions,
+  approveSalesMeetingOptions,
   recordSalesOutreachDelivery,
   recordSalesReply,
   createSalesLeadRecord,
@@ -169,6 +171,67 @@ async function recordReplyDelivery(formData: FormData) {
   redirect("/sales?notice=reply-delivery-recorded");
 }
 
+async function reviewMeetingOptions(formData: FormData) {
+  "use server";
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) redirect("/login");
+  const id = String(formData.get("id") ?? "");
+  const version = String(formData.get("version") ?? "");
+  const operation = formData.get("operation");
+  if (!/^[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i.test(id)
+    || !version || version.length > 64
+    || (operation !== "save" && operation !== "approve")) redirect("/sales?notice=meeting-options-invalid");
+  const { data: task, error } = await supabase.from("tasks")
+    .select("id, content, updated_at, status").eq("id", id).single();
+  if (error || !task || task.updated_at !== version || task.status !== "PLANNING")
+    redirect("/sales?notice=conflict");
+  if (operation === "approve" && formData.get("confirmed") !== "yes")
+    redirect("/sales?notice=meeting-options-invalid");
+  const savedAt = new Date().toISOString();
+  const slots = ["option1", "option2", "option3"].map((name) => {
+    const value = String(formData.get(name) ?? "");
+    return value === "" ? "" : (jstLocalToIso(value) ?? "INVALID");
+  });
+  const durationMinutes = Number(formData.get("durationMinutes"));
+  const content = operation === "save"
+    ? saveSalesMeetingOptions(id, task.content, slots, durationMinutes, user.id, savedAt)
+    : approveSalesMeetingOptions(id, task.content, user.id, savedAt);
+  if (!content) redirect("/sales?notice=meeting-options-invalid");
+  const result = await supabase.from("tasks").update({ content })
+    .eq("id", id).eq("updated_at", version).eq("content", task.content).eq("status", "PLANNING")
+    .select("id").maybeSingle();
+  if (result.error || !result.data) redirect("/sales?notice=conflict");
+  revalidatePath("/sales");
+  revalidatePath("/tasks");
+  redirect(operation === "save" ? "/sales?notice=meeting-options-saved" : "/sales?notice=meeting-options-approved");
+}
+
+function jstLocalToIso(value: string) {
+  const match = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})$/.exec(value);
+  if (!match) return null;
+  const [, yearText, monthText, dayText, hourText, minuteText] = match;
+  const [year, month, day, hour, minute] = [yearText, monthText, dayText, hourText, minuteText].map(Number);
+  const utcTime = Date.UTC(year, month - 1, day, hour - 9, minute, 0, 0);
+  const check = new Date(utcTime + 9 * 60 * 60 * 1000);
+  if (check.getUTCFullYear() !== year || check.getUTCMonth() !== month - 1
+    || check.getUTCDate() !== day || check.getUTCHours() !== hour
+    || check.getUTCMinutes() !== minute) return null;
+  return new Date(utcTime).toISOString();
+}
+
+function toJstLocalInput(value: string | undefined) {
+  if (!value) return "";
+  const time = Date.parse(value);
+  return Number.isFinite(time) ? new Date(time + 9 * 60 * 60 * 1000).toISOString().slice(0, 16) : "";
+}
+
+function formatMeetingSlot(value: string) {
+  return new Intl.DateTimeFormat("ja-JP", {
+    timeZone: "Asia/Tokyo", dateStyle: "medium", timeStyle: "short",
+  }).format(new Date(value));
+}
+
 function defaultReplyDraft(companyName: string, replyType: string, signature: string) {
   if (replyType === "MATERIAL_REQUEST") return {
     subject: "Re: 資料のご希望について",
@@ -305,6 +368,9 @@ export default async function SalesCommandCenterPage({ searchParams }: {
     "reply-draft-invalid": "安全対象の返信、件名、本文、署名と確認チェックを見直してください。",
     "reply-delivery-recorded": "外部での一次返信送信を記録しました。WORK OSからの送信は行っていません。",
     "reply-delivery-invalid": "承認済み返信案と送信確認を見直してください。二重記録はできません。",
+    "meeting-options-saved": "面談候補日時を保存しました。保存済み候補を確認して承認してください。",
+    "meeting-options-approved": "面談候補日時を承認しました。まだ相手への送信やカレンダー登録は行っていません。",
+    "meeting-options-invalid": "日程調整返信と候補日時を確認してください。30分以上先から180日以内の異なる2〜3枠が必要です。",
     "outreach-invalid": "件名・本文・署名と確認チェックを見直してください。進行済みの案件は変更できません。",
     "research-saved": "調査結果を保存しました。次は初回提案の準備です。",
     conflict: "保存できませんでした。他の更新や権限を確認し、再読み込みしてください。",
@@ -382,6 +448,69 @@ export default async function SalesCommandCenterPage({ searchParams }: {
                           <div className="mt-3 rounded-xl border border-blue-100 bg-blue-50 p-3 text-sm">
                             <p className="text-xs font-semibold text-blue-900">受信返信：{replyTypeLabels[latestReply.type] ?? "要確認"}／{latestReply.channel === "EMAIL" ? "メール" : "LINE"}</p>
                             <p className="mt-1 whitespace-pre-wrap break-words text-blue-950">{latestReply.message}</p>
+                          </div>
+                        )}
+                        {lead && latestReply?.type === "SCHEDULING"
+                          && (item.action === "PREPARE_MEETING_OPTIONS"
+                            || item.reason === "WAIT_FOR_HUMAN_MEETING_OPTIONS_SEND_RECORD") && (
+                          <div className="mt-4 space-y-3">
+                            <details className="rounded-xl border border-zinc-200 p-3" open={!lead.meetingOptionsDraft}>
+                              <summary className="cursor-pointer text-sm font-semibold">面談候補日時を作成・編集</summary>
+                              <p className="mt-2 text-xs text-zinc-500">
+                                日本時間で異なる2〜3枠を指定します。保存すると以前の承認は解除されます。
+                              </p>
+                              <form action={reviewMeetingOptions} className="mt-3 space-y-3">
+                                <input type="hidden" name="id" value={item.leadId} />
+                                <input type="hidden" name="version" value={versions.get(item.leadId) ?? ""} />
+                                <input type="hidden" name="operation" value="save" />
+                                {[0, 1, 2].map((slotIndex) => (
+                                  <label key={slotIndex} className="block text-xs font-semibold">
+                                    候補{slotIndex + 1}{slotIndex === 2 ? "（任意）" : ""}
+                                    <input
+                                      type="datetime-local"
+                                      name={`option${slotIndex + 1}`}
+                                      required={slotIndex < 2}
+                                      defaultValue={toJstLocalInput(lead.meetingOptionsDraft?.slots[slotIndex])}
+                                      className="mt-1 w-full rounded-lg border border-zinc-300 bg-white p-2 text-sm"
+                                    />
+                                  </label>
+                                ))}
+                                <label className="block text-xs font-semibold">面談時間
+                                  <select name="durationMinutes" defaultValue={String(lead.meetingOptionsDraft?.durationMinutes ?? 30)} className="mt-1 w-full rounded-lg border border-zinc-300 bg-white p-2 text-sm">
+                                    <option value="30">30分</option>
+                                    <option value="45">45分</option>
+                                    <option value="60">60分</option>
+                                  </select>
+                                </label>
+                                <button className="rounded-lg bg-zinc-900 px-3 py-2 text-xs font-semibold text-white">候補日時を保存・承認待ちへ</button>
+                              </form>
+                            </details>
+                            {lead.meetingOptionsDraft && (
+                              <section className="rounded-xl bg-zinc-50 p-3" aria-label="保存済み面談候補">
+                                <p className="text-xs font-semibold">{lead.meetingOptionsApproved ? "候補日時承認済み・未送信" : "保存済み・承認待ち"}</p>
+                                <ul className="mt-2 list-inside list-decimal space-y-1 text-sm">
+                                  {lead.meetingOptionsDraft.slots.map((slot: string) => <li key={slot}>{formatMeetingSlot(slot)}</li>)}
+                                </ul>
+                                <p className="mt-2 text-xs text-zinc-600">各{lead.meetingOptionsDraft.durationMinutes}分／日本時間</p>
+                                {!lead.meetingOptionsApproved && (
+                                  <form action={reviewMeetingOptions} className="mt-3 space-y-3">
+                                    <input type="hidden" name="id" value={item.leadId} />
+                                    <input type="hidden" name="version" value={versions.get(item.leadId) ?? ""} />
+                                    <input type="hidden" name="operation" value="approve" />
+                                    <label className="flex items-start gap-2 text-xs">
+                                      <input type="checkbox" name="confirmed" value="yes" required />
+                                      上の保存済み候補日時を確認しました（未保存の編集内容は対象外）。
+                                    </label>
+                                    <button className="rounded-lg bg-zinc-900 px-3 py-2 text-xs font-semibold text-white">保存済み候補を承認（送信・登録なし）</button>
+                                  </form>
+                                )}
+                                {lead.meetingOptionsApproved && (
+                                  <p className="mt-3 rounded-lg border border-amber-200 bg-amber-50 p-3 text-xs leading-5 text-amber-900">
+                                    承認済みです。相手への候補送信、カレンダー登録、面談確定はまだ行いません。
+                                  </p>
+                                )}
+                              </section>
+                            )}
                           </div>
                         )}
                         {lead && latestReply && replyDefaults
