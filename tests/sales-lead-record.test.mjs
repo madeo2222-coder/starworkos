@@ -10,6 +10,7 @@ import {
   recordSalesReplyDelivery,
   saveSalesMeetingOptions,
   approveSalesMeetingOptions,
+  recordSalesMeetingOptionsDelivery,
   recordSalesOutreachDelivery,
   recordSalesReply,
   parseSalesLeadRecord,
@@ -47,6 +48,8 @@ test("creates a bounded initial sales lead record", () => {
     meetingOptionsDraft: null,
     meetingOptionsApproved: false,
     meetingOptionsApproval: null,
+    meetingOptionsRecordedAt: null,
+    meetingOptionsDelivery: null,
     followUps: [],
     replies: [],
   });
@@ -319,6 +322,52 @@ test("meeting approval rejects missing drafts, forged audits, and repeated appro
   assert.equal(approveSalesMeetingOptions("lead-1", approved, "reviewer", approvalTime), null);
   assert.equal(parseSalesLeadRecord("lead-1", changeRecord(saved, {
     meetingOptionsApproved: true, meetingOptionsApproval: null,
+  })), null);
+  assert.equal(parseSalesLeadRecord("lead-1", changeRecord(saved, {
+    meetingOptionsApproved: true,
+    meetingOptionsApproval: { actorId: "reviewer", approvedAt: "2026-09-26T00:00:00.000Z" },
+  })), null);
+});
+
+function approvedMeetingRecord(channel = "EMAIL") {
+  const saved = saveSalesMeetingOptions(
+    "lead-1", repliedRecord("SCHEDULING", channel), meetingSlots, 30, "scheduler", approvalTime,
+  );
+  return approveSalesMeetingOptions("lead-1", saved, "reviewer", approvalTime);
+}
+
+test("records externally delivered meeting options with the inbound channel", () => {
+  const recordedAt = "2026-09-27T03:00:00.000Z";
+  const recorded = recordSalesMeetingOptionsDelivery(
+    "lead-1", approvedMeetingRecord("LINE"), "operator-4", recordedAt,
+  );
+  const lead = parseSalesLeadRecord("lead-1", recorded);
+  assert.equal(lead.meetingOptionsApproved, true);
+  assert.equal(lead.meetingOptionsRecordedAt, recordedAt);
+  assert.deepEqual(lead.meetingOptionsDelivery, {
+    actorId: "operator-4", recordedAt, channel: "LINE",
+  });
+  assert.equal(recordSalesMeetingOptionsDelivery("lead-1", recorded, "operator-4", recordedAt), null);
+});
+
+test("meeting-option delivery rejects unapproved, stale, forged, and invalid audits", () => {
+  const scheduling = repliedRecord("SCHEDULING");
+  const saved = saveSalesMeetingOptions(
+    "lead-1", scheduling, meetingSlots, 30, "scheduler", approvalTime,
+  );
+  assert.equal(recordSalesMeetingOptionsDelivery("lead-1", saved, "operator", approvalTime), null);
+  assert.equal(recordSalesMeetingOptionsDelivery("lead-1", approvedMeetingRecord(), "", approvalTime), null);
+  assert.equal(recordSalesMeetingOptionsDelivery("lead-1", approvedMeetingRecord(), "operator", "invalid"), null);
+  assert.equal(recordSalesMeetingOptionsDelivery(
+    "lead-1", approvedMeetingRecord(), "operator", "2026-09-28T00:45:00.000Z",
+  ), null);
+  assert.equal(recordSalesMeetingOptionsDelivery(
+    "lead-1", changeRecord(approvedMeetingRecord(), { meetingOptionsApproval: null }),
+    "operator", approvalTime,
+  ), null);
+  assert.equal(parseSalesLeadRecord("lead-1", changeRecord(approvedMeetingRecord(), {
+    meetingOptionsRecordedAt: approvalTime,
+    meetingOptionsDelivery: { actorId: "operator", recordedAt: approvalTime, channel: "LINE" },
   })), null);
 });
 
