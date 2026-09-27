@@ -231,6 +231,36 @@ test("parser rejects forged reply approval and reply delivery state", () => {
   assert.equal(parseSalesLeadRecord("lead-1", changeRecord(safe, { replyRecordedAt: approvalTime })), null);
 });
 
+test("parser rejects forged core workflow flags and outreach audit state", () => {
+  const initial = createSalesLeadRecord({ companyName: "工務店" });
+  for (const changes of [
+    { optedOut: "false" },
+    { researchComplete: "true" },
+    { outreachApproved: "true" },
+    { replyApproved: "false" },
+    { meetingOptionsApproved: "false" },
+  ]) assert.equal(parseSalesLeadRecord("lead-1", changeRecord(initial, changes)), null);
+
+  const saved = saveSalesOutreachDraft("lead-1", researchedRecord(), outreach);
+  assert.equal(parseSalesLeadRecord("lead-1", changeRecord(saved, {
+    outreachApproved: true, outreachApproval: null,
+  })), null);
+  assert.equal(parseSalesLeadRecord("lead-1", changeRecord(saved, {
+    outreachApproval: { actorId: "forged", approvedAt: approvalTime },
+  })), null);
+
+  const approved = approveSalesOutreachDraft("lead-1", saved, "reviewer", approvalTime);
+  assert.equal(parseSalesLeadRecord("lead-1", changeRecord(approved, {
+    outreachRecordedAt: "2026-09-26T23:59:59.000Z",
+    outreachDelivery: {
+      actorId: "operator", recordedAt: "2026-09-26T23:59:59.000Z", channel: "EMAIL",
+    },
+  })), null);
+  assert.equal(recordSalesOutreachDelivery(
+    "lead-1", approved, "operator", "2026-09-26T23:59:59.000Z", "EMAIL",
+  ), null);
+});
+
 test("records a manually completed safe reply delivery with the inbound channel", () => {
   const recordedAt = "2026-09-27T03:00:00.000Z";
   const recorded = recordSalesReplyDelivery(
