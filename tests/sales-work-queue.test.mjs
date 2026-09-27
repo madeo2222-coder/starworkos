@@ -77,7 +77,7 @@ test("keeps approved meeting-option sending visible", () => {
   assert.equal(result.items[0].reason, "WAIT_FOR_HUMAN_MEETING_OPTIONS_SEND_RECORD");
 });
 
-test("omits meeting options after external delivery has been recorded", () => {
+test("queues appointment confirmation after meeting options were delivered", () => {
   const result = buildSalesWorkQueue([{
     id: "meeting-wait", companyName: "候補回答待ち", ...sentLead,
     replies: [{ type: "SCHEDULING", receivedAt: "2026-09-26T00:00:00Z" }],
@@ -85,8 +85,9 @@ test("omits meeting options after external delivery has been recorded", () => {
     meetingOptionsRecordedAt: "2026-09-26T01:00:00Z",
   }], { now: NOW });
 
-  assert.equal(result.items.length, 0);
-  assert.equal(result.counts.noAction, 1);
+  assert.equal(result.items.length, 1);
+  assert.equal(result.items[0].action, SALES_ACTIONS.CONFIRM_MEETING);
+  assert.equal(result.items[0].reason, "WAIT_FOR_MEETING_CONFIRMATION");
 });
 
 test("deduplicates lead ids and reports malformed records without throwing", () => {
