@@ -284,17 +284,21 @@ test("internal dispatch authentication uses a constant-time equality check", () 
   assert.equal(hasMinimumTokenLength("short"), false);
 });
 
-test("dispatch loads only stable task fields so optional task columns cannot block dispatch", async () => {
+test("dispatch requires an immutable task snapshot instead of re-reading Tasks at send time", async () => {
   const route = await readFile(new URL("../app/api/internal/external-agent-jobs/dispatch/route.ts", import.meta.url), "utf8");
-  assert.match(route, /\.from\("tasks"\)[\s\S]+\.select\("id, title"\)/);
-  assert.doesNotMatch(route, /\.select\("id, title, content, priority, due_date"\)/);
+  assert.match(route, /task_snapshot/);
+  assert.match(route, /EXTERNAL_AGENT_TASK_SNAPSHOT_MISSING/);
+  assert.match(route, /EXTERNAL_AGENT_TASK_SNAPSHOT_INVALID/);
+  assert.doesNotMatch(route, /\.from\("tasks"\)/);
 });
 
-test("dispatch falls back to bounded synthetic task context when production task lookup fails", async () => {
-  const route = await readFile(new URL("../app/api/internal/external-agent-jobs/dispatch/route.ts", import.meta.url), "utf8");
-  assert.match(route, /const task = taskError/);
-  assert.match(route, /External agent job \$\{job\.id\}/);
-  assert.doesNotMatch(route, /EXTERNAL_AGENT_TASK_LOOKUP_FAILED/);
+test("task snapshot migration captures and backfills the complete source Task without schema assumptions", async () => {
+  const snapshotMigration = await readFile(new URL("../supabase/migrations/20260928010000_external_agent_task_snapshot.sql", import.meta.url), "utf8");
+  assert.match(snapshotMigration, /add column if not exists task_snapshot jsonb/);
+  assert.match(snapshotMigration, /select to_jsonb\(t\)/);
+  assert.match(snapshotMigration, /before insert on public\.external_agent_jobs/);
+  assert.match(snapshotMigration, /update public\.external_agent_jobs as j/);
+  assert.match(snapshotMigration, /jsonb_typeof\(task_snapshot\) = 'object'/);
 });
 
 test("dispatch route is fail-closed, idempotent at the gateway, and never returns raw errors", async () => {

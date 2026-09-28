@@ -27,28 +27,21 @@ export async function POST(request: Request) {
   const supabase = createServiceClient();
   const { data: job, error: jobError } = await supabase
     .from("external_agent_jobs")
-    .select("id, task_id, ai_employee_id, provider, capability, repository, base_branch, requested_action, status")
+    .select("id, task_id, ai_employee_id, provider, capability, repository, base_branch, requested_action, status, task_snapshot")
     .eq("id", jobId)
     .maybeSingle();
   if (jobError) return NextResponse.json({ ok: false, error: "EXTERNAL_AGENT_JOB_LOOKUP_FAILED" }, { status: 500 });
   if (!job) return NextResponse.json({ ok: false, error: "EXTERNAL_AGENT_JOB_NOT_FOUND" }, { status: 404 });
   if (job.status !== "QUEUED") return NextResponse.json({ ok: false, error: "EXTERNAL_AGENT_JOB_NOT_QUEUED" }, { status: 409 });
 
-  const { data: taskRecord, error: taskError } = await supabase
-    .from("tasks")
-    .select("id, title")
-    .eq("id", job.task_id)
-    .maybeSingle();
-  const task = taskError
-    ? {
-        id: job.task_id,
-        title: `External agent job ${job.id}`,
-        content: null,
-        priority: null,
-        due_date: null,
-      }
-    : taskRecord;
-  if (!task) return NextResponse.json({ ok: false, error: "EXTERNAL_AGENT_TASK_NOT_FOUND" }, { status: 409 });
+  const snapshot = job.task_snapshot;
+  if (!snapshot || typeof snapshot !== "object" || Array.isArray(snapshot)) {
+    return NextResponse.json({ ok: false, error: "EXTERNAL_AGENT_TASK_SNAPSHOT_MISSING" }, { status: 409 });
+  }
+  const task = snapshot as Record<string, unknown>;
+  if (typeof task.title !== "string" || !task.title.trim()) {
+    return NextResponse.json({ ok: false, error: "EXTERNAL_AGENT_TASK_SNAPSHOT_INVALID" }, { status: 409 });
+  }
 
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), DISPATCH_TIMEOUT_MS);
