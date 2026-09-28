@@ -292,7 +292,7 @@ test("dispatch requires an immutable task snapshot instead of re-reading Tasks a
   assert.doesNotMatch(route, /\.from\("tasks"\)/);
 });
 
-test("task snapshot migration captures and backfills the complete source Task without schema assumptions", async () => {
+test("task snapshot migration captures new source Tasks without mutating guarded legacy jobs", async () => {
   const snapshotMigration = await readFile(new URL("../supabase/migrations/20260928010000_external_agent_task_snapshot.sql", import.meta.url), "utf8");
   assert.match(snapshotMigration, /add column if not exists task_snapshot jsonb/);
   assert.match(snapshotMigration, /select to_jsonb\(t\)/);
