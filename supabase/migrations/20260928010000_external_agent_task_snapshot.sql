@@ -37,11 +37,11 @@ create trigger capture_external_agent_task_snapshot
 before insert on public.external_agent_jobs
 for each row execute function public.capture_external_agent_task_snapshot();
 
-update public.external_agent_jobs as j
-set task_snapshot = to_jsonb(t)
-from public.tasks as t
-where j.task_id = t.id
-  and j.task_snapshot is null;
+-- Existing jobs are intentionally not backfilled here. The table has an update
+-- guard that rejects no-op status transitions, so mutating legacy RUNNING jobs
+-- during activation would fail the migration. New jobs are snapshotted by the
+-- BEFORE INSERT trigger above; legacy jobs remain untouched and fail closed if
+-- dispatched without a snapshot.
 
 alter table public.external_agent_jobs
   add constraint external_agent_jobs_task_snapshot_object_check
