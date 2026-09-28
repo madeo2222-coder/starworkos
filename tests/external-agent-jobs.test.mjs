@@ -297,7 +297,7 @@ test("task snapshot migration captures new source Tasks without mutating guarded
   assert.match(snapshotMigration, /add column if not exists task_snapshot jsonb/);
   assert.match(snapshotMigration, /select to_jsonb\(t\)/);
   assert.match(snapshotMigration, /before insert on public\.external_agent_jobs/);
-  assert.match(snapshotMigration, /update public\.external_agent_jobs as j/);
+  assert.doesNotMatch(snapshotMigration, /update public\.external_agent_jobs as j/);
   assert.match(snapshotMigration, /jsonb_typeof\(task_snapshot\) = 'object'/);
 });
 
