@@ -1,1 +1,195 @@
-aW1wb3J0IHRlc3QgZnJvbSAibm9kZTp0ZXN0IjsKaW1wb3J0IGFzc2VydCBmcm9tICJub2RlOmFzc2VydC9zdHJpY3QiOwppbXBvcnQgeyBidWlsZFVuc2VudFNhbGVzUmVwbHlFbWFpbCB9IGZyb20gIi4uL2xpYi9zYWxlcy1yZXBseS1lbWFpbC1leHBvcnQuanMiOwoKZnVuY3Rpb24gbGVhZChvdmVycmlkZXMgPSB7fSkgewogIHJldHVybiB7CiAgICBjb250YWN0OiAi5Za25qWt6YOoIHNhbGVzQGV4YW1wbGUuY29tIiwKICAgIG9wdGVkT3V0OiBmYWxzZSwKICAgIGFwcG9pbnRtZW50Q29uZmlybWVkOiBmYWxzZSwKICAgIG91dHJlYWNoQXBwcm92ZWQ6IHRydWUsCiAgICBvdXRyZWFjaERyYWZ0OiB7CiAgICAgIHN1YmplY3Q6ICLkvY/lroXoqK3lgpnlu7bplbfkv53oqLzjga7jgZTnm7joq4ciLAogICAgICBib2R5OiAi5Yid5Zue44Gu44GU5qGI5YaF44Gn44GZ44CCIiwKICAgICAgc2lnbmF0dXJlOiAiU1RBUiBXT1JLIE9TXG7llrbmpa3mi4XlvZMiLAogICAgfSwKICAgIG91dHJlYWNoQXBwcm92YWw6IHsKICAgICAgYWN0b3JJZDogInJldmlld2VyLTEiLAogICAgICBhcHByb3ZlZEF0OiAiMjAyNi0wOS0yN1QwMDowMDowMC4wMDBaIiwKICAgIH0sCiAgICBvdXRyZWFjaFJlY29yZGVkQXQ6ICIyMDI2LTA5LTI3VDAxOjAwOjAwLjAwMFoiLAogICAgb3V0cmVhY2hEZWxpdmVyeTogewogICAgICBhY3RvcklkOiAic2VuZGVyLTEiLAogICAgICByZWNvcmRlZEF0OiAiMjAyNi0wOS0yN1QwMTowMDowMC4wMDBaIiwKICAgICAgY2hhbm5lbDogIkVNQUlMIiwKICAgIH0sCiAgICByZXBseUFwcHJvdmVkOiB0cnVlLAogICAgcmVwbHlBcHByb3ZhbDogewogICAgICBhY3RvcklkOiAicmV2aWV3ZXItMiIsCiAgICAgIGFwcHJvdmVkQXQ6ICIyMDI2LTA5LTI4VDAyOjAwOjAwLjAwMFoiLAogICAgfSwKICAgIHJlcGx5UmVjb3JkZWRBdDogbnVsbCwKICAgIHJlcGx5RGVsaXZlcnk6IG51bGwsCiAgICByZXBseURyYWZ0OiB7CiAgICAgIHN1YmplY3Q6ICJSZTog6LOH5paZ44Gu44GU5biM5pyb44Gr44Gk44GE44GmIiwKICAgICAgYm9keTogIuOBlOi/lOS/oeOBguOCiuOBjOOBqOOBhuOBlOOBluOBhOOBvuOBmeOAglxu6LOH5paZ44KS5rqW5YKZ44GX44G+44GZ44CCIiwKICAgICAgc2lnbmF0dXJlOiAiU1RBUiBXT1JLIE9TXG7llrbmpa3mi4XlvZMiLAogICAgfSwKICAgIHJlcGxpZXM6IFt7CiAgICAgIGNoYW5uZWw6ICJFTUFJTCIsIHR5cGU6ICJNQVRFUklBTF9SRVFVRVNUIiwgbWVzc2FnZTogIuizh+aWmeW4jOacmyIsCiAgICAgIGFjdG9ySWQ6ICJvcGVyYXRvciIsIHJlY2VpdmVkQXQ6ICIyMDI2LTA5LTI4VDAxOjAwOjAwLjAwMFoiLAogICAgfV0sCiAgICBmb2xsb3dVcHM6IFtdLAogICAgLi4ub3ZlcnJpZGVzLAogIH07Cn0KCnRlc3QoImJ1aWxkcyBhbiB1bnNlbnQgYXBwcm92ZWQgc2FmZSByZXBseSBmb3Igb25lIGVtYWlsIHJlY2lwaWVudCIsICgpID0+IHsKICBjb25zdCBlbWwgPSBidWlsZFVuc2VudFNhbGVzUmVwbHlFbWFpbChsZWFkKCkpOwogIGFzc2VydC5vayhlbWwpOwogIGFzc2VydC5tYXRjaChlbWwsIC9eVG86IHNhbGVzQGV4YW1wbGVcLmNvbVxyXG5TdWJqZWN0OiA9XD9VVEYtOFw/Qlw/L3UpOwogIGFzc2VydC5tYXRjaChlbWwsIC9cclxuWC1VbnNlbnQ6IDFcclxuXHJcbi91KTsKICBjb25zdCBlbmNvZGVkQm9keSA9IGVtbC5zcGxpdCgiXHJcblxyXG4iKVsxXS5yZXBsYWNlKC9cclxuL2d1LCAiIik7CiAgYXNzZXJ0LmVxdWFsKEJ1ZmZlci5mcm9tKGVuY29kZWRCb2R5LCAiYmFzZTY0IikudG9TdHJpbmcoInV0ZjgiKSwKICAgICLjgZTov5Tkv6HjgYLjgorjgYzjgajjgYbjgZTjgZbjgYTjgb7jgZnjgIJcclxu6LOH5paZ44KS5rqW5YKZ44GX44G+44GZ44CCXHJcblxyXG5TVEFSIFdPUksgT1Ncclxu5Za25qWt5ouF5b2TIik7Cn0pOwoKdGVzdCgic3VwcG9ydHMgYSBzYWZlIGVtYWlsIHJlcGx5IGFmdGVyIGFuIGVhcmxpZXIgcmVzb2x2ZWQgcmVwbHkiLCAoKSA9PiB7CiAgY29uc3QgZW1sID0gYnVpbGRVbnNlbnRTYWxlc1JlcGx5RW1haWwobGVhZCh7CiAgICByZXBsaWVzOiBbCiAgICAgIHsKICAgICAgICBjaGFubmVsOiAiRU1BSUwiLCB0eXBlOiAiR0VORVJBTF9RVUVTVElPTiIsIG1lc3NhZ2U6ICLlhYjjga7os6rllY/jgafjgZnjgIIiLAogICAgICAgIGFjdG9ySWQ6ICJvcGVyYXRvci0xIiwgcmVjZWl2ZWRBdDogIjIwMjYtMDktMjdUMDI6MDA6MDAuMDAwWiIsCiAgICAgICAgcmVzb2x1dGlvbjogewogICAgICAgICAga2luZDogIlNBRkVfUkVQTFkiLAogICAgICAgICAgZHJhZnQ6IHsKICAgICAgICAgICAgc3ViamVjdDogIlJlOiDlhYjjga7os6rllY/jgavjgaTjgYTjgaYiLAogICAgICAgICAgICBib2R5OiAi5YWI44Gu6LOq5ZWP44G444Gu5Zue562U44Gn44GZ44CCIiwKICAgICAgICAgICAgc2lnbmF0dXJlOiAiU1RBUiBXT1JLIE9TXG7llrbmpa3mi4XlvZMiLAogICAgICAgICAgfSwKICAgICAgICAgIGFwcHJvdmFsOiB7IGFjdG9ySWQ6ICJyZXZpZXdlci0xIiwgYXBwcm92ZWRBdDogIjIwMjYtMDktMjdUMDM6MDA6MDAuMDAwWiIgfSwKICAgICAgICAgIGRlbGl2ZXJ5OiB7CiAgICAgICAgICAgIGFjdG9ySWQ6ICJzZW5kZXItMSIsIHJlY29yZGVkQXQ6ICIyMDI2LTA5LTI3VDA0OjAwOjAwLjAwMFoiLCBjaGFubmVsOiAiRU1BSUwiLAogICAgICAgICAgfSwKICAgICAgICB9LAogICAgICB9LAogICAgICB7CiAgICAgICAgY2hhbm5lbDogIkVNQUlMIiwgdHlwZTogIkdFTkVSQUxfUVVFU1RJT04iLCBtZXNzYWdlOiAi6L+95Yqg6LOq5ZWP44Gn44GZ44CCIiwKICAgICAgICBhY3RvcklkOiAib3BlcmF0b3ItMiIsIHJlY2VpdmVkQXQ6ICIyMDI2LTA5LTI4VDAxOjAwOjAwLjAwMFoiLAogICAgICB9LAogICAgXSwKICB9KSk7CiAgYXNzZXJ0Lm9rKGVtbCk7Cn0pOwoKdGVzdCgic3VwcG9ydHMgYSBzYWZlIGVtYWlsIHJlcGx5IGFmdGVyIGEgdmFsaWQgZGVsaXZlcmVkIGZvbGxvdy11cCIsICgpID0+IHsKICBjb25zdCBlbWwgPSBidWlsZFVuc2VudFNhbGVzUmVwbHlFbWFpbChsZWFkKHsKICAgIG91dHJlYWNoQXBwcm92YWw6IHsgYWN0b3JJZDogInJldmlld2VyLTEiLCBhcHByb3ZlZEF0OiAiMjAyNi0wOS0xOVQwMDowMDowMC4wMDBaIiB9LAogICAgb3V0cmVhY2hSZWNvcmRlZEF0OiAiMjAyNi0wOS0xOVQwMTowMDowMC4wMDBaIiwKICAgIG91dHJlYWNoRGVsaXZlcnk6IHsKICAgICAgYWN0b3JJZDogInNlbmRlci0xIiwgcmVjb3JkZWRBdDogIjIwMjYtMDktMTlUMDE6MDA6MDAuMDAwWiIsIGNoYW5uZWw6ICJFTUFJTCIsCiAgICB9LAogICAgZm9sbG93VXBzOiBbewogICAgICBkcmFmdDogewogICAgICAgIHN1YmplY3Q6ICLlhYjml6Xjga7jgZTmoYjlhoXjgavjgaTjgYTjgaYiLAogICAgICAgIGJvZHk6ICLjgZ3jga7lvozjga7jgZTnirbms4Hjga/jgYTjgYvjgYzjgafjgZfjgofjgYbjgYvjgIIiLAogICAgICAgIHNpZ25hdHVyZTogIlNUQVIgV09SSyBPU1xu5Za25qWt5ouF5b2TIiwKICAgICAgICBzYXZlZEJ5OiAid3JpdGVyLTEiLAogICAgICAgIHNhdmVkQXQ6ICIyMDI2LTA5LTIyVDAxOjAwOjAwLjAwMFoiLAogICAgICB9LAogICAgICBhcHByb3ZhbDogeyBhY3RvcklkOiAicmV2aWV3ZXItMSIsIGFwcHJvdmVkQXQ6ICIyMDI2LTA5LTIyVDAyOjAwOjAwLjAwMFoiIH0sCiAgICAgIGRlbGl2ZXJ5OiB7CiAgICAgICAgYWN0b3JJZDogInNlbmRlci0xIiwgcmVjb3JkZWRBdDogIjIwMjYtMDktMjJUMDM6MDA6MDAuMDAwWiIsIGNoYW5uZWw6ICJFTUFJTCIsCiAgICAgIH0sCiAgICB9XSwKICB9KSk7CiAgYXNzZXJ0Lm9rKGVtbCk7Cn0pOwoKdGVzdCgicmVqZWN0cyBtaXNzaW5nIG9yIGZvcmdlZCByZXBseSBhcHByb3ZhbCBjaHJvbm9sb2d5IiwgKCkgPT4gewogIGFzc2VydC5lcXVhbChidWlsZFVuc2VudFNhbGVzUmVwbHlFbWFpbChsZWFkKHsgcmVwbHlBcHByb3ZhbDogbnVsbCB9KSksIG51bGwpOwogIGFzc2VydC5lcXVhbChidWlsZFVuc2VudFNhbGVzUmVwbHlFbWFpbChsZWFkKHsKICAgIHJlcGx5QXBwcm92YWw6IHsgYWN0b3JJZDogInJldmlld2VyLTIiLCBhcHByb3ZlZEF0OiAiMjAyNi0wOS0yOFQwMDo1OTo1OS45OTlaIiB9LAogIH0pKSwgbnVsbCk7CiAgYXNzZXJ0LmVxdWFsKGJ1aWxkVW5zZW50U2FsZXNSZXBseUVtYWlsKGxlYWQoewogICAgb3V0cmVhY2hEZWxpdmVyeTogeyAuLi5sZWFkKCkub3V0cmVhY2hEZWxpdmVyeSwgcmVjb3JkZWRBdDogIjIwMjYtMDktMjdUMDA6NTk6NTkuOTk5WiIgfSwKICB9KSksIG51bGwpOwogIGFzc2VydC5lcXVhbChidWlsZFVuc2VudFNhbGVzUmVwbHlFbWFpbChsZWFkKHsKICAgIG91dHJlYWNoUmVjb3JkZWRBdDogIjIwMjYtMDktMjZUMjM6NTk6NTkuOTk5WiIsCiAgICBvdXRyZWFjaERlbGl2ZXJ5OiB7CiAgICAgIC4uLmxlYWQoKS5vdXRyZWFjaERlbGl2ZXJ5LAogICAgICByZWNvcmRlZEF0OiAiMjAyNi0wOS0yNlQyMzo1OTo1OS45OTlaIiwKICAgIH0sCiAgfSkpLCBudWxsKTsKICBhc3NlcnQuZXF1YWwoYnVpbGRVbnNlbnRTYWxlc1JlcGx5RW1haWwobGVhZCh7CiAgICByZXBsaWVzOiBbeyAuLi5sZWFkKCkucmVwbGllc1swXSwgcmVjZWl2ZWRBdDogIjIwMjYtMDktMjdUMDA6NTk6NTkuOTk5WiIgfV0sCiAgfSkpLCBudWxsKTsKICBhc3NlcnQuZXF1YWwoYnVpbGRVbnNlbnRTYWxlc1JlcGx5RW1haWwobGVhZCh7CiAgICByZXBseURlbGl2ZXJ5OiB7CiAgICAgIGFjdG9ySWQ6ICJzZW5kZXItMiIsIHJlY29yZGVkQXQ6ICIyMDI2LTA5LTI4VDAzOjAwOjAwLjAwMFoiLCBjaGFubmVsOiAiRU1BSUwiLAogICAgfSwKICB9KSksIG51bGwpOwp9KTsKCnRlc3QoInJlamVjdHMgYWx0ZXJlZCByZXNvbHZlZCByZXBseSBoaXN0b3J5IiwgKCkgPT4gewogIGNvbnN0IHByaW9yUmVwbHkgPSB7CiAgICBjaGFubmVsOiAiRU1BSUwiLCB0eXBlOiAiR0VORVJBTF9RVUVTVElPTiIsIG1lc3NhZ2U6ICLlhYjjga7os6rllY/jgafjgZnjgIIiLAogICAgYWN0b3JJZDogIm9wZXJhdG9yLTEiLCByZWNlaXZlZEF0OiAiMjAyNi0wOS0yN1QwMjowMDowMC4wMDBaIiwKICAgIHJlc29sdXRpb246IHsKICAgICAga2luZDogIlNBRkVfUkVQTFkiLAogICAgICBkcmFmdDogewogICAgICAgIHN1YmplY3Q6ICJSZTog5YWI44Gu6LOq5ZWP44Gr44Gk44GE44GmIiwKICAgICAgICBib2R5OiAi5YWI44Gu6LOq5ZWP44G444Gu5Zue562U44Gn44GZ44CCIiwKICAgICAgICBzaWduYXR1cmU6ICJTVEFSIFdPUksgT1NcbuWWtualreaLheW9kyIsCiAgICAgIH0sCiAgICAgIGFwcHJvdmFsOiB7IGFjdG9ySWQ6ICJyZXZpZXdlci0xIiwgYXBwcm92ZWRBdDogIjIwMjYtMDktMjdUMDM6MDA6MDAuMDAwWiIgfSwKICAgICAgZGVsaXZlcnk6IHsKICAgICAgICBhY3RvcklkOiAic2VuZGVyLTEiLCByZWNvcmRlZEF0OiAiMjAyNi0wOS0yN1QwNDowMDowMC4wMDBaIiwgY2hhbm5lbDogIkVNQUlMIiwKICAgICAgfSwKICAgIH0sCiAgfTsKICBjb25zdCBjdXJyZW50UmVwbHkgPSBsZWFkKCkucmVwbGllc1swXTsKICBhc3NlcnQuZXF1YWwoYnVpbGRVbnNlbnRTYWxlc1JlcGx5RW1haWwobGVhZCh7CiAgICByZXBsaWVzOiBbeyAuLi5wcmlvclJlcGx5LCByZXNvbHV0aW9uOiB7IC4uLnByaW9yUmVwbHkucmVzb2x1dGlvbiwgYXBwcm92YWw6IG51bGwgfSB9LCBjdXJyZW50UmVwbHldLAogIH0pKSwgbnVsbCk7CiAgYXNzZXJ0LmVxdWFsKGJ1aWxkVW5zZW50U2FsZXNSZXBseUVtYWlsKGxlYWQoewogICAgcmVwbGllczogW3sKICAgICAgLi4ucHJpb3JSZXBseSwKICAgICAgcmVzb2x1dGlvbjogewogICAgICAgIC4uLnByaW9yUmVwbHkucmVzb2x1dGlvbiwKICAgICAgICBkZWxpdmVyeTogeyAuLi5wcmlvclJlcGx5LnJlc29sdXRpb24uZGVsaXZlcnksIGNoYW5uZWw6ICJMSU5FIiB9LAogICAgICB9LAogICAgfSwgY3VycmVudFJlcGx5XSwKICB9KSksIG51bGwpOwogIGFzc2VydC5lcXVhbChidWlsZFVuc2VudFNhbGVzUmVwbHlFbWFpbChsZWFkKHsKICAgIHJlcGxpZXM6IFtwcmlvclJlcGx5LCB7IC4uLmN1cnJlbnRSZXBseSwgcmVjZWl2ZWRBdDogIjIwMjYtMDktMjdUMDM6NTk6NTkuOTk5WiIgfV0sCiAgfSkpLCBudWxsKTsKfSk7Cgp0ZXN0KCJmYWlscyBjbG9zZWQgZm9yIExJTkUsIHVuc2FmZSwgdW5hcHByb3ZlZCwgc2VudCwgc3VwcHJlc3NlZCwgb3IgYW1iaWd1b3VzIHJlcGxpZXMiLCAoKSA9PiB7CiAgYXNzZXJ0LmVxdWFsKGJ1aWxkVW5zZW50U2FsZXNSZXBseUVtYWlsKGxlYWQoeyByZXBsaWVzOiBbeyBjaGFubmVsOiAiTElORSIsIHR5cGU6ICJNQVRFUklBTF9SRVFVRVNUIiB9XSB9KSksIG51bGwpOwogIGFzc2VydC5lcXVhbChidWlsZFVuc2VudFNhbGVzUmVwbHlFbWFpbChsZWFkKHsgcmVwbGllczogW3sgY2hhbm5lbDogIkVNQUlMIiwgdHlwZTogIkNPTlRSQUNUIiB9XSB9KSksIG51bGwpOwogIGFzc2VydC5lcXVhbChidWlsZFVuc2VudFNhbGVzUmVwbHlFbWFpbChsZWFkKHsgcmVwbHlBcHByb3ZlZDogZmFsc2UgfSkpLCBudWxsKTsKICBhc3NlcnQuZXF1YWwoYnVpbGRVbnNlbnRTYWxlc1JlcGx5RW1haWwobGVhZCh7IHJlcGx5UmVjb3JkZWRBdDogIjIwMjYtMDktMjhUMDI6MDA6MDAuMDAwWiIgfSkpLCBudWxsKTsKICBhc3NlcnQuZXF1YWwoYnVpbGRVbnNlbnRTYWxlc1JlcGx5RW1haWwobGVhZCh7IG9wdGVkT3V0OiB0cnVlIH0pKSwgbnVsbCk7CiAgYXNzZXJ0LmVxdWFsKGJ1aWxkVW5zZW50U2FsZXNSZXBseUVtYWlsKGxlYWQoewogICAgb3B0ZWRPdXQ6IGZhbHNlLAogICAgcmVwbGllczogWwogICAgICAuLi5sZWFkKCkucmVwbGllcywKICAgICAgeyBjaGFubmVsOiAiRU1BSUwiLCB0eXBlOiAiT1BUX09VVCIsIHJlY2VpdmVkQXQ6ICIyMDI2LTA5LTI4VDAyOjAwOjAwLjAwMFoiIH0sCiAgICBdLAogIH0pKSwgbnVsbCk7CiAgYXNzZXJ0LmVxdWFsKGJ1aWxkVW5zZW50U2FsZXNSZXBseUVtYWlsKGxlYWQoeyBjb250YWN0OiAiYUBleGFtcGxlLmNvbSBiQGV4YW1wbGUuY29tIiB9KSksIG51bGwpOwp9KTsKCnRlc3QoInJlamVjdHMgaGVhZGVyIGluamVjdGlvbiBhbmQgaW5jb21wbGV0ZSBvciBvdmVyc2l6ZWQgZHJhZnRzIiwgKCkgPT4gewogIGFzc2VydC5lcXVhbChidWlsZFVuc2VudFNhbGVzUmVwbHlFbWFpbChsZWFkKHsKICAgIHJlcGx5RHJhZnQ6IHsgLi4ubGVhZCgpLnJlcGx5RHJhZnQsIHN1YmplY3Q6ICLlronlhahcclxuQmNjOiBldmlsQGV4YW1wbGUuY29tIiB9LAogIH0pKSwgbnVsbCk7CiAgYXNzZXJ0LmVxdWFsKGJ1aWxkVW5zZW50U2FsZXNSZXBseUVtYWlsKGxlYWQoewogICAgcmVwbHlEcmFmdDogeyAuLi5sZWFkKCkucmVwbHlEcmFmdCwgc2lnbmF0dXJlOiAiIiB9LAogIH0pKSwgbnVsbCk7CiAgYXNzZXJ0LmVxdWFsKGJ1aWxkVW5zZW50U2FsZXNSZXBseUVtYWlsKGxlYWQoewogICAgcmVwbHlEcmFmdDogeyAuLi5sZWFkKCkucmVwbHlEcmFmdCwgYm9keTogImEiLnJlcGVhdCg0XzAwMSkgfSwKICB9KSksIG51bGwpOwp9KTsK
+import test from "node:test";
+import assert from "node:assert/strict";
+import { buildUnsentSalesReplyEmail } from "../lib/sales-reply-email-export.js";
+
+function lead(overrides = {}) {
+  return {
+    contact: "営業部 sales@example.com",
+    optedOut: false,
+    appointmentConfirmed: false,
+    outreachApproved: true,
+    outreachDraft: {
+      subject: "住宅設備延長保証のご相談",
+      body: "初回のご案内です。",
+      signature: "STAR WORK OS\n営業担当",
+    },
+    outreachApproval: {
+      actorId: "reviewer-1",
+      approvedAt: "2026-09-27T00:00:00.000Z",
+    },
+    outreachRecordedAt: "2026-09-27T01:00:00.000Z",
+    outreachDelivery: {
+      actorId: "sender-1",
+      recordedAt: "2026-09-27T01:00:00.000Z",
+      channel: "EMAIL",
+    },
+    replyApproved: true,
+    replyApproval: {
+      actorId: "reviewer-2",
+      approvedAt: "2026-09-28T02:00:00.000Z",
+    },
+    replyRecordedAt: null,
+    replyDelivery: null,
+    replyDraft: {
+      subject: "Re: 資料のご希望について",
+      body: "ご返信ありがとうございます。\n資料を準備します。",
+      signature: "STAR WORK OS\n営業担当",
+    },
+    replies: [{
+      channel: "EMAIL", type: "MATERIAL_REQUEST", message: "資料希望",
+      actorId: "operator", receivedAt: "2026-09-28T01:00:00.000Z",
+    }],
+    followUps: [],
+    ...overrides,
+  };
+}
+
+test("builds an unsent approved safe reply for one email recipient", () => {
+  const eml = buildUnsentSalesReplyEmail(lead());
+  assert.ok(eml);
+  assert.match(eml, /^To: sales@example\.com\r\nSubject: =\?UTF-8\?B\?/u);
+  assert.match(eml, /\r\nX-Unsent: 1\r\n\r\n/u);
+  const encodedBody = eml.split("\r\n\r\n")[1].replace(/\r\n/gu, "");
+  assert.equal(Buffer.from(encodedBody, "base64").toString("utf8"),
+    "ご返信ありがとうございます。\r\n資料を準備します。\r\n\r\nSTAR WORK OS\r\n営業担当");
+});
+
+test("supports a safe email reply after an earlier resolved reply", () => {
+  const eml = buildUnsentSalesReplyEmail(lead({
+    replies: [
+      {
+        channel: "EMAIL", type: "GENERAL_QUESTION", message: "先の質問です。",
+        actorId: "operator-1", receivedAt: "2026-09-27T02:00:00.000Z",
+        resolution: {
+          kind: "SAFE_REPLY",
+          draft: {
+            subject: "Re: 先の質問について",
+            body: "先の質問への回答です。",
+            signature: "STAR WORK OS\n営業担当",
+          },
+          approval: { actorId: "reviewer-1", approvedAt: "2026-09-27T03:00:00.000Z" },
+          delivery: {
+            actorId: "sender-1", recordedAt: "2026-09-27T04:00:00.000Z", channel: "EMAIL",
+          },
+        },
+      },
+      {
+        channel: "EMAIL", type: "GENERAL_QUESTION", message: "追加質問です。",
+        actorId: "operator-2", receivedAt: "2026-09-28T01:00:00.000Z",
+      },
+    ],
+  }));
+  assert.ok(eml);
+});
+
+test("supports a safe email reply after a valid delivered follow-up", () => {
+  const eml = buildUnsentSalesReplyEmail(lead({
+    outreachApproval: { actorId: "reviewer-1", approvedAt: "2026-09-19T00:00:00.000Z" },
+    outreachRecordedAt: "2026-09-19T01:00:00.000Z",
+    outreachDelivery: {
+      actorId: "sender-1", recordedAt: "2026-09-19T01:00:00.000Z", channel: "EMAIL",
+    },
+    followUps: [{
+      draft: {
+        subject: "先日のご案内について",
+        body: "その後のご状況はいかがでしょうか。",
+        signature: "STAR WORK OS\n営業担当",
+        savedBy: "writer-1",
+        savedAt: "2026-09-22T01:00:00.000Z",
+      },
+      approval: { actorId: "reviewer-1", approvedAt: "2026-09-22T02:00:00.000Z" },
+      delivery: {
+        actorId: "sender-1", recordedAt: "2026-09-22T03:00:00.000Z", channel: "EMAIL",
+      },
+    }],
+  }));
+  assert.ok(eml);
+});
+
+test("rejects missing or forged reply approval chronology", () => {
+  assert.equal(buildUnsentSalesReplyEmail(lead({ replyApproval: null })), null);
+  assert.equal(buildUnsentSalesReplyEmail(lead({
+    replyApproval: { actorId: "reviewer-2", approvedAt: "2026-09-28T00:59:59.999Z" },
+  })), null);
+  assert.equal(buildUnsentSalesReplyEmail(lead({
+    outreachDelivery: { ...lead().outreachDelivery, recordedAt: "2026-09-27T00:59:59.999Z" },
+  })), null);
+  assert.equal(buildUnsentSalesReplyEmail(lead({
+    outreachRecordedAt: "2026-09-26T23:59:59.999Z",
+    outreachDelivery: {
+      ...lead().outreachDelivery,
+      recordedAt: "2026-09-26T23:59:59.999Z",
+    },
+  })), null);
+  assert.equal(buildUnsentSalesReplyEmail(lead({
+    replies: [{ ...lead().replies[0], receivedAt: "2026-09-27T00:59:59.999Z" }],
+  })), null);
+  assert.equal(buildUnsentSalesReplyEmail(lead({
+    replyDelivery: {
+      actorId: "sender-2", recordedAt: "2026-09-28T03:00:00.000Z", channel: "EMAIL",
+    },
+  })), null);
+});
+
+test("rejects altered resolved reply history", () => {
+  const priorReply = {
+    channel: "EMAIL", type: "GENERAL_QUESTION", message: "先の質問です。",
+    actorId: "operator-1", receivedAt: "2026-09-27T02:00:00.000Z",
+    resolution: {
+      kind: "SAFE_REPLY",
+      draft: {
+        subject: "Re: 先の質問について",
+        body: "先の質問への回答です。",
+        signature: "STAR WORK OS\n営業担当",
+      },
+      approval: { actorId: "reviewer-1", approvedAt: "2026-09-27T03:00:00.000Z" },
+      delivery: {
+        actorId: "sender-1", recordedAt: "2026-09-27T04:00:00.000Z", channel: "EMAIL",
+      },
+    },
+  };
+  const currentReply = lead().replies[0];
+  assert.equal(buildUnsentSalesReplyEmail(lead({
+    replies: [{ ...priorReply, resolution: { ...priorReply.resolution, approval: null } }, currentReply],
+  })), null);
+  assert.equal(buildUnsentSalesReplyEmail(lead({
+    replies: [{
+      ...priorReply,
+      resolution: {
+        ...priorReply.resolution,
+        delivery: { ...priorReply.resolution.delivery, channel: "LINE" },
+      },
+    }, currentReply],
+  })), null);
+  assert.equal(buildUnsentSalesReplyEmail(lead({
+    replies: [priorReply, { ...currentReply, receivedAt: "2026-09-27T03:59:59.999Z" }],
+  })), null);
+});
+
+test("fails closed for LINE, unsafe, unapproved, sent, suppressed, or ambiguous replies", () => {
+  assert.equal(buildUnsentSalesReplyEmail(lead({ replies: [{ channel: "LINE", type: "MATERIAL_REQUEST" }] })), null);
+  assert.equal(buildUnsentSalesReplyEmail(lead({ replies: [{ channel: "EMAIL", type: "CONTRACT" }] })), null);
+  assert.equal(buildUnsentSalesReplyEmail(lead({ replyApproved: false })), null);
+  assert.equal(buildUnsentSalesReplyEmail(lead({ replyRecordedAt: "2026-09-28T02:00:00.000Z" })), null);
+  assert.equal(buildUnsentSalesReplyEmail(lead({ optedOut: true })), null);
+  assert.equal(buildUnsentSalesReplyEmail(lead({
+    optedOut: false,
+    replies: [
+      ...lead().replies,
+      { channel: "EMAIL", type: "OPT_OUT", receivedAt: "2026-09-28T02:00:00.000Z" },
+    ],
+  })), null);
+  assert.equal(buildUnsentSalesReplyEmail(lead({ contact: "a@example.com b@example.com" })), null);
+});
+
+test("rejects header injection and incomplete or oversized drafts", () => {
+  assert.equal(buildUnsentSalesReplyEmail(lead({
+    replyDraft: { ...lead().replyDraft, subject: "安全\r\nBcc: evil@example.com" },
+  })), null);
+  assert.equal(buildUnsentSalesReplyEmail(lead({
+    replyDraft: { ...lead().replyDraft, signature: "" },
+  })), null);
+  assert.equal(buildUnsentSalesReplyEmail(lead({
+    replyDraft: { ...lead().replyDraft, body: "a".repeat(4_001) },
+  })), null);
+});

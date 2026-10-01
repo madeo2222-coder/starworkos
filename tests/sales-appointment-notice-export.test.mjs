@@ -1,1 +1,110 @@
-aW1wb3J0IHRlc3QgZnJvbSAibm9kZTp0ZXN0IjsKaW1wb3J0IGFzc2VydCBmcm9tICJub2RlOmFzc2VydC9zdHJpY3QiOwppbXBvcnQgeyBidWlsZFVuc2VudFNhbGVzQXBwb2ludG1lbnROb3RpY2UgfSBmcm9tICIuLi9saWIvc2FsZXMtYXBwb2ludG1lbnQtbm90aWNlLWV4cG9ydC5qcyI7CgpmdW5jdGlvbiBsZWFkKG92ZXJyaWRlcyA9IHt9KSB7CiAgcmV0dXJuIHsKICAgIGNvbnRhY3Q6ICLllrbmpa3pg6ggc2FsZXNAZXhhbXBsZS5jb20iLAogICAgb3B0ZWRPdXQ6IGZhbHNlLAogICAgbWVldGluZ09wdGlvbnNBcHByb3ZlZDogdHJ1ZSwKICAgIG1lZXRpbmdPcHRpb25zQXBwcm92YWw6IHsKICAgICAgYWN0b3JJZDogIm1hbmFnZXIiLAogICAgICBhcHByb3ZlZEF0OiAiMjAyNi0wOS0yN1QwMjozMDowMC4wMDBaIiwKICAgIH0sCiAgICBtZWV0aW5nT3B0aW9uc1JlY29yZGVkQXQ6ICIyMDI2LTA5LTI3VDAzOjAwOjAwLjAwMFoiLAogICAgbWVldGluZ09wdGlvbnNEZWxpdmVyeTogewogICAgICBhY3RvcklkOiAib3BlcmF0b3IiLAogICAgICByZWNvcmRlZEF0OiAiMjAyNi0wOS0yN1QwMzowMDowMC4wMDBaIiwKICAgICAgY2hhbm5lbDogIkVNQUlMIiwKICAgIH0sCiAgICBhcHBvaW50bWVudENvbmZpcm1lZDogdHJ1ZSwKICAgIGFwcG9pbnRtZW50OiB7CiAgICAgIHNlbGVjdGVkU2xvdDogIjIwMjYtMDktMjhUMDE6MDA6MDAuMDAwWiIsCiAgICAgIGR1cmF0aW9uTWludXRlczogMzAsCiAgICAgIGNvbmZpcm1lZEJ5OiAic2NoZWR1bGVyIiwKICAgICAgY29uZmlybWVkQXQ6ICIyMDI2LTA5LTI3VDAzOjMwOjAwLjAwMFoiLAogICAgfSwKICAgIGFwcG9pbnRtZW50Tm90aWNlQXBwcm92ZWQ6IHRydWUsCiAgICBhcHBvaW50bWVudE5vdGljZUFwcHJvdmFsOiB7CiAgICAgIGFjdG9ySWQ6ICJtYW5hZ2VyIiwKICAgICAgYXBwcm92ZWRBdDogIjIwMjYtMDktMjdUMDQ6MTU6MDAuMDAwWiIsCiAgICB9LAogICAgYXBwb2ludG1lbnROb3RpY2VSZWNvcmRlZEF0OiBudWxsLAogICAgYXBwb2ludG1lbnROb3RpY2VEZWxpdmVyeTogbnVsbCwKICAgIGFwcG9pbnRtZW50Tm90aWNlRHJhZnQ6IHsKICAgICAgc3ViamVjdDogIldlYumdouirh+aXpeaZgueiuuWumuOBruOBlOahiOWGhSIsCiAgICAgIGJvZHk6ICLml6XmmYLvvJoyMDI25bm0OeaciDI45pelIDEwOjAwXG7lj4LliqBVUkzvvJpodHRwczovL3pvb20udXMvai8xMjMiLAogICAgICBzaWduYXR1cmU6ICJTVEFSIFdPUksgT1NcbuWWtualreaLheW9kyIsCiAgICAgIHNhdmVkQnk6ICJzY2hlZHVsZXIiLAogICAgICBzYXZlZEF0OiAiMjAyNi0wOS0yN1QwNDowMDowMC4wMDBaIiwKICAgIH0sCiAgICAuLi5vdmVycmlkZXMsCiAgfTsKfQoKdGVzdCgiYnVpbGRzIGFuIGFwcHJvdmVkIHVuc2VudCBhcHBvaW50bWVudCBub3RpY2UgZm9yIG9uZSBlbWFpbCByZWNpcGllbnQiLCAoKSA9PiB7CiAgY29uc3QgZW1sID0gYnVpbGRVbnNlbnRTYWxlc0FwcG9pbnRtZW50Tm90aWNlKGxlYWQoKSk7CiAgYXNzZXJ0Lm9rKGVtbCk7CiAgYXNzZXJ0Lm1hdGNoKGVtbCwgL15Ubzogc2FsZXNAZXhhbXBsZVwuY29tXHJcblN1YmplY3Q6ID1cP1VURi04XD9CXD8vdSk7CiAgYXNzZXJ0Lm1hdGNoKGVtbCwgL1xyXG5YLVVuc2VudDogMVxyXG5cclxuL3UpOwogIGNvbnN0IGVuY29kZWRCb2R5ID0gZW1sLnNwbGl0KCJcclxuXHJcbiIpWzFdLnJlcGxhY2UoL1xyXG4vZ3UsICIiKTsKICBhc3NlcnQuZXF1YWwoQnVmZmVyLmZyb20oZW5jb2RlZEJvZHksICJiYXNlNjQiKS50b1N0cmluZygidXRmOCIpLAogICAgIuaXpeaZgu+8mjIwMjblubQ55pyIMjjml6UgMTA6MDBcclxu5Y+C5YqgVVJM77yaaHR0cHM6Ly96b29tLnVzL2ovMTIzXHJcblxyXG5TVEFSIFdPUksgT1Ncclxu5Za25qWt5ouF5b2TIik7Cn0pOwoKdGVzdCgiZmFpbHMgY2xvc2VkIGZvciBMSU5FLCB1bmFwcHJvdmVkLCBkZWxpdmVyZWQsIHN1cHByZXNzZWQsIG9yIGFtYmlndW91cyBub3RpY2VzIiwgKCkgPT4gewogIGFzc2VydC5lcXVhbChidWlsZFVuc2VudFNhbGVzQXBwb2ludG1lbnROb3RpY2UobGVhZCh7CiAgICBtZWV0aW5nT3B0aW9uc0RlbGl2ZXJ5OiB7IC4uLmxlYWQoKS5tZWV0aW5nT3B0aW9uc0RlbGl2ZXJ5LCBjaGFubmVsOiAiTElORSIgfSwKICB9KSksIG51bGwpOwogIGFzc2VydC5lcXVhbChidWlsZFVuc2VudFNhbGVzQXBwb2ludG1lbnROb3RpY2UobGVhZCh7IGFwcG9pbnRtZW50Tm90aWNlQXBwcm92ZWQ6IGZhbHNlIH0pKSwgbnVsbCk7CiAgYXNzZXJ0LmVxdWFsKGJ1aWxkVW5zZW50U2FsZXNBcHBvaW50bWVudE5vdGljZShsZWFkKHsKICAgIGFwcG9pbnRtZW50Tm90aWNlUmVjb3JkZWRBdDogIjIwMjYtMDktMjdUMDY6MDA6MDAuMDAwWiIsCiAgfSkpLCBudWxsKTsKICBhc3NlcnQuZXF1YWwoYnVpbGRVbnNlbnRTYWxlc0FwcG9pbnRtZW50Tm90aWNlKGxlYWQoeyBvcHRlZE91dDogdHJ1ZSB9KSksIG51bGwpOwogIGFzc2VydC5lcXVhbChidWlsZFVuc2VudFNhbGVzQXBwb2ludG1lbnROb3RpY2UobGVhZCh7CiAgICBvcHRlZE91dDogZmFsc2UsIHJlcGxpZXM6IFt7IHR5cGU6ICJPUFRfT1VUIiB9XSwKICB9KSksIG51bGwpOwogIGFzc2VydC5lcXVhbChidWlsZFVuc2VudFNhbGVzQXBwb2ludG1lbnROb3RpY2UobGVhZCh7CiAgICBjb250YWN0OiAiYUBleGFtcGxlLmNvbSBiQGV4YW1wbGUuY29tIiwKICB9KSksIG51bGwpOwp9KTsKCnRlc3QoInJlamVjdHMgbWlzc2luZyBvciBmb3JnZWQgYXBwb2ludG1lbnQgYW5kIG5vdGljZSBhcHByb3ZhbCBjaHJvbm9sb2d5IiwgKCkgPT4gewogIGNvbnN0IHZhbGlkID0gbGVhZCgpOwogIGZvciAoY29uc3QgZm9yZ2VkIG9mIFsKICAgIHsgbWVldGluZ09wdGlvbnNBcHByb3ZlZDogZmFsc2UgfSwKICAgIHsgbWVldGluZ09wdGlvbnNBcHByb3ZhbDogbnVsbCB9LAogICAgeyBtZWV0aW5nT3B0aW9uc1JlY29yZGVkQXQ6IG51bGwgfSwKICAgIHsgbWVldGluZ09wdGlvbnNEZWxpdmVyeTogbnVsbCB9LAogICAgewogICAgICBhcHBvaW50bWVudDogeyAuLi52YWxpZC5hcHBvaW50bWVudCwgY29uZmlybWVkQnk6ICIiIH0sCiAgICB9LAogICAgewogICAgICBhcHBvaW50bWVudDogewogICAgICAgIC4uLnZhbGlkLmFwcG9pbnRtZW50LAogICAgICAgIGNvbmZpcm1lZEF0OiAiMjAyNi0wOS0yN1QwMjo1OTo1OS45OTlaIiwKICAgICAgfSwKICAgIH0sCiAgICB7CiAgICAgIGFwcG9pbnRtZW50OiB7CiAgICAgICAgLi4udmFsaWQuYXBwb2ludG1lbnQsCiAgICAgICAgc2VsZWN0ZWRTbG90OiAiMjAyNi0wOS0yN1QwMzo0NDo1OS45OTlaIiwKICAgICAgfSwKICAgIH0sCiAgICB7IGFwcG9pbnRtZW50Tm90aWNlQXBwcm92YWw6IG51bGwgfSwKICAgIHsKICAgICAgYXBwb2ludG1lbnROb3RpY2VEcmFmdDogewogICAgICAgIC4uLnZhbGlkLmFwcG9pbnRtZW50Tm90aWNlRHJhZnQsCiAgICAgICAgc2F2ZWRBdDogIjIwMjYtMDktMjdUMDM6Mjk6NTkuOTk5WiIsCiAgICAgIH0sCiAgICB9LAogICAgewogICAgICBhcHBvaW50bWVudE5vdGljZUFwcHJvdmFsOiB7CiAgICAgICAgLi4udmFsaWQuYXBwb2ludG1lbnROb3RpY2VBcHByb3ZhbCwKICAgICAgICBhcHByb3ZlZEF0OiAiMjAyNi0wOS0yN1QwMzo1OTo1OS45OTlaIiwKICAgICAgfSwKICAgIH0sCiAgXSkgewogICAgYXNzZXJ0LmVxdWFsKGJ1aWxkVW5zZW50U2FsZXNBcHBvaW50bWVudE5vdGljZShsZWFkKGZvcmdlZCkpLCBudWxsKTsKICB9Cn0pOwo=
+import test from "node:test";
+import assert from "node:assert/strict";
+import { buildUnsentSalesAppointmentNotice } from "../lib/sales-appointment-notice-export.js";
+
+function lead(overrides = {}) {
+  return {
+    contact: "営業部 sales@example.com",
+    optedOut: false,
+    meetingOptionsApproved: true,
+    meetingOptionsApproval: {
+      actorId: "manager",
+      approvedAt: "2026-09-27T02:30:00.000Z",
+    },
+    meetingOptionsRecordedAt: "2026-09-27T03:00:00.000Z",
+    meetingOptionsDelivery: {
+      actorId: "operator",
+      recordedAt: "2026-09-27T03:00:00.000Z",
+      channel: "EMAIL",
+    },
+    appointmentConfirmed: true,
+    appointment: {
+      selectedSlot: "2026-09-28T01:00:00.000Z",
+      durationMinutes: 30,
+      confirmedBy: "scheduler",
+      confirmedAt: "2026-09-27T03:30:00.000Z",
+    },
+    appointmentNoticeApproved: true,
+    appointmentNoticeApproval: {
+      actorId: "manager",
+      approvedAt: "2026-09-27T04:15:00.000Z",
+    },
+    appointmentNoticeRecordedAt: null,
+    appointmentNoticeDelivery: null,
+    appointmentNoticeDraft: {
+      subject: "Web面談日時確定のご案内",
+      body: "日時：2026年9月28日 10:00\n参加URL：https://zoom.us/j/123",
+      signature: "STAR WORK OS\n営業担当",
+      savedBy: "scheduler",
+      savedAt: "2026-09-27T04:00:00.000Z",
+    },
+    ...overrides,
+  };
+}
+
+test("builds an approved unsent appointment notice for one email recipient", () => {
+  const eml = buildUnsentSalesAppointmentNotice(lead());
+  assert.ok(eml);
+  assert.match(eml, /^To: sales@example\.com\r\nSubject: =\?UTF-8\?B\?/u);
+  assert.match(eml, /\r\nX-Unsent: 1\r\n\r\n/u);
+  const encodedBody = eml.split("\r\n\r\n")[1].replace(/\r\n/gu, "");
+  assert.equal(Buffer.from(encodedBody, "base64").toString("utf8"),
+    "日時：2026年9月28日 10:00\r\n参加URL：https://zoom.us/j/123\r\n\r\nSTAR WORK OS\r\n営業担当");
+});
+
+test("fails closed for LINE, unapproved, delivered, suppressed, or ambiguous notices", () => {
+  assert.equal(buildUnsentSalesAppointmentNotice(lead({
+    meetingOptionsDelivery: { ...lead().meetingOptionsDelivery, channel: "LINE" },
+  })), null);
+  assert.equal(buildUnsentSalesAppointmentNotice(lead({ appointmentNoticeApproved: false })), null);
+  assert.equal(buildUnsentSalesAppointmentNotice(lead({
+    appointmentNoticeRecordedAt: "2026-09-27T06:00:00.000Z",
+  })), null);
+  assert.equal(buildUnsentSalesAppointmentNotice(lead({ optedOut: true })), null);
+  assert.equal(buildUnsentSalesAppointmentNotice(lead({
+    optedOut: false, replies: [{ type: "OPT_OUT" }],
+  })), null);
+  assert.equal(buildUnsentSalesAppointmentNotice(lead({
+    contact: "a@example.com b@example.com",
+  })), null);
+});
+
+test("rejects missing or forged appointment and notice approval chronology", () => {
+  const valid = lead();
+  for (const forged of [
+    { meetingOptionsApproved: false },
+    { meetingOptionsApproval: null },
+    { meetingOptionsRecordedAt: null },
+    { meetingOptionsDelivery: null },
+    {
+      appointment: { ...valid.appointment, confirmedBy: "" },
+    },
+    {
+      appointment: {
+        ...valid.appointment,
+        confirmedAt: "2026-09-27T02:59:59.999Z",
+      },
+    },
+    {
+      appointment: {
+        ...valid.appointment,
+        selectedSlot: "2026-09-27T03:44:59.999Z",
+      },
+    },
+    { appointmentNoticeApproval: null },
+    {
+      appointmentNoticeDraft: {
+        ...valid.appointmentNoticeDraft,
+        savedAt: "2026-09-27T03:29:59.999Z",
+      },
+    },
+    {
+      appointmentNoticeApproval: {
+        ...valid.appointmentNoticeApproval,
+        approvedAt: "2026-09-27T03:59:59.999Z",
+      },
+    },
+  ]) {
+    assert.equal(buildUnsentSalesAppointmentNotice(lead(forged)), null);
+  }
+});

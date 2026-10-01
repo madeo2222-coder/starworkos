@@ -1,1 +1,18 @@
-aW1wb3J0IHRlc3QgZnJvbSAibm9kZTp0ZXN0IjsKaW1wb3J0IGFzc2VydCBmcm9tICJub2RlOmFzc2VydC9zdHJpY3QiOwppbXBvcnQgZnMgZnJvbSAibm9kZTpmcyI7Cgpjb25zdCBzb3VyY2UgPSBmcy5yZWFkRmlsZVN5bmMobmV3IFVSTCgiLi4vYXBwL3NhbGVzL2NhbGVuZGFyL1tpZF0vcm91dGUudHMiLCBpbXBvcnQubWV0YS51cmwpLCAidXRmOCIpOwoKdGVzdCgiY2FsZW5kYXIgcm91dGUgYXV0aGVudGljYXRlcyBiZWZvcmUgb25lIFJMUy1zY29wZWQgcm93IHJlYWQiLCAoKSA9PiB7CiAgYXNzZXJ0Lm9rKHNvdXJjZS5pbmRleE9mKCJhdXRoLmdldFVzZXIoKSIpIDwgc291cmNlLmluZGV4T2YoJ2Zyb20oInRhc2tzIiknKSk7CiAgYXNzZXJ0Lm1hdGNoKHNvdXJjZSwgL3NlbGVjdFwoImlkLCBjb250ZW50IlwpXC5lcVwoImlkIiwgaWRcKVwubWF5YmVTaW5nbGVcKFwpL3UpOwogIGFzc2VydC5kb2VzTm90TWF0Y2goc291cmNlLCAvc2VydmljZVtfLV0/cm9sZXxjcmVhdGVDbGllbnRcKFteKV0qc2VjcmV0L2l1KTsKfSk7Cgp0ZXN0KCJjYWxlbmRhciByb3V0ZSBpcyBkb3dubG9hZC1vbmx5IGFuZCBuZXZlciBjcmVhdGVzIG9yIHNlbmRzIGFuIGV2ZW50IiwgKCkgPT4gewogIGFzc2VydC5tYXRjaChzb3VyY2UsIC9idWlsZFNhbGVzQXBwb2ludG1lbnRDYWxlbmRhci91KTsKICBhc3NlcnQubWF0Y2goc291cmNlLCAvdGV4dFwvY2FsZW5kYXIvdSk7CiAgYXNzZXJ0Lm1hdGNoKHNvdXJjZSwgL2NhY2hlLWNvbnRyb2wiOiAibm8tc3RvcmUiL3UpOwogIGFzc2VydC5kb2VzTm90TWF0Y2goc291cmNlLCAvXC5pbnNlcnRcKHxcLnVwZGF0ZVwofFwuZGVsZXRlXCh8ZmV0Y2hcKHxzZW5kfGludml0ZS9pdSk7Cn0pOwo=
+import test from "node:test";
+import assert from "node:assert/strict";
+import fs from "node:fs";
+
+const source = fs.readFileSync(new URL("../app/sales/calendar/[id]/route.ts", import.meta.url), "utf8");
+
+test("calendar route authenticates before one RLS-scoped row read", () => {
+  assert.ok(source.indexOf("auth.getUser()") < source.indexOf('from("tasks")'));
+  assert.match(source, /select\("id, content"\)\.eq\("id", id\)\.maybeSingle\(\)/u);
+  assert.doesNotMatch(source, /service[_-]?role|createClient\([^)]*secret/iu);
+});
+
+test("calendar route is download-only and never creates or sends an event", () => {
+  assert.match(source, /buildSalesAppointmentCalendar/u);
+  assert.match(source, /text\/calendar/u);
+  assert.match(source, /cache-control": "no-store"/u);
+  assert.doesNotMatch(source, /\.insert\(|\.update\(|\.delete\(|fetch\(|send|invite/iu);
+});

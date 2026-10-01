@@ -1,1 +1,126 @@
-aW1wb3J0IHRlc3QgZnJvbSAibm9kZTp0ZXN0IjsKaW1wb3J0IGFzc2VydCBmcm9tICJub2RlOmFzc2VydC9zdHJpY3QiOwppbXBvcnQgeyBidWlsZFVuc2VudFNhbGVzRm9sbG93VXBFbWFpbCB9IGZyb20gIi4uL2xpYi9zYWxlcy1mb2xsb3ctdXAtZW1haWwtZXhwb3J0LmpzIjsKCmZ1bmN0aW9uIGxlYWQob3ZlcnJpZGVzID0ge30pIHsKICByZXR1cm4gewogICAgY29udGFjdDogIuWWtualremDqCBzYWxlc0BleGFtcGxlLmNvbSIsCiAgICBvcHRlZE91dDogZmFsc2UsCiAgICBhcHBvaW50bWVudENvbmZpcm1lZDogZmFsc2UsCiAgICByZXBsaWVzOiBbXSwKICAgIGZvbGxvd1VwczogW10sCiAgICBvdXRyZWFjaEFwcHJvdmVkOiB0cnVlLAogICAgb3V0cmVhY2hEcmFmdDogewogICAgICBzdWJqZWN0OiAi5L2P5a6F6Kit5YKZ5bu26ZW35L+d6Ki844Gu44GU55u46KuHIiwKICAgICAgYm9keTogIuWIneWbnuOBruOBlOahiOWGheOBp+OBmeOAgiIsCiAgICAgIHNpZ25hdHVyZTogIlNUQVIgV09SSyBPU1xu5Za25qWt5ouF5b2TIiwKICAgIH0sCiAgICBvdXRyZWFjaEFwcHJvdmFsOiB7CiAgICAgIGFjdG9ySWQ6ICJyZXZpZXdlci0xIiwKICAgICAgYXBwcm92ZWRBdDogIjIwMjYtMDktMjZUMDA6MDA6MDAuMDAwWiIsCiAgICB9LAogICAgb3V0cmVhY2hSZWNvcmRlZEF0OiAiMjAyNi0wOS0yNlQwMTowMDowMC4wMDBaIiwKICAgIG91dHJlYWNoRGVsaXZlcnk6IHsKICAgICAgYWN0b3JJZDogInNlbmRlci0xIiwKICAgICAgcmVjb3JkZWRBdDogIjIwMjYtMDktMjZUMDE6MDA6MDAuMDAwWiIsCiAgICAgIGNoYW5uZWw6ICJFTUFJTCIsCiAgICB9LAogICAgZm9sbG93VXBBcHByb3ZlZDogdHJ1ZSwKICAgIGZvbGxvd1VwQXBwcm92YWw6IHsKICAgICAgYWN0b3JJZDogInJldmlld2VyLTIiLAogICAgICBhcHByb3ZlZEF0OiAiMjAyNi0wOS0zMFQwMTowMDowMC4wMDBaIiwKICAgIH0sCiAgICBmb2xsb3dVcERyYWZ0OiB7CiAgICAgIHN1YmplY3Q6ICLlhYjml6Xjga7jgZTmoYjlhoXjgavjgaTjgYTjgaYiLAogICAgICBib2R5OiAi44Gd44Gu5b6M44Gu44GU54q25rOB44Gv44GE44GL44GM44Gn44GX44KH44GG44GL44CCIiwKICAgICAgc2lnbmF0dXJlOiAiU1RBUiBXT1JLIE9TXG7llrbmpa3mi4XlvZMiLAogICAgICBzYXZlZEJ5OiAid3JpdGVyIiwKICAgICAgc2F2ZWRBdDogIjIwMjYtMDktMzBUMDA6MDA6MDAuMDAwWiIsCiAgICB9LAogICAgLi4ub3ZlcnJpZGVzLAogIH07Cn0KCnRlc3QoImJ1aWxkcyBhbiBhcHByb3ZlZCB1bnNlbnQgZm9sbG93LXVwIGVtYWlsIiwgKCkgPT4gewogIGNvbnN0IGVtbCA9IGJ1aWxkVW5zZW50U2FsZXNGb2xsb3dVcEVtYWlsKGxlYWQoKSk7CiAgYXNzZXJ0Lm9rKGVtbCk7CiAgYXNzZXJ0Lm1hdGNoKGVtbCwgL15Ubzogc2FsZXNAZXhhbXBsZVwuY29tXHJcblN1YmplY3Q6ID1cP1VURi04XD9CXD8vdSk7CiAgYXNzZXJ0Lm1hdGNoKGVtbCwgL1xyXG5YLVVuc2VudDogMVxyXG5cclxuL3UpOwogIGNvbnN0IGVuY29kZWRCb2R5ID0gZW1sLnNwbGl0KCJcclxuXHJcbiIpWzFdLnJlcGxhY2UoL1xyXG4vZ3UsICIiKTsKICBhc3NlcnQuZXF1YWwoQnVmZmVyLmZyb20oZW5jb2RlZEJvZHksICJiYXNlNjQiKS50b1N0cmluZygidXRmOCIpLAogICAgIuOBneOBruW+jOOBruOBlOeKtuazgeOBr+OBhOOBi+OBjOOBp+OBl+OCh+OBhuOBi+OAglxyXG5cclxuU1RBUiBXT1JLIE9TXHJcbuWWtualreaLheW9kyIpOwp9KTsKCnRlc3QoImJ1aWxkcyB0aGUgc2Vjb25kIGZvbGxvdy11cCBvbmx5IGFmdGVyIGEgdmFsaWQgZGVsaXZlcmVkIGZpcnN0IGZvbGxvdy11cCIsICgpID0+IHsKICBjb25zdCBlbWwgPSBidWlsZFVuc2VudFNhbGVzRm9sbG93VXBFbWFpbChsZWFkKHsKICAgIG91dHJlYWNoQXBwcm92YWw6IHsgYWN0b3JJZDogInJldmlld2VyLTEiLCBhcHByb3ZlZEF0OiAiMjAyNi0wOS0xOVQyMzowMDowMC4wMDBaIiB9LAogICAgb3V0cmVhY2hSZWNvcmRlZEF0OiAiMjAyNi0wOS0yMFQwMDowMDowMC4wMDBaIiwKICAgIG91dHJlYWNoRGVsaXZlcnk6IHsKICAgICAgYWN0b3JJZDogInNlbmRlci0xIiwKICAgICAgcmVjb3JkZWRBdDogIjIwMjYtMDktMjBUMDA6MDA6MDAuMDAwWiIsCiAgICAgIGNoYW5uZWw6ICJFTUFJTCIsCiAgICB9LAogICAgZm9sbG93VXBzOiBbewogICAgICBkcmFmdDogewogICAgICAgIHN1YmplY3Q6ICIx5Zue55uu44Gu44OV44Kp44Ot44O8IiwKICAgICAgICBib2R5OiAiMeWbnuebruOBruacrOaWh+OBp+OBmeOAgiIsCiAgICAgICAgc2lnbmF0dXJlOiAiU1RBUiBXT1JLIE9TXG7llrbmpa3mi4XlvZMiLAogICAgICAgIHNhdmVkQnk6ICJ3cml0ZXItMSIsCiAgICAgICAgc2F2ZWRBdDogIjIwMjYtMDktMjNUMDA6MDA6MDAuMDAwWiIsCiAgICAgIH0sCiAgICAgIGFwcHJvdmFsOiB7IGFjdG9ySWQ6ICJyZXZpZXdlci0xIiwgYXBwcm92ZWRBdDogIjIwMjYtMDktMjNUMDE6MDA6MDAuMDAwWiIgfSwKICAgICAgZGVsaXZlcnk6IHsKICAgICAgICBhY3RvcklkOiAic2VuZGVyLTEiLAogICAgICAgIHJlY29yZGVkQXQ6ICIyMDI2LTA5LTIzVDAyOjAwOjAwLjAwMFoiLAogICAgICAgIGNoYW5uZWw6ICJFTUFJTCIsCiAgICAgIH0sCiAgICB9XSwKICB9KSk7CiAgYXNzZXJ0Lm9rKGVtbCk7Cn0pOwoKdGVzdCgiZmFpbHMgY2xvc2VkIGZvciB1bnNhZmUgb3IgY29tcGxldGVkIGZvbGxvdy11cCBzdGF0ZXMiLCAoKSA9PiB7CiAgYXNzZXJ0LmVxdWFsKGJ1aWxkVW5zZW50U2FsZXNGb2xsb3dVcEVtYWlsKGxlYWQoeyBmb2xsb3dVcEFwcHJvdmVkOiBmYWxzZSB9KSksIG51bGwpOwogIGFzc2VydC5lcXVhbChidWlsZFVuc2VudFNhbGVzRm9sbG93VXBFbWFpbChsZWFkKHsgb3B0ZWRPdXQ6IHRydWUgfSkpLCBudWxsKTsKICBhc3NlcnQuZXF1YWwoYnVpbGRVbnNlbnRTYWxlc0ZvbGxvd1VwRW1haWwobGVhZCh7IGFwcG9pbnRtZW50Q29uZmlybWVkOiB0cnVlIH0pKSwgbnVsbCk7CiAgYXNzZXJ0LmVxdWFsKGJ1aWxkVW5zZW50U2FsZXNGb2xsb3dVcEVtYWlsKGxlYWQoeyByZXBsaWVzOiBbe31dIH0pKSwgbnVsbCk7CiAgYXNzZXJ0LmVxdWFsKGJ1aWxkVW5zZW50U2FsZXNGb2xsb3dVcEVtYWlsKGxlYWQoeyBmb2xsb3dVcHM6IFt7fSwge31dIH0pKSwgbnVsbCk7CiAgYXNzZXJ0LmVxdWFsKGJ1aWxkVW5zZW50U2FsZXNGb2xsb3dVcEVtYWlsKGxlYWQoeyBjb250YWN0OiAiYUBleGFtcGxlLmNvbSBiQGV4YW1wbGUuY29tIiB9KSksIG51bGwpOwp9KTsKCnRlc3QoInJlamVjdHMgbWlzc2luZyBvciBmb3JnZWQgZm9sbG93LXVwIGFwcHJvdmFsIGNocm9ub2xvZ3kiLCAoKSA9PiB7CiAgYXNzZXJ0LmVxdWFsKGJ1aWxkVW5zZW50U2FsZXNGb2xsb3dVcEVtYWlsKGxlYWQoeyBmb2xsb3dVcEFwcHJvdmFsOiBudWxsIH0pKSwgbnVsbCk7CiAgYXNzZXJ0LmVxdWFsKGJ1aWxkVW5zZW50U2FsZXNGb2xsb3dVcEVtYWlsKGxlYWQoewogICAgZm9sbG93VXBBcHByb3ZhbDogeyBhY3RvcklkOiAicmV2aWV3ZXItMiIsIGFwcHJvdmVkQXQ6ICIyMDI2LTA5LTI5VDIzOjU5OjU5Ljk5OVoiIH0sCiAgfSkpLCBudWxsKTsKICBhc3NlcnQuZXF1YWwoYnVpbGRVbnNlbnRTYWxlc0ZvbGxvd1VwRW1haWwobGVhZCh7CiAgICBvdXRyZWFjaERlbGl2ZXJ5OiB7IC4uLmxlYWQoKS5vdXRyZWFjaERlbGl2ZXJ5LCByZWNvcmRlZEF0OiAiMjAyNi0wOS0yNlQwMDozMDowMC4wMDBaIiB9LAogIH0pKSwgbnVsbCk7CiAgYXNzZXJ0LmVxdWFsKGJ1aWxkVW5zZW50U2FsZXNGb2xsb3dVcEVtYWlsKGxlYWQoewogICAgZm9sbG93VXBEcmFmdDogeyAuLi5sZWFkKCkuZm9sbG93VXBEcmFmdCwgc2F2ZWRBdDogIjIwMjYtMDktMjlUMDA6NTk6NTkuOTk5WiIgfSwKICB9KSksIG51bGwpOwogIGFzc2VydC5lcXVhbChidWlsZFVuc2VudFNhbGVzRm9sbG93VXBFbWFpbChsZWFkKHsKICAgIGZvbGxvd1VwRHJhZnQ6IHsgLi4ubGVhZCgpLmZvbGxvd1VwRHJhZnQsIHNpZ25hdHVyZTogIuW3ruOBl+abv+OBiOe9suWQjSIgfSwKICB9KSksIG51bGwpOwogIGFzc2VydC5lcXVhbChidWlsZFVuc2VudFNhbGVzRm9sbG93VXBFbWFpbChsZWFkKHsKICAgIG91dHJlYWNoQXBwcm92YWw6IHsgYWN0b3JJZDogInJldmlld2VyLTEiLCBhcHByb3ZlZEF0OiAiMjAyNi0wOS0xOVQyMzowMDowMC4wMDBaIiB9LAogICAgb3V0cmVhY2hSZWNvcmRlZEF0OiAiMjAyNi0wOS0yMFQwMDowMDowMC4wMDBaIiwKICAgIG91dHJlYWNoRGVsaXZlcnk6IHsKICAgICAgYWN0b3JJZDogInNlbmRlci0xIiwKICAgICAgcmVjb3JkZWRBdDogIjIwMjYtMDktMjBUMDA6MDA6MDAuMDAwWiIsCiAgICAgIGNoYW5uZWw6ICJFTUFJTCIsCiAgICB9LAogICAgZm9sbG93VXBzOiBbewogICAgICBkcmFmdDogewogICAgICAgIC4uLmxlYWQoKS5mb2xsb3dVcERyYWZ0LAogICAgICAgIHNhdmVkQXQ6ICIyMDI2LTA5LTIzVDAwOjAwOjAwLjAwMFoiLAogICAgICB9LAogICAgICBhcHByb3ZhbDogeyBhY3RvcklkOiAicmV2aWV3ZXItMSIsIGFwcHJvdmVkQXQ6ICIyMDI2LTA5LTIyVDIzOjU5OjU5Ljk5OVoiIH0sCiAgICAgIGRlbGl2ZXJ5OiB7CiAgICAgICAgYWN0b3JJZDogInNlbmRlci0xIiwKICAgICAgICByZWNvcmRlZEF0OiAiMjAyNi0wOS0yM1QwMTowMDowMC4wMDBaIiwKICAgICAgICBjaGFubmVsOiAiRU1BSUwiLAogICAgICB9LAogICAgfV0sCiAgfSkpLCBudWxsKTsKfSk7Cg==
+import test from "node:test";
+import assert from "node:assert/strict";
+import { buildUnsentSalesFollowUpEmail } from "../lib/sales-follow-up-email-export.js";
+
+function lead(overrides = {}) {
+  return {
+    contact: "営業部 sales@example.com",
+    optedOut: false,
+    appointmentConfirmed: false,
+    replies: [],
+    followUps: [],
+    outreachApproved: true,
+    outreachDraft: {
+      subject: "住宅設備延長保証のご相談",
+      body: "初回のご案内です。",
+      signature: "STAR WORK OS\n営業担当",
+    },
+    outreachApproval: {
+      actorId: "reviewer-1",
+      approvedAt: "2026-09-26T00:00:00.000Z",
+    },
+    outreachRecordedAt: "2026-09-26T01:00:00.000Z",
+    outreachDelivery: {
+      actorId: "sender-1",
+      recordedAt: "2026-09-26T01:00:00.000Z",
+      channel: "EMAIL",
+    },
+    followUpApproved: true,
+    followUpApproval: {
+      actorId: "reviewer-2",
+      approvedAt: "2026-09-30T01:00:00.000Z",
+    },
+    followUpDraft: {
+      subject: "先日のご案内について",
+      body: "その後のご状況はいかがでしょうか。",
+      signature: "STAR WORK OS\n営業担当",
+      savedBy: "writer",
+      savedAt: "2026-09-30T00:00:00.000Z",
+    },
+    ...overrides,
+  };
+}
+
+test("builds an approved unsent follow-up email", () => {
+  const eml = buildUnsentSalesFollowUpEmail(lead());
+  assert.ok(eml);
+  assert.match(eml, /^To: sales@example\.com\r\nSubject: =\?UTF-8\?B\?/u);
+  assert.match(eml, /\r\nX-Unsent: 1\r\n\r\n/u);
+  const encodedBody = eml.split("\r\n\r\n")[1].replace(/\r\n/gu, "");
+  assert.equal(Buffer.from(encodedBody, "base64").toString("utf8"),
+    "その後のご状況はいかがでしょうか。\r\n\r\nSTAR WORK OS\r\n営業担当");
+});
+
+test("builds the second follow-up only after a valid delivered first follow-up", () => {
+  const eml = buildUnsentSalesFollowUpEmail(lead({
+    outreachApproval: { actorId: "reviewer-1", approvedAt: "2026-09-19T23:00:00.000Z" },
+    outreachRecordedAt: "2026-09-20T00:00:00.000Z",
+    outreachDelivery: {
+      actorId: "sender-1",
+      recordedAt: "2026-09-20T00:00:00.000Z",
+      channel: "EMAIL",
+    },
+    followUps: [{
+      draft: {
+        subject: "1回目のフォロー",
+        body: "1回目の本文です。",
+        signature: "STAR WORK OS\n営業担当",
+        savedBy: "writer-1",
+        savedAt: "2026-09-23T00:00:00.000Z",
+      },
+      approval: { actorId: "reviewer-1", approvedAt: "2026-09-23T01:00:00.000Z" },
+      delivery: {
+        actorId: "sender-1",
+        recordedAt: "2026-09-23T02:00:00.000Z",
+        channel: "EMAIL",
+      },
+    }],
+  }));
+  assert.ok(eml);
+});
+
+test("fails closed for unsafe or completed follow-up states", () => {
+  assert.equal(buildUnsentSalesFollowUpEmail(lead({ followUpApproved: false })), null);
+  assert.equal(buildUnsentSalesFollowUpEmail(lead({ optedOut: true })), null);
+  assert.equal(buildUnsentSalesFollowUpEmail(lead({ appointmentConfirmed: true })), null);
+  assert.equal(buildUnsentSalesFollowUpEmail(lead({ replies: [{}] })), null);
+  assert.equal(buildUnsentSalesFollowUpEmail(lead({ followUps: [{}, {}] })), null);
+  assert.equal(buildUnsentSalesFollowUpEmail(lead({ contact: "a@example.com b@example.com" })), null);
+});
+
+test("rejects missing or forged follow-up approval chronology", () => {
+  assert.equal(buildUnsentSalesFollowUpEmail(lead({ followUpApproval: null })), null);
+  assert.equal(buildUnsentSalesFollowUpEmail(lead({
+    followUpApproval: { actorId: "reviewer-2", approvedAt: "2026-09-29T23:59:59.999Z" },
+  })), null);
+  assert.equal(buildUnsentSalesFollowUpEmail(lead({
+    outreachDelivery: { ...lead().outreachDelivery, recordedAt: "2026-09-26T00:30:00.000Z" },
+  })), null);
+  assert.equal(buildUnsentSalesFollowUpEmail(lead({
+    followUpDraft: { ...lead().followUpDraft, savedAt: "2026-09-29T00:59:59.999Z" },
+  })), null);
+  assert.equal(buildUnsentSalesFollowUpEmail(lead({
+    followUpDraft: { ...lead().followUpDraft, signature: "差し替え署名" },
+  })), null);
+  assert.equal(buildUnsentSalesFollowUpEmail(lead({
+    outreachApproval: { actorId: "reviewer-1", approvedAt: "2026-09-19T23:00:00.000Z" },
+    outreachRecordedAt: "2026-09-20T00:00:00.000Z",
+    outreachDelivery: {
+      actorId: "sender-1",
+      recordedAt: "2026-09-20T00:00:00.000Z",
+      channel: "EMAIL",
+    },
+    followUps: [{
+      draft: {
+        ...lead().followUpDraft,
+        savedAt: "2026-09-23T00:00:00.000Z",
+      },
+      approval: { actorId: "reviewer-1", approvedAt: "2026-09-22T23:59:59.999Z" },
+      delivery: {
+        actorId: "sender-1",
+        recordedAt: "2026-09-23T01:00:00.000Z",
+        channel: "EMAIL",
+      },
+    }],
+  })), null);
+});

@@ -1,1 +1,44 @@
-aW1wb3J0IHsgY3JlYXRlQ2xpZW50IH0gZnJvbSAiQC91dGlscy9zdXBhYmFzZS9zZXJ2ZXIiOwppbXBvcnQgeyBidWlsZFNhbGVzQXBwb2ludG1lbnRDYWxlbmRhciB9IGZyb20gIkAvbGliL3NhbGVzLWNhbGVuZGFyLWV4cG9ydC5qcyI7CmltcG9ydCB7IHBhcnNlU2FsZXNMZWFkUmVjb3JkIH0gZnJvbSAiQC9saWIvc2FsZXMtbGVhZC1yZWNvcmQuanMiOwoKdHlwZSBTYWxlc1Rhc2sgPSB7IGlkOiBzdHJpbmc7IGNvbnRlbnQ6IHN0cmluZyB8IG51bGwgfTsKCmNvbnN0IFVVSURfUEFUVEVSTiA9IC9eWzAtOWEtZl17OH0oLVswLTlhLWZdezR9KXszfS1bMC05YS1mXXsxMn0kL2k7CgpleHBvcnQgYXN5bmMgZnVuY3Rpb24gR0VUKAogIF9yZXF1ZXN0OiBSZXF1ZXN0LAogIHsgcGFyYW1zIH06IHsgcGFyYW1zOiBQcm9taXNlPHsgaWQ6IHN0cmluZyB9PiB9LAopIHsKICBjb25zdCBzdXBhYmFzZSA9IGF3YWl0IGNyZWF0ZUNsaWVudCgpOwogIGNvbnN0IHsgZGF0YTogeyB1c2VyIH0gfSA9IGF3YWl0IHN1cGFiYXNlLmF1dGguZ2V0VXNlcigpOwogIGlmICghdXNlcikgcmV0dXJuIHJlc3BvbnNlKCJVbmF1dGhvcml6ZWQiLCA0MDEpOwoKICBjb25zdCB7IGlkIH0gPSBhd2FpdCBwYXJhbXM7CiAgaWYgKCFVVUlEX1BBVFRFUk4udGVzdChpZCkpIHJldHVybiByZXNwb25zZSgiTm90IGZvdW5kIiwgNDA0KTsKCiAgY29uc3QgeyBkYXRhLCBlcnJvciB9ID0gYXdhaXQgc3VwYWJhc2UuZnJvbSgidGFza3MiKQogICAgLnNlbGVjdCgiaWQsIGNvbnRlbnQiKS5lcSgiaWQiLCBpZCkubWF5YmVTaW5nbGUoKTsKICBjb25zdCB0YXNrID0gZGF0YSBhcyBTYWxlc1Rhc2sgfCBudWxsOwogIGlmIChlcnJvciB8fCAhdGFzaykgcmV0dXJuIHJlc3BvbnNlKCJOb3QgZm91bmQiLCA0MDQpOwoKICBjb25zdCBsZWFkID0gcGFyc2VTYWxlc0xlYWRSZWNvcmQodGFzay5pZCwgdGFzay5jb250ZW50KTsKICBjb25zdCBjYWxlbmRhciA9IGxlYWQgPyBidWlsZFNhbGVzQXBwb2ludG1lbnRDYWxlbmRhcihsZWFkKSA6IG51bGw7CiAgaWYgKCFjYWxlbmRhcikgcmV0dXJuIHJlc3BvbnNlKCLjgqvjg6zjg7Pjg4Djg7zkuojlrprjgpLlh7rlipvjgafjgY3jgb7jgZvjgpPjgafjgZfjgZ/jgIIiLCA0MDkpOwoKICByZXR1cm4gbmV3IFJlc3BvbnNlKGNhbGVuZGFyLCB7CiAgICBoZWFkZXJzOiB7CiAgICAgICJjYWNoZS1jb250cm9sIjogIm5vLXN0b3JlIiwKICAgICAgImNvbnRlbnQtZGlzcG9zaXRpb24iOiBgYXR0YWNobWVudDsgZmlsZW5hbWU9InN0YXItd29yay1vcy1hcHBvaW50bWVudC0ke2lkfS5pY3MiYCwKICAgICAgImNvbnRlbnQtdHlwZSI6ICJ0ZXh0L2NhbGVuZGFyOyBjaGFyc2V0PXV0Zi04IiwKICAgICAgIngtY29udGVudC10eXBlLW9wdGlvbnMiOiAibm9zbmlmZiIsCiAgICB9LAogIH0pOwp9CgpmdW5jdGlvbiByZXNwb25zZShtZXNzYWdlOiBzdHJpbmcsIHN0YXR1czogbnVtYmVyKSB7CiAgcmV0dXJuIG5ldyBSZXNwb25zZShtZXNzYWdlLCB7CiAgICBzdGF0dXMsCiAgICBoZWFkZXJzOiB7ICJjYWNoZS1jb250cm9sIjogIm5vLXN0b3JlIiwgIngtY29udGVudC10eXBlLW9wdGlvbnMiOiAibm9zbmlmZiIgfSwKICB9KTsKfQo=
+import { createClient } from "@/utils/supabase/server";
+import { buildSalesAppointmentCalendar } from "@/lib/sales-calendar-export.js";
+import { parseSalesLeadRecord } from "@/lib/sales-lead-record.js";
+
+type SalesTask = { id: string; content: string | null };
+
+const UUID_PATTERN = /^[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i;
+
+export async function GET(
+  _request: Request,
+  { params }: { params: Promise<{ id: string }> },
+) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return response("Unauthorized", 401);
+
+  const { id } = await params;
+  if (!UUID_PATTERN.test(id)) return response("Not found", 404);
+
+  const { data, error } = await supabase.from("tasks")
+    .select("id, content").eq("id", id).maybeSingle();
+  const task = data as SalesTask | null;
+  if (error || !task) return response("Not found", 404);
+
+  const lead = parseSalesLeadRecord(task.id, task.content);
+  const calendar = lead ? buildSalesAppointmentCalendar(lead) : null;
+  if (!calendar) return response("カレンダー予定を出力できませんでした。", 409);
+
+  return new Response(calendar, {
+    headers: {
+      "cache-control": "no-store",
+      "content-disposition": `attachment; filename="star-work-os-appointment-${id}.ics"`,
+      "content-type": "text/calendar; charset=utf-8",
+      "x-content-type-options": "nosniff",
+    },
+  });
+}
+
+function response(message: string, status: number) {
+  return new Response(message, {
+    status,
+    headers: { "cache-control": "no-store", "x-content-type-options": "nosniff" },
+  });
+}

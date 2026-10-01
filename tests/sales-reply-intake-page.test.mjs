@@ -1,1 +1,25 @@
-aW1wb3J0IHRlc3QgZnJvbSAibm9kZTp0ZXN0IjsKaW1wb3J0IGFzc2VydCBmcm9tICJub2RlOmFzc2VydC9zdHJpY3QiOwppbXBvcnQgeyByZWFkRmlsZVN5bmMgfSBmcm9tICJub2RlOmZzIjsKCmNvbnN0IHBhZ2UgPSByZWFkRmlsZVN5bmMobmV3IFVSTCgiLi4vYXBwL3NhbGVzL3BhZ2UudHN4IiwgaW1wb3J0Lm1ldGEudXJsKSwgInV0ZjgiKTsKCnRlc3QoInNhbGVzIHJlcGx5IGludGFrZSBrZWVwcyBvbmUgZmluYWwgb3B0LW91dCBzbG90IHZpc2libGUiLCAoKSA9PiB7CiAgYXNzZXJ0Lm1hdGNoKHBhZ2UsIC9NQVhfU0FMRVNfUkVQTElFU19XSVRIX09QVF9PVVQvdSk7CiAgYXNzZXJ0Lm1hdGNoKHBhZ2UsIC9sZWFkXC5yZXBsaWVzXC5sZW5ndGggPCBNQVhfU0FMRVNfUkVQTElFU19XSVRIX09QVF9PVVQvdSk7CiAgYXNzZXJ0Lm1hdGNoKHBhZ2UsIC9yZXF1aXJlc09wdE91dE9ubHlSZXBseUludGFrZVwobGVhZFwpL3UpOwogIGFzc2VydC5tYXRjaChwYWdlLCAvc2FsZXNSZXBseUludGFrZURlZmF1bHRDaGFubmVsXChsZWFkXCkvdSk7CiAgYXNzZXJ0Lm1hdGNoKHBhZ2UsIC9kZWZhdWx0VmFsdWU9XHtkZWZhdWx0Q2hhbm5lbFx9L3UpOwogIGFzc2VydC5tYXRjaChwYWdlLCAvZGVmYXVsdFZhbHVlPVx7b3B0T3V0T25seSBcPyAiT1BUX09VVCIgOiAiVU5LTk9XTiJcfS91KTsKICBhc3NlcnQubWF0Y2gocGFnZSwgLyFvcHRPdXRPbmx5IFx8XHwgdmFsdWUgPT09ICJPUFRfT1VUIi91KTsKICBhc3NlcnQubWF0Y2gocGFnZSwgL+i/veWKoOOBp+OBjeOCi+OBruOBr+mFjeS/oeWBnOatouOBoOOBkeOBp+OBmS91KTsKfSk7Cgp0ZXN0KCJyZXBseSBpbnRha2UgcmVtYWlucyBhbiBhdXRoZW50aWNhdGVkIHNlcnZlciBhY3Rpb24iLCAoKSA9PiB7CiAgY29uc3QgYWN0aW9uID0gcGFnZS5zbGljZShwYWdlLmluZGV4T2YoImFzeW5jIGZ1bmN0aW9uIHJlY29yZEluYm91bmRSZXBseSIpLAogICAgcGFnZS5pbmRleE9mKCJhc3luYyBmdW5jdGlvbiByZWNvcmRPdXRyZWFjaERlbGl2ZXJ5IikpOwogIGFzc2VydC5tYXRjaChhY3Rpb24sIC8idXNlIHNlcnZlciIvdSk7CiAgYXNzZXJ0Lm1hdGNoKGFjdGlvbiwgL3N1cGFiYXNlXC5hdXRoXC5nZXRVc2VyXChcKS91KTsKICBhc3NlcnQubWF0Y2goYWN0aW9uLCAvcmVjb3JkU2FsZXNSZXBseVwoL3UpOwogIGFzc2VydC5tYXRjaChhY3Rpb24sIC9cLmVxXCgidXBkYXRlZF9hdCIsIHZlcnNpb25cKS91KTsKfSk7Cg==
+import test from "node:test";
+import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
+
+const page = readFileSync(new URL("../app/sales/page.tsx", import.meta.url), "utf8");
+
+test("sales reply intake keeps one final opt-out slot visible", () => {
+  assert.match(page, /MAX_SALES_REPLIES_WITH_OPT_OUT/u);
+  assert.match(page, /lead\.replies\.length < MAX_SALES_REPLIES_WITH_OPT_OUT/u);
+  assert.match(page, /requiresOptOutOnlyReplyIntake\(lead\)/u);
+  assert.match(page, /salesReplyIntakeDefaultChannel\(lead\)/u);
+  assert.match(page, /defaultValue=\{defaultChannel\}/u);
+  assert.match(page, /defaultValue=\{optOutOnly \? "OPT_OUT" : "UNKNOWN"\}/u);
+  assert.match(page, /!optOutOnly \|\| value === "OPT_OUT"/u);
+  assert.match(page, /追加できるのは配信停止だけです/u);
+});
+
+test("reply intake remains an authenticated server action", () => {
+  const action = page.slice(page.indexOf("async function recordInboundReply"),
+    page.indexOf("async function recordOutreachDelivery"));
+  assert.match(action, /"use server"/u);
+  assert.match(action, /supabase\.auth\.getUser\(\)/u);
+  assert.match(action, /recordSalesReply\(/u);
+  assert.match(action, /\.eq\("updated_at", version\)/u);
+});

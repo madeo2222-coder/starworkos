@@ -1,1 +1,97 @@
-aW1wb3J0IHRlc3QgZnJvbSAibm9kZTp0ZXN0IjsKaW1wb3J0IGFzc2VydCBmcm9tICJub2RlOmFzc2VydC9zdHJpY3QiOwppbXBvcnQgeyByZWFkRmlsZVN5bmMgfSBmcm9tICJub2RlOmZzIjsKaW1wb3J0IHsgYnVpbGRTYWxlc1Byb3Bvc2FsIH0gZnJvbSAiLi4vbGliL3NhbGVzLXByb3Bvc2FsLmpzIjsKCmZ1bmN0aW9uIHZhbGlkTGVhZChvdmVycmlkZXMgPSB7fSkgewogIHJldHVybiB7CiAgICBpZDogImxlYWQtMSIsCiAgICBjb21wYW55TmFtZTogIuODhuOCueODiOW3peWLmeW6lyIsCiAgICBwcm9wb3NhbEZpdDogIuW8leOBjea4oeOBl+W+jOOBrumhp+WuouaUr+aPtOOCkuW8t+WMluOBp+OBjeOCi+WPr+iDveaApyIsCiAgICBjb250YWN0OiAic2VjcmV0QGV4YW1wbGUuY29tIiwKICAgIHJlc2VhcmNoTm90ZXM6ICLnpL7lhoXpmZDlrprjga7oqr/mn7vjg6Hjg6IiLAogICAgcmVzZWFyY2hDb21wbGV0ZTogdHJ1ZSwKICAgIHJlc2VhcmNoQXVkaXQ6IHsKICAgICAgYWN0b3JJZDogInJlc2VhcmNoZXItMSIsCiAgICAgIGNvbXBsZXRlZEF0OiAiMjAyNi0xMC0wMVQwMDowMDowMC4wMDBaIiwKICAgICAgc291cmNlczogWyJodHRwczovL2V4YW1wbGUuY29tL2NvbXBhbnkiXSwKICAgIH0sCiAgICBvcHRlZE91dDogZmFsc2UsCiAgICAuLi5vdmVycmlkZXMsCiAgfTsKfQoKdGVzdCgiYnVpbGRzIGEgbWluaW1hbCBpbW11dGFibGUgcHJvcG9zYWwgd2l0aG91dCBpbnRlcm5hbCBzYWxlcyBkZXRhaWxzIiwgKCkgPT4gewogIGNvbnN0IHByb3Bvc2FsID0gYnVpbGRTYWxlc1Byb3Bvc2FsKHZhbGlkTGVhZCgpKTsKICBhc3NlcnQuZGVlcEVxdWFsKHByb3Bvc2FsLCB7CiAgICBpZDogImxlYWQtMSIsCiAgICBjb21wYW55TmFtZTogIuODhuOCueODiOW3peWLmeW6lyIsCiAgICBwcm9wb3NhbEZpdDogIuW8leOBjea4oeOBl+W+jOOBrumhp+WuouaUr+aPtOOCkuW8t+WMluOBp+OBjeOCi+WPr+iDveaApyIsCiAgfSk7CiAgYXNzZXJ0Lm9rKE9iamVjdC5pc0Zyb3plbihwcm9wb3NhbCkpOwogIGFzc2VydC5lcXVhbCgiY29udGFjdCIgaW4gcHJvcG9zYWwsIGZhbHNlKTsKICBhc3NlcnQuZXF1YWwoInJlc2VhcmNoTm90ZXMiIGluIHByb3Bvc2FsLCBmYWxzZSk7CiAgYXNzZXJ0LmVxdWFsKCJyZXNlYXJjaEF1ZGl0IiBpbiBwcm9wb3NhbCwgZmFsc2UpOwp9KTsKCnRlc3QoInJlcXVpcmVzIGEgdmFsaWQgYXVkaXRlZCByZXNlYXJjaCBjb21wbGV0aW9uIGJlZm9yZSBwcm9wb3NhbCBnZW5lcmF0aW9uIiwgKCkgPT4gewogIGFzc2VydC5lcXVhbChidWlsZFNhbGVzUHJvcG9zYWwodmFsaWRMZWFkKHsgcmVzZWFyY2hDb21wbGV0ZTogZmFsc2UsIHJlc2VhcmNoQXVkaXQ6IG51bGwgfSkpLCBudWxsKTsKICBhc3NlcnQuZXF1YWwoYnVpbGRTYWxlc1Byb3Bvc2FsKHZhbGlkTGVhZCh7IHJlc2VhcmNoQXVkaXQ6IG51bGwgfSkpLCBudWxsKTsKICBhc3NlcnQuZXF1YWwoYnVpbGRTYWxlc1Byb3Bvc2FsKHZhbGlkTGVhZCh7CiAgICByZXNlYXJjaEF1ZGl0OiB7IC4uLnZhbGlkTGVhZCgpLnJlc2VhcmNoQXVkaXQsIGFjdG9ySWQ6ICIiIH0sCiAgfSkpLCBudWxsKTsKICBhc3NlcnQuZXF1YWwoYnVpbGRTYWxlc1Byb3Bvc2FsKHZhbGlkTGVhZCh7CiAgICByZXNlYXJjaEF1ZGl0OiB7IC4uLnZhbGlkTGVhZCgpLnJlc2VhcmNoQXVkaXQsIGNvbXBsZXRlZEF0OiAiaW52YWxpZCIgfSwKICB9KSksIG51bGwpOwogIGFzc2VydC5lcXVhbChidWlsZFNhbGVzUHJvcG9zYWwodmFsaWRMZWFkKHsKICAgIHJlc2VhcmNoQXVkaXQ6IHsgLi4udmFsaWRMZWFkKCkucmVzZWFyY2hBdWRpdCwgc291cmNlczogW10gfSwKICB9KSksIG51bGwpOwogIGFzc2VydC5lcXVhbChidWlsZFNhbGVzUHJvcG9zYWwodmFsaWRMZWFkKHsKICAgIHJlc2VhcmNoQXVkaXQ6IHsgLi4udmFsaWRMZWFkKCkucmVzZWFyY2hBdWRpdCwgc291cmNlczogWyJodHRwOi8vZXhhbXBsZS5jb20vY29tcGFueSJdIH0sCiAgfSkpLCBudWxsKTsKICBhc3NlcnQuZXF1YWwoYnVpbGRTYWxlc1Byb3Bvc2FsKHZhbGlkTGVhZCh7CiAgICByZXNlYXJjaEF1ZGl0OiB7CiAgICAgIC4uLnZhbGlkTGVhZCgpLnJlc2VhcmNoQXVkaXQsCiAgICAgIHNvdXJjZXM6IFsiaHR0cHM6Ly9leGFtcGxlLmNvbS9jb21wYW55IiwgImh0dHBzOi8vZXhhbXBsZS5jb20vY29tcGFueSJdLAogICAgfSwKICB9KSksIG51bGwpOwp9KTsKCnRlc3QoInJlcXVpcmVzIGJvdW5kZWQgYW5kIHNhZmUgcmVzZWFyY2ggbm90ZXMgYmVmb3JlIHByb3Bvc2FsIGdlbmVyYXRpb24iLCAoKSA9PiB7CiAgYXNzZXJ0LmVxdWFsKGJ1aWxkU2FsZXNQcm9wb3NhbCh2YWxpZExlYWQoeyByZXNlYXJjaE5vdGVzOiAiIiB9KSksIG51bGwpOwogIGFzc2VydC5lcXVhbChidWlsZFNhbGVzUHJvcG9zYWwodmFsaWRMZWFkKHsgcmVzZWFyY2hOb3RlczogIngiLnJlcGVhdCgyXzAwMSkgfSkpLCBudWxsKTsKICBhc3NlcnQuZXF1YWwoYnVpbGRTYWxlc1Byb3Bvc2FsKHZhbGlkTGVhZCh7IHJlc2VhcmNoTm90ZXM6ICLnorroqo3muIjjgb9cMOW3ruOBl+abv+OBiCIgfSkpLCBudWxsKTsKfSk7Cgp0ZXN0KCJyZWplY3RzIHN1cHByZXNzZWQsIGluY29tcGxldGUsIG92ZXJzaXplZCwgYW5kIGhvc3RpbGUgcHJvcG9zYWwgaW5wdXQiLCAoKSA9PiB7CiAgYXNzZXJ0LmVxdWFsKGJ1aWxkU2FsZXNQcm9wb3NhbCh2YWxpZExlYWQoeyBvcHRlZE91dDogdHJ1ZSB9KSksIG51bGwpOwogIGFzc2VydC5lcXVhbChidWlsZFNhbGVzUHJvcG9zYWwodmFsaWRMZWFkKHsKICAgIG9wdGVkT3V0OiBmYWxzZSwgcmVwbGllczogW3sgdHlwZTogIk9QVF9PVVQiIH1dLAogIH0pKSwgbnVsbCk7CiAgYXNzZXJ0LmVxdWFsKGJ1aWxkU2FsZXNQcm9wb3NhbCh2YWxpZExlYWQoewogICAgb3B0ZWRPdXQ6IGZhbHNlLCByZXBsaWVzOiBbe31dLAogIH0pKSwgbnVsbCk7CiAgYXNzZXJ0LmVxdWFsKGJ1aWxkU2FsZXNQcm9wb3NhbCh2YWxpZExlYWQoeyBwcm9wb3NhbEZpdDogIiIgfSkpLCBudWxsKTsKICBhc3NlcnQuZXF1YWwoYnVpbGRTYWxlc1Byb3Bvc2FsKHZhbGlkTGVhZCh7IGNvbXBhbnlOYW1lOiBg5LyB5qWtJHsieCIucmVwZWF0KDE2MCl9YCB9KSksIG51bGwpOwogIGFzc2VydC5lcXVhbChidWlsZFNhbGVzUHJvcG9zYWwobmV3IFByb3h5KHt9LCB7IGdldCgpIHsgdGhyb3cgbmV3IEVycm9yKCJibG9ja2VkIik7IH0gfSkpLCBudWxsKTsKfSk7Cgp0ZXN0KCJwcm9wb3NhbCBwYWdlIGF1dGhlbnRpY2F0ZXMgYmVmb3JlIG9uZSBSTFMtc2NvcGVkIHJvdyByZWFkIGFuZCBoYXMgbm8gZXh0ZXJuYWwgc2VuZCBwYXRoIiwgKCkgPT4gewogIGNvbnN0IHBhZ2UgPSByZWFkRmlsZVN5bmMobmV3IFVSTCgiLi4vYXBwL3NhbGVzL3Byb3Bvc2Fscy9baWRdL3BhZ2UudHN4IiwgaW1wb3J0Lm1ldGEudXJsKSwgInV0ZjgiKTsKICBhc3NlcnQub2socGFnZS5pbmRleE9mKCJzdXBhYmFzZS5hdXRoLmdldFVzZXIoKSIpIDwgcGFnZS5pbmRleE9mKCcuZnJvbSgidGFza3MiKScpKTsKICBhc3NlcnQub2socGFnZS5pbmNsdWRlcygnLnNlbGVjdCgiaWQsIGNvbnRlbnQiKScpKTsKICBhc3NlcnQub2socGFnZS5pbmNsdWRlcygnLmVxKCJpZCIsIGlkKScpKTsKICBhc3NlcnQuZG9lc05vdE1hdGNoKHBhZ2UsIC9zZXJ2aWNlX3JvbGV8XC5pbnNlcnRcKHxcLnVwZGF0ZVwofFwuZGVsZXRlXCh8ZmV0Y2hcKHxvcGVuYWl8bGVhZFwuY29udGFjdHxsZWFkXC5yZXNlYXJjaE5vdGVzL3VpKTsKfSk7Cgp0ZXN0KCJwcm9wb3NhbCBjb3B5IGRvZXMgbm90IHByb21pc2UgcHJpY2UsIGNvdmVyYWdlLCB0ZXJtLCBvciBjb250cmFjdCBjb25kaXRpb25zIiwgKCkgPT4gewogIGNvbnN0IHBhZ2UgPSByZWFkRmlsZVN5bmMobmV3IFVSTCgiLi4vYXBwL3NhbGVzL3Byb3Bvc2Fscy9baWRdL3BhZ2UudHN4IiwgaW1wb3J0Lm1ldGEudXJsKSwgInV0ZjgiKTsKICBhc3NlcnQubWF0Y2gocGFnZSwgL+S+oeagvOOAgeS/neiovOevhOWbsuOAgeS/neiovOacn+mWk+OAgeWlkee0hOadoeS7tuOCkueiuue0hOOBmeOCi+OCguOBruOBp+OBr+OBguOCiuOBvuOBm+OCky91KTsKICBhc3NlcnQubWF0Y2gocGFnZSwgL+S6uumWk+OBq+OCiOOCi+aJv+iqjeW+jC91KTsKfSk7Cgp0ZXN0KCJwcm9wb3NhbCBpbmRleCBleHBsYWlucyBhdWRpdGVkIHJlc2VhcmNoIHJlYWRpbmVzcyIsICgpID0+IHsKICBjb25zdCBwYWdlID0gcmVhZEZpbGVTeW5jKG5ldyBVUkwoIi4uL2FwcC9zYWxlcy9wcm9wb3NhbHMvcGFnZS50c3giLCBpbXBvcnQubWV0YS51cmwpLCAidXRmOCIpOwogIGFzc2VydC5tYXRjaChwYWdlLCAv55uj5p+75LuY44GN5LyB5qWt6Kq/5p+744GM5a6M5LqG44GX44Gf5qGI5Lu2L3UpOwogIGFzc2VydC5tYXRjaChwYWdlLCAv55uj5p+75LuY44GN5LyB5qWt6Kq/5p+744GM5a6M5LqG44GX44CB5o+Q5qGI55CG55Sx44GM55m76Yyy44GV44KM44Gf5LyB5qWt44Gv44GC44KK44G+44Gb44KTL3UpOwp9KTsK
+import test from "node:test";
+import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
+import { buildSalesProposal } from "../lib/sales-proposal.js";
+
+function validLead(overrides = {}) {
+  return {
+    id: "lead-1",
+    companyName: "テスト工務店",
+    proposalFit: "引き渡し後の顧客支援を強化できる可能性",
+    contact: "secret@example.com",
+    researchNotes: "社内限定の調査メモ",
+    researchComplete: true,
+    researchAudit: {
+      actorId: "researcher-1",
+      completedAt: "2026-10-01T00:00:00.000Z",
+      sources: ["https://example.com/company"],
+    },
+    optedOut: false,
+    ...overrides,
+  };
+}
+
+test("builds a minimal immutable proposal without internal sales details", () => {
+  const proposal = buildSalesProposal(validLead());
+  assert.deepEqual(proposal, {
+    id: "lead-1",
+    companyName: "テスト工務店",
+    proposalFit: "引き渡し後の顧客支援を強化できる可能性",
+  });
+  assert.ok(Object.isFrozen(proposal));
+  assert.equal("contact" in proposal, false);
+  assert.equal("researchNotes" in proposal, false);
+  assert.equal("researchAudit" in proposal, false);
+});
+
+test("requires a valid audited research completion before proposal generation", () => {
+  assert.equal(buildSalesProposal(validLead({ researchComplete: false, researchAudit: null })), null);
+  assert.equal(buildSalesProposal(validLead({ researchAudit: null })), null);
+  assert.equal(buildSalesProposal(validLead({
+    researchAudit: { ...validLead().researchAudit, actorId: "" },
+  })), null);
+  assert.equal(buildSalesProposal(validLead({
+    researchAudit: { ...validLead().researchAudit, completedAt: "invalid" },
+  })), null);
+  assert.equal(buildSalesProposal(validLead({
+    researchAudit: { ...validLead().researchAudit, sources: [] },
+  })), null);
+  assert.equal(buildSalesProposal(validLead({
+    researchAudit: { ...validLead().researchAudit, sources: ["http://example.com/company"] },
+  })), null);
+  assert.equal(buildSalesProposal(validLead({
+    researchAudit: {
+      ...validLead().researchAudit,
+      sources: ["https://example.com/company", "https://example.com/company"],
+    },
+  })), null);
+});
+
+test("requires bounded and safe research notes before proposal generation", () => {
+  assert.equal(buildSalesProposal(validLead({ researchNotes: "" })), null);
+  assert.equal(buildSalesProposal(validLead({ researchNotes: "x".repeat(2_001) })), null);
+  assert.equal(buildSalesProposal(validLead({ researchNotes: "確認済み\0差し替え" })), null);
+});
+
+test("rejects suppressed, incomplete, oversized, and hostile proposal input", () => {
+  assert.equal(buildSalesProposal(validLead({ optedOut: true })), null);
+  assert.equal(buildSalesProposal(validLead({
+    optedOut: false, replies: [{ type: "OPT_OUT" }],
+  })), null);
+  assert.equal(buildSalesProposal(validLead({
+    optedOut: false, replies: [{}],
+  })), null);
+  assert.equal(buildSalesProposal(validLead({ proposalFit: "" })), null);
+  assert.equal(buildSalesProposal(validLead({ companyName: `企業${"x".repeat(160)}` })), null);
+  assert.equal(buildSalesProposal(new Proxy({}, { get() { throw new Error("blocked"); } })), null);
+});
+
+test("proposal page authenticates before one RLS-scoped row read and has no external send path", () => {
+  const page = readFileSync(new URL("../app/sales/proposals/[id]/page.tsx", import.meta.url), "utf8");
+  assert.ok(page.indexOf("supabase.auth.getUser()") < page.indexOf('.from("tasks")'));
+  assert.ok(page.includes('.select("id, content")'));
+  assert.ok(page.includes('.eq("id", id)'));
+  assert.doesNotMatch(page, /service_role|\.insert\(|\.update\(|\.delete\(|fetch\(|openai|lead\.contact|lead\.researchNotes/ui);
+});
+
+test("proposal copy does not promise price, coverage, term, or contract conditions", () => {
+  const page = readFileSync(new URL("../app/sales/proposals/[id]/page.tsx", import.meta.url), "utf8");
+  assert.match(page, /価格、保証範囲、保証期間、契約条件を確約するものではありません/u);
+  assert.match(page, /人間による承認後/u);
+});
+
+test("proposal index explains audited research readiness", () => {
+  const page = readFileSync(new URL("../app/sales/proposals/page.tsx", import.meta.url), "utf8");
+  assert.match(page, /監査付き企業調査が完了した案件/u);
+  assert.match(page, /監査付き企業調査が完了し、提案理由が登録された企業はありません/u);
+});

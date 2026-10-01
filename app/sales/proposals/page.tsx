@@ -1,1 +1,61 @@
-aW1wb3J0IExpbmsgZnJvbSAibmV4dC9saW5rIjsKaW1wb3J0IHsgcmVkaXJlY3QgfSBmcm9tICJuZXh0L25hdmlnYXRpb24iOwppbXBvcnQgeyBidWlsZFNhbGVzUHJvcG9zYWwgfSBmcm9tICJAL2xpYi9zYWxlcy1wcm9wb3NhbC5qcyI7CmltcG9ydCB7IHBhcnNlU2FsZXNMZWFkUmVjb3JkLCBTQUxFU19MRUFEX1JFQ09SRF9QUkVGSVggfSBmcm9tICJAL2xpYi9zYWxlcy1sZWFkLXJlY29yZC5qcyI7CmltcG9ydCB7IGNyZWF0ZUNsaWVudCB9IGZyb20gIkAvdXRpbHMvc3VwYWJhc2Uvc2VydmVyIjsKCnR5cGUgU2FsZXNUYXNrID0geyBpZDogc3RyaW5nOyBjb250ZW50OiBzdHJpbmcgfCBudWxsIH07CgpleHBvcnQgZGVmYXVsdCBhc3luYyBmdW5jdGlvbiBTYWxlc1Byb3Bvc2FsSW5kZXhQYWdlKCkgewogIGNvbnN0IHN1cGFiYXNlID0gYXdhaXQgY3JlYXRlQ2xpZW50KCk7CiAgY29uc3QgeyBkYXRhOiB7IHVzZXIgfSB9ID0gYXdhaXQgc3VwYWJhc2UuYXV0aC5nZXRVc2VyKCk7CiAgaWYgKCF1c2VyKSByZWRpcmVjdCgiL2xvZ2luIik7CgogIGNvbnN0IHsgZGF0YSwgZXJyb3IgfSA9IGF3YWl0IHN1cGFiYXNlLmZyb20oInRhc2tzIikKICAgIC5zZWxlY3QoImlkLCBjb250ZW50IikKICAgIC5saWtlKCJjb250ZW50IiwgYCR7U0FMRVNfTEVBRF9SRUNPUkRfUFJFRklYfSVgKQogICAgLm9yZGVyKCJjcmVhdGVkX2F0IiwgeyBhc2NlbmRpbmc6IGZhbHNlIH0pCiAgICAubGltaXQoMTAwKTsKICBpZiAoZXJyb3IpIHRocm93IG5ldyBFcnJvcigi5o+Q5qGI5pu45a++6LGh44KS5Y+W5b6X44Gn44GN44G+44Gb44KT44Gn44GX44Gf44CCIik7CgogIGNvbnN0IHByb3Bvc2FscyA9ICgoZGF0YSA/PyBbXSkgYXMgU2FsZXNUYXNrW10pCiAgICAubWFwKCh0YXNrKSA9PiBwYXJzZVNhbGVzTGVhZFJlY29yZCh0YXNrLmlkLCB0YXNrLmNvbnRlbnQpKQogICAgLm1hcChidWlsZFNhbGVzUHJvcG9zYWwpCiAgICAuZmlsdGVyKChwcm9wb3NhbCkgPT4gcHJvcG9zYWwgIT09IG51bGwpOwoKICByZXR1cm4gKAogICAgPG1haW4gY2xhc3NOYW1lPSJtaW4taC1zY3JlZW4gYmctWyNmN2Y3ZjVdIHB4LTQgcHktNiBtZDpweC04Ij4KICAgICAgPGRpdiBjbGFzc05hbWU9Im14LWF1dG8gbWF4LXctNXhsIj4KICAgICAgICA8aGVhZGVyIGNsYXNzTmFtZT0ib3Mtc3VyZmFjZSByb3VuZGVkLVsyNHB4XSBwLTYgbWQ6cC04Ij4KICAgICAgICAgIDxwIGNsYXNzTmFtZT0ib3MtZXllYnJvdyI+U2FsZXMgcHJvcG9zYWxzPC9wPgogICAgICAgICAgPGRpdiBjbGFzc05hbWU9Im10LTMgZmxleCBmbGV4LXdyYXAgaXRlbXMtZW5kIGp1c3RpZnktYmV0d2VlbiBnYXAtNCI+CiAgICAgICAgICAgIDxkaXY+CiAgICAgICAgICAgICAgPGgxIGNsYXNzTmFtZT0idGV4dC0zeGwgZm9udC1zZW1pYm9sZCB0cmFja2luZy1bLTAuMDRlbV0gdGV4dC16aW5jLTk1MCI+5LyB5qWt5YilQTTmj5DmoYjmm7g8L2gxPgogICAgICAgICAgICAgIDxwIGNsYXNzTmFtZT0ibXQtMyB0ZXh0LXNtIGxlYWRpbmctNiB0ZXh0LXppbmMtNTAwIj7nm6Pmn7vku5jjgY3kvIHmpa3oqr/mn7vjgYzlrozkuobjgZfjgZ/moYjku7bjga7kuIvmm7jjgY3jgpLnorroqo3jgZfjgIHjg5bjg6njgqbjgrbjgYvjgonljbDliLfjgb7jgZ/jga9QREbkv53lrZjjgafjgY3jgb7jgZnjgII8L3A+CiAgICAgICAgICAgIDwvZGl2PgogICAgICAgICAgICA8TGluayBocmVmPSIvc2FsZXMiIGNsYXNzTmFtZT0icm91bmRlZC14bCBib3JkZXIgYm9yZGVyLXppbmMtMjAwIGJnLXdoaXRlIHB4LTQgcHktMi41IHRleHQtc20gZm9udC1zZW1pYm9sZCB0ZXh0LXppbmMtNzAwIGhvdmVyOmJnLXppbmMtNTAiPuWWtualreWPuOS7pOWhlOOBuOaIu+OCizwvTGluaz4KICAgICAgICAgIDwvZGl2PgogICAgICAgIDwvaGVhZGVyPgoKICAgICAgICA8c2VjdGlvbiBjbGFzc05hbWU9Im9zLXN1cmZhY2UgbXQtNiByb3VuZGVkLVsyMnB4XSBwLTYiIGFyaWEtbGFiZWxsZWRieT0icHJvcG9zYWwtbGlzdC1oZWFkaW5nIj4KICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJmbGV4IGl0ZW1zLWNlbnRlciBqdXN0aWZ5LWJldHdlZW4gZ2FwLTMiPgogICAgICAgICAgICA8aDIgaWQ9InByb3Bvc2FsLWxpc3QtaGVhZGluZyIgY2xhc3NOYW1lPSJ0ZXh0LXhsIGZvbnQtc2VtaWJvbGQgdGV4dC16aW5jLTk1MCI+5o+Q5qGI5pu444KS6YG45oqePC9oMj4KICAgICAgICAgICAgPHNwYW4gY2xhc3NOYW1lPSJyb3VuZGVkLWZ1bGwgYmctemluYy0xMDAgcHgtMyBweS0xIHRleHQteHMgZm9udC1zZW1pYm9sZCB0ZXh0LXppbmMtNjAwIj7mnIDlpKcxMDDnpL48L3NwYW4+CiAgICAgICAgICA8L2Rpdj4KICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJtdC01IGdyaWQgZ2FwLTMgbWQ6Z3JpZC1jb2xzLTIiPgogICAgICAgICAgICB7cHJvcG9zYWxzLm1hcCgocHJvcG9zYWwpID0+ICgKICAgICAgICAgICAgICA8TGluayBrZXk9e3Byb3Bvc2FsLmlkfSBocmVmPXtgL3NhbGVzL3Byb3Bvc2Fscy8ke3Byb3Bvc2FsLmlkfWB9IGNsYXNzTmFtZT0ib3MtY2FyZC1ob3ZlciByb3VuZGVkLTJ4bCBib3JkZXIgYm9yZGVyLXppbmMtMjAwIGJnLXdoaXRlIHAtNCI+CiAgICAgICAgICAgICAgICA8aDMgY2xhc3NOYW1lPSJmb250LXNlbWlib2xkIHRleHQtemluYy05NTAiPntwcm9wb3NhbC5jb21wYW55TmFtZX08L2gzPgogICAgICAgICAgICAgICAgPHAgY2xhc3NOYW1lPSJtdC0yIGxpbmUtY2xhbXAtMyB0ZXh0LXNtIGxlYWRpbmctNiB0ZXh0LXppbmMtNTAwIj57cHJvcG9zYWwucHJvcG9zYWxGaXR9PC9wPgogICAgICAgICAgICAgICAgPHAgY2xhc3NOYW1lPSJtdC0zIHRleHQteHMgZm9udC1zZW1pYm9sZCB0ZXh0LWJsdWUtNzAwIj5BNOODl+ODrOODk+ODpeODvOOCkumWi+OBjyDihpI8L3A+CiAgICAgICAgICAgICAgPC9MaW5rPgogICAgICAgICAgICApKX0KICAgICAgICAgICAge3Byb3Bvc2Fscy5sZW5ndGggPT09IDAgJiYgKAogICAgICAgICAgICAgIDxwIGNsYXNzTmFtZT0icm91bmRlZC0yeGwgYmctemluYy01MCBweC00IHB5LTEwIHRleHQtY2VudGVyIHRleHQtc20gdGV4dC16aW5jLTUwMCBtZDpjb2wtc3Bhbi0yIj7nm6Pmn7vku5jjgY3kvIHmpa3oqr/mn7vjgYzlrozkuobjgZfjgIHmj5DmoYjnkIbnlLHjgYznmbvpjLLjgZXjgozjgZ/kvIHmpa3jga/jgYLjgorjgb7jgZvjgpPjgII8L3A+CiAgICAgICAgICAgICl9CiAgICAgICAgICA8L2Rpdj4KICAgICAgICA8L3NlY3Rpb24+CiAgICAgIDwvZGl2PgogICAgPC9tYWluPgogICk7Cn0K
+import Link from "next/link";
+import { redirect } from "next/navigation";
+import { buildSalesProposal } from "@/lib/sales-proposal.js";
+import { parseSalesLeadRecord, SALES_LEAD_RECORD_PREFIX } from "@/lib/sales-lead-record.js";
+import { createClient } from "@/utils/supabase/server";
+
+type SalesTask = { id: string; content: string | null };
+
+export default async function SalesProposalIndexPage() {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) redirect("/login");
+
+  const { data, error } = await supabase.from("tasks")
+    .select("id, content")
+    .like("content", `${SALES_LEAD_RECORD_PREFIX}%`)
+    .order("created_at", { ascending: false })
+    .limit(100);
+  if (error) throw new Error("提案書対象を取得できませんでした。");
+
+  const proposals = ((data ?? []) as SalesTask[])
+    .map((task) => parseSalesLeadRecord(task.id, task.content))
+    .map(buildSalesProposal)
+    .filter((proposal) => proposal !== null);
+
+  return (
+    <main className="min-h-screen bg-[#f7f7f5] px-4 py-6 md:px-8">
+      <div className="mx-auto max-w-5xl">
+        <header className="os-surface rounded-[24px] p-6 md:p-8">
+          <p className="os-eyebrow">Sales proposals</p>
+          <div className="mt-3 flex flex-wrap items-end justify-between gap-4">
+            <div>
+              <h1 className="text-3xl font-semibold tracking-[-0.04em] text-zinc-950">企業別A4提案書</h1>
+              <p className="mt-3 text-sm leading-6 text-zinc-500">監査付き企業調査が完了した案件の下書きを確認し、ブラウザから印刷またはPDF保存できます。</p>
+            </div>
+            <Link href="/sales" className="rounded-xl border border-zinc-200 bg-white px-4 py-2.5 text-sm font-semibold text-zinc-700 hover:bg-zinc-50">営業司令塔へ戻る</Link>
+          </div>
+        </header>
+
+        <section className="os-surface mt-6 rounded-[22px] p-6" aria-labelledby="proposal-list-heading">
+          <div className="flex items-center justify-between gap-3">
+            <h2 id="proposal-list-heading" className="text-xl font-semibold text-zinc-950">提案書を選択</h2>
+            <span className="rounded-full bg-zinc-100 px-3 py-1 text-xs font-semibold text-zinc-600">最大100社</span>
+          </div>
+          <div className="mt-5 grid gap-3 md:grid-cols-2">
+            {proposals.map((proposal) => (
+              <Link key={proposal.id} href={`/sales/proposals/${proposal.id}`} className="os-card-hover rounded-2xl border border-zinc-200 bg-white p-4">
+                <h3 className="font-semibold text-zinc-950">{proposal.companyName}</h3>
+                <p className="mt-2 line-clamp-3 text-sm leading-6 text-zinc-500">{proposal.proposalFit}</p>
+                <p className="mt-3 text-xs font-semibold text-blue-700">A4プレビューを開く →</p>
+              </Link>
+            ))}
+            {proposals.length === 0 && (
+              <p className="rounded-2xl bg-zinc-50 px-4 py-10 text-center text-sm text-zinc-500 md:col-span-2">監査付き企業調査が完了し、提案理由が登録された企業はありません。</p>
+            )}
+          </div>
+        </section>
+      </div>
+    </main>
+  );
+}

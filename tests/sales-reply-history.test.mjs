@@ -1,1 +1,101 @@
-aW1wb3J0IHRlc3QgZnJvbSAibm9kZTp0ZXN0IjsKaW1wb3J0IGFzc2VydCBmcm9tICJub2RlOmFzc2VydC9zdHJpY3QiOwppbXBvcnQgewogIGhhc1NhbGVzT3B0T3V0RXZpZGVuY2UsCiAgcmVxdWlyZXNPcHRPdXRPbmx5UmVwbHlJbnRha2UsCiAgc2FsZXNSZXBseUludGFrZURlZmF1bHRDaGFubmVsLAp9IGZyb20gIi4uL2xpYi9zYWxlcy1yZXBseS1oaXN0b3J5LmpzIjsKCmNvbnN0IGJhc2UgPSB7CiAgYXBwb2ludG1lbnRDb25maXJtZWQ6IGZhbHNlLAogIHJlcGxpZXM6IFtdLAogIHJlcGx5UmVjb3JkZWRBdDogbnVsbCwKICBtZWV0aW5nT3B0aW9uc1JlY29yZGVkQXQ6IG51bGwsCn07Cgp0ZXN0KCJyZXBseSBpbnRha2UgYWxsb3dzIG5vcm1hbCBjbGFzc2lmaWNhdGlvbnMgYmVmb3JlIHRoZSBmaXJzdCByZXBseSIsICgpID0+IHsKICBhc3NlcnQuZXF1YWwocmVxdWlyZXNPcHRPdXRPbmx5UmVwbHlJbnRha2UoYmFzZSksIGZhbHNlKTsKfSk7Cgp0ZXN0KCJyZXBseSBpbnRha2UgYWxsb3dzIG9ubHkgb3B0LW91dCB3aGlsZSB0aGUgbGF0ZXN0IHJlcGx5IGlzIHVucmVzb2x2ZWQiLCAoKSA9PiB7CiAgYXNzZXJ0LmVxdWFsKHJlcXVpcmVzT3B0T3V0T25seVJlcGx5SW50YWtlKHsKICAgIC4uLmJhc2UsCiAgICByZXBsaWVzOiBbeyB0eXBlOiAiR0VORVJBTF9RVUVTVElPTiIgfV0sCiAgfSksIHRydWUpOwogIGFzc2VydC5lcXVhbChyZXF1aXJlc09wdE91dE9ubHlSZXBseUludGFrZSh7CiAgICAuLi5iYXNlLAogICAgcmVwbGllczogW3sgdHlwZTogIlNDSEVEVUxJTkciIH1dLAogIH0pLCB0cnVlKTsKICBhc3NlcnQuZXF1YWwocmVxdWlyZXNPcHRPdXRPbmx5UmVwbHlJbnRha2UoewogICAgLi4uYmFzZSwKICAgIHJlcGxpZXM6IFt7IHR5cGU6ICJQUklDRSIgfV0sCiAgfSksIHRydWUpOwp9KTsKCnRlc3QoInJlcGx5IGludGFrZSByZW9wZW5zIG5vcm1hbCBjbGFzc2lmaWNhdGlvbnMgYWZ0ZXIgdGhlIGN1cnJlbnQgcmVzcG9uc2UgaXMgcmVjb3JkZWQiLCAoKSA9PiB7CiAgYXNzZXJ0LmVxdWFsKHJlcXVpcmVzT3B0T3V0T25seVJlcGx5SW50YWtlKHsKICAgIC4uLmJhc2UsCiAgICByZXBsaWVzOiBbeyB0eXBlOiAiR0VORVJBTF9RVUVTVElPTiIgfV0sCiAgICByZXBseVJlY29yZGVkQXQ6ICIyMDI2LTA5LTMwVDA4OjAwOjAwLjAwMFoiLAogIH0pLCBmYWxzZSk7CiAgYXNzZXJ0LmVxdWFsKHJlcXVpcmVzT3B0T3V0T25seVJlcGx5SW50YWtlKHsKICAgIC4uLmJhc2UsCiAgICByZXBsaWVzOiBbeyB0eXBlOiAiU0NIRURVTElORyIgfV0sCiAgICBtZWV0aW5nT3B0aW9uc1JlY29yZGVkQXQ6ICIyMDI2LTA5LTMwVDA4OjAwOjAwLjAwMFoiLAogIH0pLCBmYWxzZSk7Cn0pOwoKdGVzdCgicmVwbHkgaW50YWtlIHJlc2VydmVzIHRoZSBuaW50aCBzbG90IGZvciBvcHQtb3V0IGV2ZW4gYWZ0ZXIgY29tcGxldGVkIHdvcmsiLCAoKSA9PiB7CiAgY29uc3QgcmVwbGllcyA9IEFycmF5LmZyb20oeyBsZW5ndGg6IDggfSwgKF8sIGluZGV4KSA9PiAoewogICAgdHlwZTogIkdFTkVSQUxfUVVFU1RJT04iLAogICAgcmVjZWl2ZWRBdDogYDIwMjYtMDktMzBUJHtTdHJpbmcoaW5kZXgpLnBhZFN0YXJ0KDIsICIwIil9OjAwOjAwLjAwMFpgLAogIH0pKTsKICBhc3NlcnQuZXF1YWwocmVxdWlyZXNPcHRPdXRPbmx5UmVwbHlJbnRha2UoewogICAgLi4uYmFzZSwKICAgIHJlcGxpZXMsCiAgICByZXBseVJlY29yZGVkQXQ6ICIyMDI2LTA5LTMwVDA4OjAwOjAwLjAwMFoiLAogIH0pLCB0cnVlKTsKfSk7Cgp0ZXN0KCJyZXBseSBpbnRha2UgZmFpbHMgY2xvc2VkIGZvciBtYWxmb3JtZWQgcmVjb3JkcyIsICgpID0+IHsKICBhc3NlcnQuZXF1YWwocmVxdWlyZXNPcHRPdXRPbmx5UmVwbHlJbnRha2UobnVsbCksIHRydWUpOwogIGFzc2VydC5lcXVhbChyZXF1aXJlc09wdE91dE9ubHlSZXBseUludGFrZSh7IC4uLmJhc2UsIHJlcGxpZXM6ICJpbnZhbGlkIiB9KSwgdHJ1ZSk7Cn0pOwoKdGVzdCgicmVwbHkgaW50YWtlIGRlZmF1bHRzIHRvIHRoZSBsYXRlc3QgY29udmVyc2F0aW9uIGNoYW5uZWwiLCAoKSA9PiB7CiAgYXNzZXJ0LmVxdWFsKHNhbGVzUmVwbHlJbnRha2VEZWZhdWx0Q2hhbm5lbCh7CiAgICAuLi5iYXNlLAogICAgb3V0cmVhY2hEZWxpdmVyeTogeyBjaGFubmVsOiAiRU1BSUwiIH0sCiAgICByZXBsaWVzOiBbeyB0eXBlOiAiR0VORVJBTF9RVUVTVElPTiIsIGNoYW5uZWw6ICJMSU5FIiB9XSwKICB9KSwgIkxJTkUiKTsKICBhc3NlcnQuZXF1YWwoc2FsZXNSZXBseUludGFrZURlZmF1bHRDaGFubmVsKHsKICAgIC4uLmJhc2UsCiAgICBvdXRyZWFjaERlbGl2ZXJ5OiB7IGNoYW5uZWw6ICJMSU5FIiB9LAogIH0pLCAiTElORSIpOwogIGFzc2VydC5lcXVhbChzYWxlc1JlcGx5SW50YWtlRGVmYXVsdENoYW5uZWwoeyAuLi5iYXNlLCBvdXRyZWFjaERlbGl2ZXJ5OiBudWxsIH0pLCAiRU1BSUwiKTsKICBhc3NlcnQuZXF1YWwoc2FsZXNSZXBseUludGFrZURlZmF1bHRDaGFubmVsKG51bGwpLCAiRU1BSUwiKTsKfSk7Cgp0ZXN0KCJ0cmVhdHMgcmVwbHkgaGlzdG9yeSBhcyBhdXRob3JpdGF0aXZlIG9wdC1vdXQgZXZpZGVuY2UiLCAoKSA9PiB7CiAgYXNzZXJ0LmVxdWFsKGhhc1NhbGVzT3B0T3V0RXZpZGVuY2UoeyBvcHRlZE91dDogZmFsc2UsIHJlcGxpZXM6IFt7IHR5cGU6ICJPUFRfT1VUIiB9XSB9KSwgdHJ1ZSk7CiAgYXNzZXJ0LmVxdWFsKGhhc1NhbGVzT3B0T3V0RXZpZGVuY2UoeyBvcHRlZE91dDogdHJ1ZSwgcmVwbGllczogW10gfSksIHRydWUpOwogIGFzc2VydC5lcXVhbChoYXNTYWxlc09wdE91dEV2aWRlbmNlKHsgb3B0ZWRPdXQ6IGZhbHNlLCByZXBsaWVzOiBbXSB9KSwgZmFsc2UpOwogIGFzc2VydC5lcXVhbChoYXNTYWxlc09wdE91dEV2aWRlbmNlKHsgb3B0ZWRPdXQ6IGZhbHNlLCByZXBsaWVzOiAiaW52YWxpZCIgfSksIHRydWUpOwp9KTsKCnRlc3QoImZhaWxzIGNsb3NlZCB3aGVuIGNvbnRhY3Qtc3VwcHJlc3Npb24gZXZpZGVuY2UgaXMgbWFsZm9ybWVkIiwgKCkgPT4gewogIGFzc2VydC5lcXVhbChoYXNTYWxlc09wdE91dEV2aWRlbmNlKHsgb3B0ZWRPdXQ6ICJmYWxzZSIsIHJlcGxpZXM6IFtdIH0pLCB0cnVlKTsKICBhc3NlcnQuZXF1YWwoaGFzU2FsZXNPcHRPdXRFdmlkZW5jZSh7IG9wdGVkT3V0OiBmYWxzZSwgcmVwbGllczogW3t9XSB9KSwgdHJ1ZSk7CiAgYXNzZXJ0LmVxdWFsKGhhc1NhbGVzT3B0T3V0RXZpZGVuY2UoewogICAgb3B0ZWRPdXQ6IGZhbHNlLAogICAgcmVwbGllczogW3sgdHlwZTogIk5PVF9BX1JFUExZIiB9XSwKICB9KSwgdHJ1ZSk7CiAgYXNzZXJ0LmVxdWFsKGhhc1NhbGVzT3B0T3V0RXZpZGVuY2UoewogICAgb3B0ZWRPdXQ6IGZhbHNlLAogICAgcmVwbGllczogQXJyYXkuZnJvbSh7IGxlbmd0aDogMTAgfSwgKCkgPT4gKHsgdHlwZTogIkdFTkVSQUxfUVVFU1RJT04iIH0pKSwKICB9KSwgdHJ1ZSk7CiAgYXNzZXJ0LmVxdWFsKGhhc1NhbGVzT3B0T3V0RXZpZGVuY2UoewogICAgb3B0ZWRPdXQ6IGZhbHNlLAogICAgcmVwbGllczogW3sgdHlwZTogIkdFTkVSQUxfUVVFU1RJT04iIH1dLAogIH0pLCBmYWxzZSk7Cn0pOwo=
+import test from "node:test";
+import assert from "node:assert/strict";
+import {
+  hasSalesOptOutEvidence,
+  requiresOptOutOnlyReplyIntake,
+  salesReplyIntakeDefaultChannel,
+} from "../lib/sales-reply-history.js";
+
+const base = {
+  appointmentConfirmed: false,
+  replies: [],
+  replyRecordedAt: null,
+  meetingOptionsRecordedAt: null,
+};
+
+test("reply intake allows normal classifications before the first reply", () => {
+  assert.equal(requiresOptOutOnlyReplyIntake(base), false);
+});
+
+test("reply intake allows only opt-out while the latest reply is unresolved", () => {
+  assert.equal(requiresOptOutOnlyReplyIntake({
+    ...base,
+    replies: [{ type: "GENERAL_QUESTION" }],
+  }), true);
+  assert.equal(requiresOptOutOnlyReplyIntake({
+    ...base,
+    replies: [{ type: "SCHEDULING" }],
+  }), true);
+  assert.equal(requiresOptOutOnlyReplyIntake({
+    ...base,
+    replies: [{ type: "PRICE" }],
+  }), true);
+});
+
+test("reply intake reopens normal classifications after the current response is recorded", () => {
+  assert.equal(requiresOptOutOnlyReplyIntake({
+    ...base,
+    replies: [{ type: "GENERAL_QUESTION" }],
+    replyRecordedAt: "2026-09-30T08:00:00.000Z",
+  }), false);
+  assert.equal(requiresOptOutOnlyReplyIntake({
+    ...base,
+    replies: [{ type: "SCHEDULING" }],
+    meetingOptionsRecordedAt: "2026-09-30T08:00:00.000Z",
+  }), false);
+});
+
+test("reply intake reserves the ninth slot for opt-out even after completed work", () => {
+  const replies = Array.from({ length: 8 }, (_, index) => ({
+    type: "GENERAL_QUESTION",
+    receivedAt: `2026-09-30T${String(index).padStart(2, "0")}:00:00.000Z`,
+  }));
+  assert.equal(requiresOptOutOnlyReplyIntake({
+    ...base,
+    replies,
+    replyRecordedAt: "2026-09-30T08:00:00.000Z",
+  }), true);
+});
+
+test("reply intake fails closed for malformed records", () => {
+  assert.equal(requiresOptOutOnlyReplyIntake(null), true);
+  assert.equal(requiresOptOutOnlyReplyIntake({ ...base, replies: "invalid" }), true);
+});
+
+test("reply intake defaults to the latest conversation channel", () => {
+  assert.equal(salesReplyIntakeDefaultChannel({
+    ...base,
+    outreachDelivery: { channel: "EMAIL" },
+    replies: [{ type: "GENERAL_QUESTION", channel: "LINE" }],
+  }), "LINE");
+  assert.equal(salesReplyIntakeDefaultChannel({
+    ...base,
+    outreachDelivery: { channel: "LINE" },
+  }), "LINE");
+  assert.equal(salesReplyIntakeDefaultChannel({ ...base, outreachDelivery: null }), "EMAIL");
+  assert.equal(salesReplyIntakeDefaultChannel(null), "EMAIL");
+});
+
+test("treats reply history as authoritative opt-out evidence", () => {
+  assert.equal(hasSalesOptOutEvidence({ optedOut: false, replies: [{ type: "OPT_OUT" }] }), true);
+  assert.equal(hasSalesOptOutEvidence({ optedOut: true, replies: [] }), true);
+  assert.equal(hasSalesOptOutEvidence({ optedOut: false, replies: [] }), false);
+  assert.equal(hasSalesOptOutEvidence({ optedOut: false, replies: "invalid" }), true);
+});
+
+test("fails closed when contact-suppression evidence is malformed", () => {
+  assert.equal(hasSalesOptOutEvidence({ optedOut: "false", replies: [] }), true);
+  assert.equal(hasSalesOptOutEvidence({ optedOut: false, replies: [{}] }), true);
+  assert.equal(hasSalesOptOutEvidence({
+    optedOut: false,
+    replies: [{ type: "NOT_A_REPLY" }],
+  }), true);
+  assert.equal(hasSalesOptOutEvidence({
+    optedOut: false,
+    replies: Array.from({ length: 10 }, () => ({ type: "GENERAL_QUESTION" })),
+  }), true);
+  assert.equal(hasSalesOptOutEvidence({
+    optedOut: false,
+    replies: [{ type: "GENERAL_QUESTION" }],
+  }), false);
+});

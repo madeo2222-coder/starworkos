@@ -1,1 +1,468 @@
-aW1wb3J0IHRlc3QgZnJvbSAibm9kZTp0ZXN0IjsKaW1wb3J0IGFzc2VydCBmcm9tICJub2RlOmFzc2VydC9zdHJpY3QiOwppbXBvcnQgeyBidWlsZFNhbGVzV29ya1F1ZXVlIH0gZnJvbSAiLi4vbGliL3NhbGVzLXdvcmstcXVldWUuanMiOwppbXBvcnQgeyBTQUxFU19BQ1RJT05TIH0gZnJvbSAiLi4vbGliL3NhbGVzLW9yY2hlc3RyYXRvci5qcyI7Cgpjb25zdCBOT1cgPSBuZXcgRGF0ZSgiMjAyNi0wOS0yN1QwMDowMDowMFoiKTsKY29uc3Qgc2VudExlYWQgPSB7CiAgcmVzZWFyY2hDb21wbGV0ZTogdHJ1ZSwKICBvdXRyZWFjaEFwcHJvdmVkOiB0cnVlLAogIG91dHJlYWNoUmVjb3JkZWRBdDogIjIwMjYtMDktMjBUMDA6MDA6MDBaIiwKfTsKCmZ1bmN0aW9uIGNvbmZpcm1lZEFwcG9pbnRtZW50U3RhdGUoewogIHNlbGVjdGVkU2xvdCA9ICIyMDI2LTA5LTI4VDAxOjAwOjAwWiIsCiAgZHVyYXRpb25NaW51dGVzID0gMzAsCiAgY29uZmlybWVkQnkgPSAic2NoZWR1bGVyIiwKICBjb25maXJtZWRBdCA9ICIyMDI2LTA5LTI1VDAzOjAwOjAwWiIsCiAgbWVldGluZ09wdGlvbnNSZWNvcmRlZEF0ID0gIjIwMjYtMDktMjVUMDI6MDA6MDBaIiwKfSA9IHt9KSB7CiAgcmV0dXJuIHsKICAgIHJlcGxpZXM6IFt7IHR5cGU6ICJTQ0hFRFVMSU5HIiwgcmVjZWl2ZWRBdDogIjIwMjYtMDktMjVUMDA6MDA6MDBaIiB9XSwKICAgIG1lZXRpbmdPcHRpb25zQXBwcm92ZWQ6IHRydWUsCiAgICBtZWV0aW5nT3B0aW9uc1JlY29yZGVkQXQsCiAgICBhcHBvaW50bWVudENvbmZpcm1lZDogdHJ1ZSwKICAgIGFwcG9pbnRtZW50OiB7IHNlbGVjdGVkU2xvdCwgZHVyYXRpb25NaW51dGVzLCBjb25maXJtZWRCeSwgY29uZmlybWVkQXQgfSwKICB9Owp9Cgp0ZXN0KCJwcmlvcml0aXplcyBzdG9wIHJlcXVlc3RzLCBodW1hbiByZXZpZXcsIHNjaGVkdWxpbmcsIGFuZCBzYWZlIHByZXBhcmF0aW9uIiwgKCkgPT4gewogIGNvbnN0IHJlc3VsdCA9IGJ1aWxkU2FsZXNXb3JrUXVldWUoWwogICAgeyBpZDogInJlc2VhcmNoIiwgY29tcGFueU5hbWU6ICLmoKrlvI/kvJrnpL7noJTnqbYiLCByZXNlYXJjaENvbXBsZXRlOiBmYWxzZSB9LAogICAgeyBpZDogInJlcGx5IiwgY29tcGFueU5hbWU6ICLmoKrlvI/kvJrnpL7ov5Tkv6EiLCAuLi5zZW50TGVhZCwgcmVwbGllczogW3sgdHlwZTogIkdFTkVSQUxfUVVFU1RJT04iLCByZWNlaXZlZEF0OiAiMjAyNi0wOS0yNlQwMDowMDowMFoiIH1dIH0sCiAgICB7IGlkOiAic2NoZWR1bGUiLCBjb21wYW55TmFtZTogIuagquW8j+S8muekvuaXpeeoiyIsIC4uLnNlbnRMZWFkLCByZXBsaWVzOiBbeyB0eXBlOiAiU0NIRURVTElORyIsIHJlY2VpdmVkQXQ6ICIyMDI2LTA5LTI2VDAwOjAwOjAwWiIgfV0gfSwKICAgIHsgaWQ6ICJyZXZpZXciLCBjb21wYW55TmFtZTogIuagquW8j+S8muekvueiuuiqjSIsIC4uLnNlbnRMZWFkLCByZXBsaWVzOiBbeyB0eXBlOiAiQ09OVFJBQ1QiLCByZWNlaXZlZEF0OiAiMjAyNi0wOS0yNlQwMDowMDowMFoiIH1dIH0sCiAgICB7IGlkOiAic3RvcCIsIGNvbXBhbnlOYW1lOiAi5qCq5byP5Lya56S+5YGc5q2iIiwgLi4uc2VudExlYWQsIG9wdGVkT3V0OiB0cnVlIH0sCiAgXSwgeyBub3c6IE5PVyB9KTsKCiAgYXNzZXJ0LmRlZXBFcXVhbChyZXN1bHQuaXRlbXMubWFwKCh7IGxlYWRJZCwgYWN0aW9uLCBkZWxpdmVyeUFsbG93ZWQgfSkgPT4gKHsgbGVhZElkLCBhY3Rpb24sIGRlbGl2ZXJ5QWxsb3dlZCB9KSksIFsKICAgIHsgbGVhZElkOiAic3RvcCIsIGFjdGlvbjogU0FMRVNfQUNUSU9OUy5TVE9QX0NPTlRBQ1QsIGRlbGl2ZXJ5QWxsb3dlZDogZmFsc2UgfSwKICAgIHsgbGVhZElkOiAicmV2aWV3IiwgYWN0aW9uOiBTQUxFU19BQ1RJT05TLkhVTUFOX1JFVklFVywgZGVsaXZlcnlBbGxvd2VkOiBmYWxzZSB9LAogICAgeyBsZWFkSWQ6ICJzY2hlZHVsZSIsIGFjdGlvbjogU0FMRVNfQUNUSU9OUy5QUkVQQVJFX01FRVRJTkdfT1BUSU9OUywgZGVsaXZlcnlBbGxvd2VkOiBmYWxzZSB9LAogICAgeyBsZWFkSWQ6ICJyZXBseSIsIGFjdGlvbjogU0FMRVNfQUNUSU9OUy5QUkVQQVJFX1JFUExZLCBkZWxpdmVyeUFsbG93ZWQ6IGZhbHNlIH0sCiAgICB7IGxlYWRJZDogInJlc2VhcmNoIiwgYWN0aW9uOiBTQUxFU19BQ1RJT05TLlJFU0VBUkNIX0NPTVBBTlksIGRlbGl2ZXJ5QWxsb3dlZDogZmFsc2UgfSwKICBdKTsKfSk7Cgp0ZXN0KCJmYWlscyBzYWZlIHdoZW4gY2FjaGVkIG9wdC1vdXQgZXZpZGVuY2UgaGFzIGFuIGludmFsaWQgdHlwZSIsICgpID0+IHsKICBjb25zdCByZXN1bHQgPSBidWlsZFNhbGVzV29ya1F1ZXVlKFt7CiAgICBpZDogIm1hbGZvcm1lZC1zdG9wIiwgY29tcGFueU5hbWU6ICLlgZzmraLnirbmhYvnorroqo3npL4iLCAuLi5zZW50TGVhZCwKICAgIG9wdGVkT3V0OiAiZmFsc2UiLAogIH1dLCB7IG5vdzogTk9XIH0pOwoKICBhc3NlcnQuZXF1YWwocmVzdWx0LmNvdW50cy5pbnZhbGlkLCAwKTsKICBhc3NlcnQuZXF1YWwocmVzdWx0Lml0ZW1zWzBdLmFjdGlvbiwgU0FMRVNfQUNUSU9OUy5TVE9QX0NPTlRBQ1QpOwogIGFzc2VydC5lcXVhbChyZXN1bHQuaXRlbXNbMF0ucmVhc29uLCAiT1BUX09VVCIpOwp9KTsKCnRlc3QoImV4Y2x1ZGVzIGEgbGVhZCB3aXRoIGZvcmdlZCBzdXBwbGllZCByZXNlYXJjaCBldmlkZW5jZSIsICgpID0+IHsKICBjb25zdCByZXN1bHQgPSBidWlsZFNhbGVzV29ya1F1ZXVlKFsKICAgIHsKICAgICAgaWQ6ICJmb3JnZWQtcmVzZWFyY2giLAogICAgICBjb21wYW55TmFtZTogIuebo+afu+S4jeato+ekviIsCiAgICAgIHJlc2VhcmNoQ29tcGxldGU6IHRydWUsCiAgICAgIHJlc2VhcmNoTm90ZXM6ICLlhazplovmg4XloLHjgpLnorroqo3muIjjgb8iLAogICAgICByZXNlYXJjaEF1ZGl0OiB7CiAgICAgICAgYWN0b3JJZDogInJlc2VhcmNoZXItMSIsCiAgICAgICAgY29tcGxldGVkQXQ6ICJpbnZhbGlkIiwKICAgICAgICBzb3VyY2VzOiBbImh0dHBzOi8vZXhhbXBsZS5jb20vY29tcGFueSJdLAogICAgICB9LAogICAgfSwKICAgIHsgaWQ6ICJ2YWxpZCIsIGNvbXBhbnlOYW1lOiAi5q2j5bi456S+IiwgcmVzZWFyY2hDb21wbGV0ZTogZmFsc2UgfSwKICBdLCB7IG5vdzogTk9XIH0pOwoKICBhc3NlcnQuZGVlcEVxdWFsKHJlc3VsdC5pdGVtcy5tYXAoKGl0ZW0pID0+IGl0ZW0ubGVhZElkKSwgWyJ2YWxpZCJdKTsKICBhc3NlcnQuZXF1YWwocmVzdWx0LmNvdW50cy5pbnZhbGlkLCAxKTsKfSk7Cgp0ZXN0KCJrZWVwcyBhIG5pbnRoIGZpbmFsIG9wdC1vdXQgYWN0aW9uYWJsZSBhZnRlciBlaWdodCBwcmlvciByZXBsaWVzIiwgKCkgPT4gewogIGNvbnN0IHJlcGxpZXMgPSBBcnJheS5mcm9tKHsgbGVuZ3RoOiA5IH0sIChfLCBpbmRleCkgPT4gKHsKICAgIHR5cGU6IGluZGV4ID09PSA4ID8gIk9QVF9PVVQiIDogIkdFTkVSQUxfUVVFU1RJT04iLAogICAgcmVjZWl2ZWRBdDogYDIwMjYtMDktJHsxOCArIGluZGV4fVQwMDowMDowMFpgLAogIH0pKTsKICBjb25zdCByZXN1bHQgPSBidWlsZFNhbGVzV29ya1F1ZXVlKFt7CiAgICBpZDogImNhcGFjaXR5LXN0b3AiLCBjb21wYW55TmFtZTogIuWBnOatouS+nemgvOekviIsIC4uLnNlbnRMZWFkLAogICAgb3V0cmVhY2hSZWNvcmRlZEF0OiAiMjAyNi0wOS0xN1QwMDowMDowMFoiLCByZXBsaWVzLCBvcHRlZE91dDogdHJ1ZSwKICB9XSwgeyBub3c6IE5PVyB9KTsKICBhc3NlcnQuZXF1YWwocmVzdWx0LmNvdW50cy5pbnZhbGlkLCAwKTsKICBhc3NlcnQuZXF1YWwocmVzdWx0Lml0ZW1zWzBdLmFjdGlvbiwgU0FMRVNfQUNUSU9OUy5TVE9QX0NPTlRBQ1QpOwp9KTsKCnRlc3QoImZhaWxzIHNhZmUgd2hlbiBmaW5hbCBvcHQtb3V0IGV2aWRlbmNlIGFycml2ZXMgYmVmb3JlIHRoZSBjYWNoZWQgZmxhZyIsICgpID0+IHsKICBjb25zdCByZXBsaWVzID0gQXJyYXkuZnJvbSh7IGxlbmd0aDogOSB9LCAoXywgaW5kZXgpID0+ICh7CiAgICB0eXBlOiBpbmRleCA9PT0gOCA/ICJPUFRfT1VUIiA6ICJHRU5FUkFMX1FVRVNUSU9OIiwKICAgIHJlY2VpdmVkQXQ6IGAyMDI2LTA5LSR7MTggKyBpbmRleH1UMDA6MDA6MDBaYCwKICB9KSk7CiAgY29uc3QgcmVzdWx0ID0gYnVpbGRTYWxlc1dvcmtRdWV1ZShbewogICAgaWQ6ICJzdGFsZS1jYXBhY2l0eS1zdG9wIiwgY29tcGFueU5hbWU6ICLlgZzmraLlj43mmKDlvoXjgaHnpL4iLCAuLi5zZW50TGVhZCwKICAgIG91dHJlYWNoUmVjb3JkZWRBdDogIjIwMjYtMDktMTdUMDA6MDA6MDBaIiwgcmVwbGllcywgb3B0ZWRPdXQ6IGZhbHNlLAogIH1dLCB7IG5vdzogTk9XIH0pOwogIGFzc2VydC5lcXVhbChyZXN1bHQuY291bnRzLmludmFsaWQsIDApOwogIGFzc2VydC5lcXVhbChyZXN1bHQuaXRlbXNbMF0uYWN0aW9uLCBTQUxFU19BQ1RJT05TLlNUT1BfQ09OVEFDVCk7Cn0pOwoKdGVzdCgia2VlcHMgZmluYWwgb3B0LW91dCBldmlkZW5jZSB2aXNpYmxlIGFmdGVyIGFwcG9pbnRtZW50IGNvbmZpcm1hdGlvbiIsICgpID0+IHsKICBjb25zdCByZXN1bHQgPSBidWlsZFNhbGVzV29ya1F1ZXVlKFt7CiAgICBpZDogImFwcG9pbnRtZW50LXN0b3AiLCBjb21wYW55TmFtZTogIumdouirh+W+jOWBnOatouekviIsIC4uLnNlbnRMZWFkLAogICAgLi4uY29uZmlybWVkQXBwb2ludG1lbnRTdGF0ZSgpLAogICAgcmVwbGllczogW3sgdHlwZTogIk9QVF9PVVQiLCByZWNlaXZlZEF0OiAiMjAyNi0wOS0yNlQwMjowMDowMFoiIH1dLAogICAgb3B0ZWRPdXQ6IGZhbHNlLAogIH1dLCB7IG5vdzogTk9XIH0pOwogIGFzc2VydC5lcXVhbChyZXN1bHQuY291bnRzLmludmFsaWQsIDApOwogIGFzc2VydC5lcXVhbChyZXN1bHQuaXRlbXNbMF0uYWN0aW9uLCBTQUxFU19BQ1RJT05TLlNUT1BfQ09OVEFDVCk7CiAgYXNzZXJ0LmVxdWFsKHJlc3VsdC5pdGVtc1swXS5yZWFzb24sICJPUFRfT1VUIik7Cn0pOwoKdGVzdCgia2VlcHMgYSBzZW5zaXRpdmUgcmVwbHkgdmlzaWJsZSBhZnRlciBhcHBvaW50bWVudCBjb25maXJtYXRpb24iLCAoKSA9PiB7CiAgY29uc3QgcmVzdWx0ID0gYnVpbGRTYWxlc1dvcmtRdWV1ZShbewogICAgaWQ6ICJhcHBvaW50bWVudC1yZXZpZXciLCBjb21wYW55TmFtZTogIumdouirh+W+jOeiuuiqjeekviIsIC4uLnNlbnRMZWFkLAogICAgLi4uY29uZmlybWVkQXBwb2ludG1lbnRTdGF0ZSgpLAogICAgcmVwbGllczogW3sgdHlwZTogIkNPTlRSQUNUIiwgcmVjZWl2ZWRBdDogIjIwMjYtMDktMjZUMDI6MDA6MDBaIiB9XSwKICB9XSwgeyBub3c6IE5PVyB9KTsKICBhc3NlcnQuZXF1YWwocmVzdWx0LmNvdW50cy5pbnZhbGlkLCAwKTsKICBhc3NlcnQuZXF1YWwocmVzdWx0Lml0ZW1zWzBdLmFjdGlvbiwgU0FMRVNfQUNUSU9OUy5IVU1BTl9SRVZJRVcpOwogIGFzc2VydC5lcXVhbChyZXN1bHQuaXRlbXNbMF0ucmVhc29uLCAiU0VOU0lUSVZFX1JFUExZX0NPTlRSQUNUIik7Cn0pOwoKdGVzdCgia2VlcHMgbWFudWFsIHNlbmQgcmVjb3JkaW5nIHZpc2libGUgYnV0IG9taXRzIGdlbnVpbmVseSBjb21wbGV0ZWQgb3Igd2FpdGluZyBsZWFkcyIsICgpID0+IHsKICBjb25zdCByZXN1bHQgPSBidWlsZFNhbGVzV29ya1F1ZXVlKFsKICAgIHsgaWQ6ICJyZWNvcmQiLCBjb21wYW55TmFtZTogIuiomOmMsuW+heOBoSIsIHJlc2VhcmNoQ29tcGxldGU6IHRydWUsIG91dHJlYWNoQXBwcm92ZWQ6IHRydWUgfSwKICAgIHsgaWQ6ICJ3YWl0aW5nIiwgY29tcGFueU5hbWU6ICLov73lrqLmnJ/pmZDliY0iLCAuLi5zZW50TGVhZCwgb3V0cmVhY2hSZWNvcmRlZEF0OiAiMjAyNi0wOS0yNlQwMDowMDowMFoiIH0sCiAgICB7IGlkOiAiZG9uZSIsIGNvbXBhbnlOYW1lOiAi44Ki44Od56K65a6aIiwgLi4uc2VudExlYWQsIGFwcG9pbnRtZW50Q29uZmlybWVkOiB0cnVlIH0sCiAgXSwgeyBub3c6IE5PVyB9KTsKCiAgYXNzZXJ0LmVxdWFsKHJlc3VsdC5pdGVtcy5sZW5ndGgsIDEpOwogIGFzc2VydC5lcXVhbChyZXN1bHQuaXRlbXNbMF0ubGVhZElkLCAicmVjb3JkIik7CiAgYXNzZXJ0LmVxdWFsKHJlc3VsdC5pdGVtc1swXS5yZWFzb24sICJXQUlUX0ZPUl9IVU1BTl9TRU5EX1JFQ09SRCIpOwogIGFzc2VydC5lcXVhbChyZXN1bHQuY291bnRzLm5vQWN0aW9uLCAxKTsKICBhc3NlcnQuZXF1YWwocmVzdWx0LmNvdW50cy5pbnZhbGlkLCAxKTsKfSk7Cgp0ZXN0KCJrZWVwcyBhcHByb3ZlZCByZXBseSBkZWxpdmVyeSByZWNvcmRpbmcgdmlzaWJsZSIsICgpID0+IHsKICBjb25zdCByZXN1bHQgPSBidWlsZFNhbGVzV29ya1F1ZXVlKFt7CiAgICBpZDogInJlcGx5LXJlY29yZCIsIGNvbXBhbnlOYW1lOiAi6L+U5L+h6KiY6Yyy5b6F44GhIiwgLi4uc2VudExlYWQsCiAgICByZXBsaWVzOiBbeyB0eXBlOiAiR0VORVJBTF9RVUVTVElPTiIsIHJlY2VpdmVkQXQ6ICIyMDI2LTA5LTI2VDAwOjAwOjAwWiIgfV0sCiAgICByZXBseUFwcHJvdmVkOiB0cnVlLAogIH1dLCB7IG5vdzogTk9XIH0pOwoKICBhc3NlcnQuZXF1YWwocmVzdWx0Lml0ZW1zLmxlbmd0aCwgMSk7CiAgYXNzZXJ0LmVxdWFsKHJlc3VsdC5pdGVtc1swXS5sZWFkSWQsICJyZXBseS1yZWNvcmQiKTsKICBhc3NlcnQuZXF1YWwocmVzdWx0Lml0ZW1zWzBdLnJlYXNvbiwgIldBSVRfRk9SX0hVTUFOX1JFUExZX1NFTkRfUkVDT1JEIik7Cn0pOwoKdGVzdCgia2VlcHMgYXBwcm92ZWQgZm9sbG93LXVwIGRlbGl2ZXJ5IHJlY29yZGluZyB2aXNpYmxlIiwgKCkgPT4gewogIGNvbnN0IGZvbGxvd1VwRHJhZnQgPSB7CiAgICBzdWJqZWN0OiAi44GU56K66KqNIiwgYm9keTogIuacrOaWhyIsIHNpZ25hdHVyZTogIue9suWQjSIsCiAgICBzYXZlZEJ5OiAid3JpdGVyIiwgc2F2ZWRBdDogIjIwMjYtMDktMjNUMDA6MDA6MDBaIiwKICB9OwogIGNvbnN0IHJlc3VsdCA9IGJ1aWxkU2FsZXNXb3JrUXVldWUoW3sKICAgIGlkOiAiZm9sbG93LXVwLXNlbmQiLCBjb21wYW55TmFtZTogIui/veWuoumAgeS/oeW+heOBoSIsIC4uLnNlbnRMZWFkLAogICAgZm9sbG93VXBEcmFmdCwgZm9sbG93VXBBcHByb3ZlZDogdHJ1ZSwKICB9XSwgeyBub3c6IE5PVyB9KTsKICBhc3NlcnQuZXF1YWwocmVzdWx0Lml0ZW1zWzBdLmxlYWRJZCwgImZvbGxvdy11cC1zZW5kIik7CiAgYXNzZXJ0LmVxdWFsKHJlc3VsdC5pdGVtc1swXS5yZWFzb24sICJXQUlUX0ZPUl9IVU1BTl9GT0xMT1dfVVBfU0VORF9SRUNPUkQiKTsKfSk7Cgp0ZXN0KCJvbWl0cyBhIHJlcGx5IGFmdGVyIGl0cyBtYW51YWwgZGVsaXZlcnkgaGFzIGJlZW4gcmVjb3JkZWQiLCAoKSA9PiB7CiAgY29uc3QgcmVzdWx0ID0gYnVpbGRTYWxlc1dvcmtRdWV1ZShbewogICAgaWQ6ICJyZXBseS1kb25lIiwgY29tcGFueU5hbWU6ICLov5Tkv6HlrozkuoYiLCAuLi5zZW50TGVhZCwKICAgIHJlcGxpZXM6IFt7IHR5cGU6ICJHRU5FUkFMX1FVRVNUSU9OIiwgcmVjZWl2ZWRBdDogIjIwMjYtMDktMjZUMDA6MDA6MDBaIiB9XSwKICAgIHJlcGx5QXBwcm92ZWQ6IHRydWUsCiAgICByZXBseVJlY29yZGVkQXQ6ICIyMDI2LTA5LTI2VDAxOjAwOjAwWiIsCiAgfV0sIHsgbm93OiBOT1cgfSk7CgogIGFzc2VydC5lcXVhbChyZXN1bHQuaXRlbXMubGVuZ3RoLCAwKTsKICBhc3NlcnQuZXF1YWwocmVzdWx0LmNvdW50cy5ub0FjdGlvbiwgMSk7Cn0pOwoKdGVzdCgia2VlcHMgYXBwcm92ZWQgbWVldGluZy1vcHRpb24gc2VuZGluZyB2aXNpYmxlIiwgKCkgPT4gewogIGNvbnN0IHJlc3VsdCA9IGJ1aWxkU2FsZXNXb3JrUXVldWUoW3sKICAgIGlkOiAibWVldGluZy1zZW5kIiwgY29tcGFueU5hbWU6ICLlgJnoo5zpgIHkv6HlvoXjgaEiLCAuLi5zZW50TGVhZCwKICAgIHJlcGxpZXM6IFt7IHR5cGU6ICJTQ0hFRFVMSU5HIiwgcmVjZWl2ZWRBdDogIjIwMjYtMDktMjZUMDA6MDA6MDBaIiB9XSwKICAgIG1lZXRpbmdPcHRpb25zQXBwcm92ZWQ6IHRydWUsCiAgfV0sIHsgbm93OiBOT1cgfSk7CgogIGFzc2VydC5lcXVhbChyZXN1bHQuaXRlbXMubGVuZ3RoLCAxKTsKICBhc3NlcnQuZXF1YWwocmVzdWx0Lml0ZW1zWzBdLmxlYWRJZCwgIm1lZXRpbmctc2VuZCIpOwogIGFzc2VydC5lcXVhbChyZXN1bHQuaXRlbXNbMF0ucmVhc29uLCAiV0FJVF9GT1JfSFVNQU5fTUVFVElOR19PUFRJT05TX1NFTkRfUkVDT1JEIik7Cn0pOwoKdGVzdCgicXVldWVzIGFwcG9pbnRtZW50IGNvbmZpcm1hdGlvbiBhZnRlciBtZWV0aW5nIG9wdGlvbnMgd2VyZSBkZWxpdmVyZWQiLCAoKSA9PiB7CiAgY29uc3QgcmVzdWx0ID0gYnVpbGRTYWxlc1dvcmtRdWV1ZShbewogICAgaWQ6ICJtZWV0aW5nLXdhaXQiLCBjb21wYW55TmFtZTogIuWAmeijnOWbnuetlOW+heOBoSIsIC4uLnNlbnRMZWFkLAogICAgcmVwbGllczogW3sgdHlwZTogIlNDSEVEVUxJTkciLCByZWNlaXZlZEF0OiAiMjAyNi0wOS0yNlQwMDowMDowMFoiIH1dLAogICAgbWVldGluZ09wdGlvbnNBcHByb3ZlZDogdHJ1ZSwKICAgIG1lZXRpbmdPcHRpb25zUmVjb3JkZWRBdDogIjIwMjYtMDktMjZUMDE6MDA6MDBaIiwKICB9XSwgeyBub3c6IE5PVyB9KTsKCiAgYXNzZXJ0LmVxdWFsKHJlc3VsdC5pdGVtcy5sZW5ndGgsIDEpOwogIGFzc2VydC5lcXVhbChyZXN1bHQuaXRlbXNbMF0uYWN0aW9uLCBTQUxFU19BQ1RJT05TLkNPTkZJUk1fTUVFVElORyk7CiAgYXNzZXJ0LmVxdWFsKHJlc3VsdC5pdGVtc1swXS5yZWFzb24sICJXQUlUX0ZPUl9NRUVUSU5HX0NPTkZJUk1BVElPTiIpOwp9KTsKCnRlc3QoImNvdW50cyBtaXNzaW5nIGFuZCBmb3JnZWQgYXBwb2ludG1lbnQgY29uZmlybWF0aW9uIGNocm9ub2xvZ3kgYXMgaW52YWxpZCIsICgpID0+IHsKICBjb25zdCBjb25maXJtZWQgPSB7CiAgICAuLi5zZW50TGVhZCwKICAgIHJlcGxpZXM6IFt7IHR5cGU6ICJTQ0hFRFVMSU5HIiwgcmVjZWl2ZWRBdDogIjIwMjYtMDktMjVUMDA6MDA6MDBaIiB9XSwKICAgIG1lZXRpbmdPcHRpb25zQXBwcm92ZWQ6IHRydWUsCiAgICBtZWV0aW5nT3B0aW9uc1JlY29yZGVkQXQ6ICIyMDI2LTA5LTI1VDAyOjAwOjAwWiIsCiAgICBhcHBvaW50bWVudENvbmZpcm1lZDogdHJ1ZSwKICAgIGFwcG9pbnRtZW50OiB7CiAgICAgIHNlbGVjdGVkU2xvdDogIjIwMjYtMDktMjdUMDE6MDA6MDBaIiwKICAgICAgZHVyYXRpb25NaW51dGVzOiAzMCwKICAgICAgY29uZmlybWVkQnk6ICJzY2hlZHVsZXIiLAogICAgICBjb25maXJtZWRBdDogIjIwMjYtMDktMjVUMDM6MDA6MDBaIiwKICAgIH0sCiAgfTsKICBjb25zdCByZXN1bHQgPSBidWlsZFNhbGVzV29ya1F1ZXVlKFsKICAgIHsKICAgICAgaWQ6ICJtaXNzaW5nLWNvbmZpcm1hdGlvbi1hdWRpdCIsIGNvbXBhbnlOYW1lOiAi56K65a6a55uj5p+75qyg6JC956S+IiwgLi4uY29uZmlybWVkLAogICAgICBhcHBvaW50bWVudDogewogICAgICAgIHNlbGVjdGVkU2xvdDogY29uZmlybWVkLmFwcG9pbnRtZW50LnNlbGVjdGVkU2xvdCwKICAgICAgICBkdXJhdGlvbk1pbnV0ZXM6IGNvbmZpcm1lZC5hcHBvaW50bWVudC5kdXJhdGlvbk1pbnV0ZXMsCiAgICAgIH0sCiAgICB9LAogICAgewogICAgICBpZDogImNvbmZpcm1lZC1iZWZvcmUtb3B0aW9ucyIsIGNvbXBhbnlOYW1lOiAi5YCZ6KOc6YCB5L+h5YmN56K65a6a56S+IiwgLi4uY29uZmlybWVkLAogICAgICBhcHBvaW50bWVudDogeyAuLi5jb25maXJtZWQuYXBwb2ludG1lbnQsIGNvbmZpcm1lZEF0OiAiMjAyNi0wOS0yNVQwMTo1OTo1OVoiIH0sCiAgICB9LAogICAgewogICAgICBpZDogImNvbmZpcm1lZC10b28tbGF0ZSIsIGNvbXBhbnlOYW1lOiAi6ZaL5aeL55u05YmN56K65a6a56S+IiwgLi4uY29uZmlybWVkLAogICAgICBhcHBvaW50bWVudDogeyAuLi5jb25maXJtZWQuYXBwb2ludG1lbnQsIHNlbGVjdGVkU2xvdDogIjIwMjYtMDktMjVUMDM6MTQ6NTlaIiB9LAogICAgfSwKICAgIHsgaWQ6ICJ2YWxpZC1jb25maXJtYXRpb24iLCBjb21wYW55TmFtZTogIuato+W4uOeiuuWumuekviIsIC4uLmNvbmZpcm1lZCB9LAogIF0sIHsgbm93OiBOT1cgfSk7CgogIGFzc2VydC5kZWVwRXF1YWwocmVzdWx0Lml0ZW1zLm1hcCgoaXRlbSkgPT4gaXRlbS5sZWFkSWQpLCBbInZhbGlkLWNvbmZpcm1hdGlvbiJdKTsKICBhc3NlcnQuZGVlcEVxdWFsKHJlc3VsdC5jb3VudHMsIHsKICAgIHF1ZXVlZDogMSwgaW52YWxpZDogMywgZHVwbGljYXRlOiAwLCBub0FjdGlvbjogMCwgb3ZlcmZsb3c6IDAsCiAgfSk7Cn0pOwoKdGVzdCgiY291bnRzIGZvcmdlZCBhcHByb3ZhbCBhbmQgZGVsaXZlcnkgY2hyb25vbG9neSBhcyBpbnZhbGlkIiwgKCkgPT4gewogIGNvbnN0IHJlc3VsdCA9IGJ1aWxkU2FsZXNXb3JrUXVldWUoWwogICAgewogICAgICBpZDogInJlcGx5LXdpdGhvdXQtYXBwcm92YWwiLCBjb21wYW55TmFtZTogIuacquaJv+iqjei/lOS/oeiomOmMsiIsIC4uLnNlbnRMZWFkLAogICAgICByZXBsaWVzOiBbeyB0eXBlOiAiR0VORVJBTF9RVUVTVElPTiIsIHJlY2VpdmVkQXQ6ICIyMDI2LTA5LTI2VDAwOjAwOjAwWiIgfV0sCiAgICAgIHJlcGx5UmVjb3JkZWRBdDogIjIwMjYtMDktMjZUMDE6MDA6MDBaIiwKICAgIH0sCiAgICB7CiAgICAgIGlkOiAibWVldGluZy1iZWZvcmUtcmVwbHkiLCBjb21wYW55TmFtZTogIui/lOS/oeWJjeWAmeijnOmAgeS/oSIsIC4uLnNlbnRMZWFkLAogICAgICByZXBsaWVzOiBbeyB0eXBlOiAiU0NIRURVTElORyIsIHJlY2VpdmVkQXQ6ICIyMDI2LTA5LTI2VDAwOjAwOjAwWiIgfV0sCiAgICAgIG1lZXRpbmdPcHRpb25zQXBwcm92ZWQ6IHRydWUsCiAgICAgIG1lZXRpbmdPcHRpb25zUmVjb3JkZWRBdDogIjIwMjYtMDktMjVUMjM6NTk6NTlaIiwKICAgIH0sCiAgXSwgeyBub3c6IE5PVyB9KTsKCiAgYXNzZXJ0LmVxdWFsKHJlc3VsdC5pdGVtcy5sZW5ndGgsIDApOwogIGFzc2VydC5lcXVhbChyZXN1bHQuY291bnRzLmludmFsaWQsIDIpOwp9KTsKCnRlc3QoInF1ZXVlcyBhcHBvaW50bWVudCBub3RpY2UgYXBwcm92YWwgYW5kIG1hbnVhbCBkZWxpdmVyeSByZWNvcmRpbmciLCAoKSA9PiB7CiAgY29uc3QgY29uZmlybWVkID0gY29uZmlybWVkQXBwb2ludG1lbnRTdGF0ZSgpOwogIGNvbnN0IGFwcG9pbnRtZW50Tm90aWNlRHJhZnQgPSB7CiAgICBzdWJqZWN0OiAiV2Vi6Z2i6KuH5pel5pmC56K65a6a44Gu44GU5qGI5YaFIiwgYm9keTogIuacrOaWhyIsIHNpZ25hdHVyZTogIue9suWQjSIsCiAgICBzYXZlZEJ5OiAic2NoZWR1bGVyIiwgc2F2ZWRBdDogIjIwMjYtMDktMjdUMDE6MDA6MDBaIiwKICB9OwogIGNvbnN0IHJlc3VsdCA9IGJ1aWxkU2FsZXNXb3JrUXVldWUoWwogICAgewogICAgICBpZDogIm5vdGljZS1yZXZpZXciLCBjb21wYW55TmFtZTogIuahiOWGheaJv+iqjeW+heOBoSIsIC4uLnNlbnRMZWFkLAogICAgICAuLi5jb25maXJtZWQsIGFwcG9pbnRtZW50Tm90aWNlRHJhZnQsCiAgICB9LAogICAgewogICAgICBpZDogIm5vdGljZS1zZW5kIiwgY29tcGFueU5hbWU6ICLmoYjlhoXpgIHkv6HoqJjpjLLlvoXjgaEiLCAuLi5zZW50TGVhZCwKICAgICAgLi4uY29uZmlybWVkLCBhcHBvaW50bWVudE5vdGljZURyYWZ0LAogICAgICBhcHBvaW50bWVudE5vdGljZUFwcHJvdmVkOiB0cnVlLAogICAgfSwKICBdLCB7IG5vdzogTk9XIH0pOwoKICBhc3NlcnQuZGVlcEVxdWFsKHJlc3VsdC5pdGVtcy5tYXAoKHsgbGVhZElkLCBhY3Rpb24sIHJlYXNvbiB9KSA9PiAoeyBsZWFkSWQsIGFjdGlvbiwgcmVhc29uIH0pKSwgWwogICAgewogICAgICBsZWFkSWQ6ICJub3RpY2UtcmV2aWV3IiwgYWN0aW9uOiBTQUxFU19BQ1RJT05TLlBSRVBBUkVfQVBQT0lOVE1FTlRfTk9USUNFLAogICAgICByZWFzb246ICJBUFBPSU5UTUVOVF9OT1RJQ0VfQVBQUk9WQUxfUkVRVUlSRUQiLAogICAgfSwKICAgIHsKICAgICAgbGVhZElkOiAibm90aWNlLXNlbmQiLCBhY3Rpb246IFNBTEVTX0FDVElPTlMuTk9fQUNUSU9OLAogICAgICByZWFzb246ICJXQUlUX0ZPUl9IVU1BTl9BUFBPSU5UTUVOVF9OT1RJQ0VfU0VORF9SRUNPUkQiLAogICAgfSwKICBdKTsKfSk7Cgp0ZXN0KCJxdWV1ZXMgYXBwb2ludG1lbnQgcmVtaW5kZXIgYXBwcm92YWwgYW5kIG1hbnVhbCBkZWxpdmVyeSByZWNvcmRpbmciLCAoKSA9PiB7CiAgY29uc3QgY29uZmlybWVkID0gY29uZmlybWVkQXBwb2ludG1lbnRTdGF0ZSh7IHNlbGVjdGVkU2xvdDogIjIwMjYtMDktMjdUMTI6MDA6MDBaIiB9KTsKICBjb25zdCBub3RpY2UgPSB7CiAgICBhcHBvaW50bWVudE5vdGljZURyYWZ0OiB7CiAgICAgIHN1YmplY3Q6ICLnorrlrprmoYjlhoUiLCBib2R5OiAi5pys5paHIiwgc2lnbmF0dXJlOiAi572y5ZCNIiwKICAgICAgc2F2ZWRCeTogInNjaGVkdWxlciIsIHNhdmVkQXQ6ICIyMDI2LTA5LTI2VDAxOjAwOjAwWiIsCiAgICB9LAogICAgYXBwb2ludG1lbnROb3RpY2VBcHByb3ZlZDogdHJ1ZSwKICAgIGFwcG9pbnRtZW50Tm90aWNlUmVjb3JkZWRBdDogIjIwMjYtMDktMjZUMDI6MDA6MDBaIiwKICB9OwogIGNvbnN0IGFwcG9pbnRtZW50UmVtaW5kZXJEcmFmdCA9IHsKICAgIHN1YmplY3Q6ICJXZWLpnaLoq4fliY3ml6Xjga7jgZTmoYjlhoUiLCBib2R5OiAi5pys5paHIiwgc2lnbmF0dXJlOiAi572y5ZCNIiwKICAgIHNhdmVkQnk6ICJzY2hlZHVsZXIiLCBzYXZlZEF0OiAiMjAyNi0wOS0yN1QwMDowMDowMFoiLAogIH07CiAgY29uc3QgcmVzdWx0ID0gYnVpbGRTYWxlc1dvcmtRdWV1ZShbCiAgICB7CiAgICAgIGlkOiAicmVtaW5kZXItcmV2aWV3IiwgY29tcGFueU5hbWU6ICLliY3ml6XmoYjlhoXmib/oqo3lvoXjgaEiLCAuLi5zZW50TGVhZCwKICAgICAgLi4uY29uZmlybWVkLCAuLi5ub3RpY2UsIGFwcG9pbnRtZW50UmVtaW5kZXJEcmFmdCwKICAgIH0sCiAgICB7CiAgICAgIGlkOiAicmVtaW5kZXItc2VuZCIsIGNvbXBhbnlOYW1lOiAi5YmN5pel5qGI5YaF6YCB5L+h6KiY6Yyy5b6F44GhIiwgLi4uc2VudExlYWQsCiAgICAgIC4uLmNvbmZpcm1lZCwgLi4ubm90aWNlLCBhcHBvaW50bWVudFJlbWluZGVyRHJhZnQsCiAgICAgIGFwcG9pbnRtZW50UmVtaW5kZXJBcHByb3ZlZDogdHJ1ZSwKICAgIH0sCiAgXSwgeyBub3c6IE5PVyB9KTsKCiAgYXNzZXJ0LmRlZXBFcXVhbChyZXN1bHQuaXRlbXMubWFwKCh7IGxlYWRJZCwgYWN0aW9uLCByZWFzb24gfSkgPT4gKHsgbGVhZElkLCBhY3Rpb24sIHJlYXNvbiB9KSksIFsKICAgIHsKICAgICAgbGVhZElkOiAicmVtaW5kZXItcmV2aWV3IiwgYWN0aW9uOiBTQUxFU19BQ1RJT05TLlBSRVBBUkVfQVBQT0lOVE1FTlRfUkVNSU5ERVIsCiAgICAgIHJlYXNvbjogIkFQUE9JTlRNRU5UX1JFTUlOREVSX0FQUFJPVkFMX1JFUVVJUkVEIiwKICAgIH0sCiAgICB7CiAgICAgIGxlYWRJZDogInJlbWluZGVyLXNlbmQiLCBhY3Rpb246IFNBTEVTX0FDVElPTlMuTk9fQUNUSU9OLAogICAgICByZWFzb246ICJXQUlUX0ZPUl9IVU1BTl9BUFBPSU5UTUVOVF9SRU1JTkRFUl9TRU5EX1JFQ09SRCIsCiAgICB9LAogIF0pOwp9KTsKCnRlc3QoInF1ZXVlcyBhbiBlbmRlZCBhcHBvaW50bWVudCB1bnRpbCBpdHMgcmVzdWx0IGlzIHJlY29yZGVkIiwgKCkgPT4gewogIGNvbnN0IHJlc3VsdCA9IGJ1aWxkU2FsZXNXb3JrUXVldWUoW3sKICAgIGlkOiAib3V0Y29tZSIsIGNvbXBhbnlOYW1lOiAi57WQ5p6c5b6F44GhIiwgLi4uc2VudExlYWQsCiAgICAuLi5jb25maXJtZWRBcHBvaW50bWVudFN0YXRlKHsgc2VsZWN0ZWRTbG90OiAiMjAyNi0wOS0yNlQwMTowMDowMFoiIH0pLAogICAgYXBwb2ludG1lbnRPdXRjb21lOiBudWxsLAogIH1dLCB7IG5vdzogTk9XIH0pOwoKICBhc3NlcnQuZXF1YWwocmVzdWx0Lml0ZW1zLmxlbmd0aCwgMSk7CiAgYXNzZXJ0LmVxdWFsKHJlc3VsdC5pdGVtc1swXS5hY3Rpb24sIFNBTEVTX0FDVElPTlMuUkVDT1JEX0FQUE9JTlRNRU5UX09VVENPTUUpOwogIGFzc2VydC5lcXVhbChyZXN1bHQuaXRlbXNbMF0ucmVhc29uLCAiQVBQT0lOVE1FTlRfT1VUQ09NRV9SRVFVSVJFRCIpOwogIGFzc2VydC5lcXVhbChyZXN1bHQuaXRlbXNbMF0ucHJpb3JpdHksIDIpOwp9KTsKCnRlc3QoInF1ZXVlcyByZXF1aXJlZCBhbmQgb3ZlcmR1ZSBwb3N0LW1lZXRpbmcgZm9sbG93LXVwIHdvcmsiLCAoKSA9PiB7CiAgY29uc3QgYmFzZSA9IHsKICAgIC4uLnNlbnRMZWFkLAogICAgLi4uY29uZmlybWVkQXBwb2ludG1lbnRTdGF0ZSh7IHNlbGVjdGVkU2xvdDogIjIwMjYtMDktMjZUMDE6MDA6MDBaIiB9KSwKICAgIGFwcG9pbnRtZW50T3V0Y29tZTogeyByZXN1bHQ6ICJGT0xMT1dfVVAiIH0sCiAgfTsKICBjb25zdCByZXN1bHQgPSBidWlsZFNhbGVzV29ya1F1ZXVlKFsKICAgIHsgaWQ6ICJzY2hlZHVsZS1mb2xsb3ctdXAiLCBjb21wYW55TmFtZTogIuioreWumuW+heOBoSIsIC4uLmJhc2UgfSwKICAgIHsKICAgICAgaWQ6ICJjb21wbGV0ZS1mb2xsb3ctdXAiLCBjb21wYW55TmFtZTogIuacn+mZkOWIsOadpSIsIC4uLmJhc2UsCiAgICAgIHBvc3RNZWV0aW5nRm9sbG93VXA6IHsKICAgICAgICBkdWVBdDogIjIwMjYtMDktMjdUMDA6MDA6MDBaIiwKICAgICAgICBjcmVhdGVkQXQ6ICIyMDI2LTA5LTI2VDAzOjAwOjAwWiIsCiAgICAgICAgY29tcGxldGVkQXQ6IG51bGwsCiAgICAgIH0sCiAgICB9LAogICAgewogICAgICBpZDogImZ1dHVyZS1mb2xsb3ctdXAiLCBjb21wYW55TmFtZTogIuacn+mZkOWJjSIsIC4uLmJhc2UsCiAgICAgIHBvc3RNZWV0aW5nRm9sbG93VXA6IHsKICAgICAgICBkdWVBdDogIjIwMjYtMDktMjhUMDA6MDA6MDBaIiwKICAgICAgICBjcmVhdGVkQXQ6ICIyMDI2LTA5LTI2VDAzOjAwOjAwWiIsCiAgICAgICAgY29tcGxldGVkQXQ6IG51bGwsCiAgICAgIH0sCiAgICB9LAogIF0sIHsgbm93OiBOT1cgfSk7CgogIGFzc2VydC5kZWVwRXF1YWwocmVzdWx0Lml0ZW1zLm1hcCgoeyBsZWFkSWQsIGFjdGlvbiwgcmVhc29uIH0pID0+ICh7IGxlYWRJZCwgYWN0aW9uLCByZWFzb24gfSkpLCBbCiAgICB7CiAgICAgIGxlYWRJZDogImNvbXBsZXRlLWZvbGxvdy11cCIsCiAgICAgIGFjdGlvbjogU0FMRVNfQUNUSU9OUy5DT01QTEVURV9QT1NUX01FRVRJTkdfRk9MTE9XX1VQLAogICAgICByZWFzb246ICJQT1NUX01FRVRJTkdfRk9MTE9XX1VQX0RVRSIsCiAgICB9LAogICAgewogICAgICBsZWFkSWQ6ICJzY2hlZHVsZS1mb2xsb3ctdXAiLAogICAgICBhY3Rpb246IFNBTEVTX0FDVElPTlMuU0NIRURVTEVfUE9TVF9NRUVUSU5HX0ZPTExPV19VUCwKICAgICAgcmVhc29uOiAiUE9TVF9NRUVUSU5HX0ZPTExPV19VUF9SRVFVSVJFRCIsCiAgICB9LAogIF0pOwogIGFzc2VydC5lcXVhbChyZXN1bHQuY291bnRzLm5vQWN0aW9uLCAxKTsKfSk7Cgp0ZXN0KCJkZWR1cGxpY2F0ZXMgbGVhZCBpZHMgYW5kIHJlcG9ydHMgbWFsZm9ybWVkIHJlY29yZHMgd2l0aG91dCB0aHJvd2luZyIsICgpID0+IHsKICBjb25zdCBob3N0aWxlID0gbmV3IFByb3h5KHt9LCB7IGdldCgpIHsgdGhyb3cgbmV3IEVycm9yKCJibG9ja2VkIik7IH0gfSk7CiAgY29uc3QgcmVzdWx0ID0gYnVpbGRTYWxlc1dvcmtRdWV1ZShbCiAgICB7IGlkOiAib25lIiwgY29tcGFueU5hbWU6ICLkuIDnpL7nm64iIH0sCiAgICB7IGlkOiAib25lIiwgY29tcGFueU5hbWU6ICLph43opIciIH0sCiAgICB7IGlkOiAiIiwgY29tcGFueU5hbWU6ICJJROOBquOBlyIgfSwKICAgIGhvc3RpbGUsCiAgXSwgeyBub3c6IE5PVyB9KTsKCiAgYXNzZXJ0LmVxdWFsKHJlc3VsdC5pdGVtcy5sZW5ndGgsIDEpOwogIGFzc2VydC5kZWVwRXF1YWwocmVzdWx0LmNvdW50cywgeyBxdWV1ZWQ6IDEsIGludmFsaWQ6IDIsIGR1cGxpY2F0ZTogMSwgbm9BY3Rpb246IDAsIG92ZXJmbG93OiAwIH0pOwp9KTsKCnRlc3QoInJlamVjdHMgb3ZlcnNpemVkLCBub24tYXJyYXksIGFuZCBpbnRlcm5hbGx5IGludmFsaWQgd29ya2Zsb3cgc3RhdGUiLCAoKSA9PiB7CiAgY29uc3QgcmVzdWx0ID0gYnVpbGRTYWxlc1dvcmtRdWV1ZShbCiAgICB7CiAgICAgIGlkOiAicmVwbHktb3ZlcmZsb3ciLCBjb21wYW55TmFtZTogIui/lOS/oei2hemBjiIsCiAgICAgIC4uLnNlbnRMZWFkLAogICAgICByZXBsaWVzOiBBcnJheS5mcm9tKHsgbGVuZ3RoOiA5IH0sIChfLCBpbmRleCkgPT4gKHsKICAgICAgICB0eXBlOiAiR0VORVJBTF9RVUVTVElPTiIsCiAgICAgICAgcmVjZWl2ZWRBdDogYDIwMjYtMDktMiR7aW5kZXggJSA3fVQwMDowMDowMFpgLAogICAgICB9KSksCiAgICAgIGZvbGxvd1VwczogW10sCiAgICB9LAogICAgewogICAgICBpZDogImZvbGxvdy11cC1vdmVyZmxvdyIsIGNvbXBhbnlOYW1lOiAi6L+95a6i6LaF6YGOIiwKICAgICAgLi4uc2VudExlYWQsCiAgICAgIHJlcGxpZXM6IFtdLAogICAgICBmb2xsb3dVcHM6IFsKICAgICAgICB7IHJlY29yZGVkQXQ6ICIyMDI2LTA5LTIxVDAwOjAwOjAwWiIgfSwKICAgICAgICB7IHJlY29yZGVkQXQ6ICIyMDI2LTA5LTIyVDAwOjAwOjAwWiIgfSwKICAgICAgICB7IHJlY29yZGVkQXQ6ICIyMDI2LTA5LTIzVDAwOjAwOjAwWiIgfSwKICAgICAgXSwKICAgIH0sCiAgICB7IGlkOiAicmVwbHktb2JqZWN0IiwgY29tcGFueU5hbWU6ICLov5Tkv6HphY3liJfkuI3mraMiLCByZXBsaWVzOiB7fSwgZm9sbG93VXBzOiBbXSB9LAogICAgeyBpZDogImZvbGxvdy11cC1vYmplY3QiLCBjb21wYW55TmFtZTogIui/veWuoumFjeWIl+S4jeatoyIsIHJlcGxpZXM6IFtdLCBmb2xsb3dVcHM6IHt9IH0sCiAgICB7IGlkOiAicmVwbHktZW50cnkiLCBjb21wYW55TmFtZTogIui/lOS/oeimgee0oOS4jeatoyIsIC4uLnNlbnRMZWFkLAogICAgICByZXBsaWVzOiBbe31dLCBmb2xsb3dVcHM6IFtdIH0sCiAgICB7IGlkOiAiZm9sbG93LXVwLWVudHJ5IiwgY29tcGFueU5hbWU6ICLov73lrqLopoHntKDkuI3mraMiLCAuLi5zZW50TGVhZCwKICAgICAgcmVwbGllczogW10sIGZvbGxvd1VwczogW3t9XSB9LAogICAgeyBpZDogImNvbnRhY3Qtb3JkZXIiLCBjb21wYW55TmFtZTogIuaOpeinpumghuW6j+S4jeatoyIsIC4uLnNlbnRMZWFkLAogICAgICByZXBsaWVzOiBbeyB0eXBlOiAiR0VORVJBTF9RVUVTVElPTiIsIHJlY2VpdmVkQXQ6ICIyMDI2LTA5LTIxVDAwOjAwOjAwWiIgfV0sCiAgICAgIGZvbGxvd1VwczogW3sgcmVjb3JkZWRBdDogIjIwMjYtMDktMjJUMDA6MDA6MDBaIiB9XSB9LAogICAgewogICAgICBpZDogInBsYW5uZXItaW52YWxpZCIsIGNvbXBhbnlOYW1lOiAi5YaF6YOo54q25oWL5LiN5q2jIiwKICAgICAgLi4uc2VudExlYWQsCiAgICAgIGFwcG9pbnRtZW50Q29uZmlybWVkOiB0cnVlLAogICAgICBhcHBvaW50bWVudDogeyBzZWxlY3RlZFNsb3Q6ICIyMDI2LTA5LTI2VDAxOjAwOjAwWiIsIGR1cmF0aW9uTWludXRlczogMzAgfSwKICAgICAgYXBwb2ludG1lbnRPdXRjb21lOiB7IHJlc3VsdDogIkZPTExPV19VUCIgfSwKICAgICAgcG9zdE1lZXRpbmdGb2xsb3dVcDogeyBkdWVBdDogImludmFsaWQiLCBjcmVhdGVkQXQ6ICIyMDI2LTA5LTI2VDAzOjAwOjAwWiIsIGNvbXBsZXRlZEF0OiBudWxsIH0sCiAgICAgIHJlcGxpZXM6IFtdLAogICAgICBmb2xsb3dVcHM6IFtdLAogICAgfSwKICAgIHsgaWQ6ICJ2YWxpZCIsIGNvbXBhbnlOYW1lOiAi5q2j5bi4IiwgcmVwbGllczogW10sIGZvbGxvd1VwczogW10gfSwKICBdLCB7IG5vdzogTk9XIH0pOwoKICBhc3NlcnQuZGVlcEVxdWFsKHJlc3VsdC5pdGVtcy5tYXAoKGl0ZW0pID0+IGl0ZW0ubGVhZElkKSwgWyJ2YWxpZCJdKTsKICBhc3NlcnQuZGVlcEVxdWFsKHJlc3VsdC5jb3VudHMsIHsKICAgIHF1ZXVlZDogMSwgaW52YWxpZDogOCwgZHVwbGljYXRlOiAwLCBub0FjdGlvbjogMCwgb3ZlcmZsb3c6IDAsCiAgfSk7Cn0pOwoKdGVzdCgiY2FwcyBvdXRwdXQgYW5kIHByZXNlcnZlcyBhIGRldGVybWluaXN0aWMgb3JkZXIiLCAoKSA9PiB7CiAgY29uc3QgcmVzdWx0ID0gYnVpbGRTYWxlc1dvcmtRdWV1ZShbCiAgICB7IGlkOiAiYiIsIGNvbXBhbnlOYW1lOiAi5ZCM5ZCNIiwgcmVzZWFyY2hDb21wbGV0ZTogZmFsc2UgfSwKICAgIHsgaWQ6ICJhIiwgY29tcGFueU5hbWU6ICLlkIzlkI0iLCByZXNlYXJjaENvbXBsZXRlOiBmYWxzZSB9LAogICAgeyBpZDogImMiLCBjb21wYW55TmFtZTogIuWQjOWQjSIsIHJlc2VhcmNoQ29tcGxldGU6IGZhbHNlIH0sCiAgXSwgeyBub3c6IE5PVywgbGltaXQ6IDIgfSk7CgogIGFzc2VydC5lcXVhbChyZXN1bHQuaXRlbXMubGVuZ3RoLCAyKTsKICBhc3NlcnQuZXF1YWwocmVzdWx0LmNvdW50cy5vdmVyZmxvdywgMSk7CiAgYXNzZXJ0LmRlZXBFcXVhbChyZXN1bHQuaXRlbXMubWFwKChpdGVtKSA9PiBpdGVtLmxlYWRJZCksIFsiYSIsICJiIl0pOwp9KTsKCnRlc3QoImZhaWxzIGNsb3NlZCBmb3IgaW52YWxpZCBiYXRjaGVzIGFuZCBkYXRlcyIsICgpID0+IHsKICBhc3NlcnQuZXF1YWwoYnVpbGRTYWxlc1dvcmtRdWV1ZShudWxsLCB7IG5vdzogTk9XIH0pLmludmFsaWRCYXRjaCwgdHJ1ZSk7CiAgYXNzZXJ0LmVxdWFsKGJ1aWxkU2FsZXNXb3JrUXVldWUoW10sIHsgbm93OiBuZXcgRGF0ZSgiaW52YWxpZCIpIH0pLmludmFsaWRCYXRjaCwgdHJ1ZSk7Cn0pOwoKdGVzdCgicmV0dXJucyBpbW11dGFibGUgcXVldWUgcmVjb3JkcyIsICgpID0+IHsKICBjb25zdCByZXN1bHQgPSBidWlsZFNhbGVzV29ya1F1ZXVlKFt7IGlkOiAib25lIiwgY29tcGFueU5hbWU6ICLkuIDnpL7nm64iIH1dLCB7IG5vdzogTk9XIH0pOwogIGFzc2VydC5lcXVhbChPYmplY3QuaXNGcm96ZW4ocmVzdWx0KSwgdHJ1ZSk7CiAgYXNzZXJ0LmVxdWFsKE9iamVjdC5pc0Zyb3plbihyZXN1bHQuaXRlbXMpLCB0cnVlKTsKICBhc3NlcnQuZXF1YWwoT2JqZWN0LmlzRnJvemVuKHJlc3VsdC5pdGVtc1swXSksIHRydWUpOwogIGFzc2VydC5lcXVhbChPYmplY3QuaXNGcm96ZW4ocmVzdWx0LmNvdW50cyksIHRydWUpOwp9KTsK
+import test from "node:test";
+import assert from "node:assert/strict";
+import { buildSalesWorkQueue } from "../lib/sales-work-queue.js";
+import { SALES_ACTIONS } from "../lib/sales-orchestrator.js";
+
+const NOW = new Date("2026-09-27T00:00:00Z");
+const sentLead = {
+  researchComplete: true,
+  outreachApproved: true,
+  outreachRecordedAt: "2026-09-20T00:00:00Z",
+};
+
+function confirmedAppointmentState({
+  selectedSlot = "2026-09-28T01:00:00Z",
+  durationMinutes = 30,
+  confirmedBy = "scheduler",
+  confirmedAt = "2026-09-25T03:00:00Z",
+  meetingOptionsRecordedAt = "2026-09-25T02:00:00Z",
+} = {}) {
+  return {
+    replies: [{ type: "SCHEDULING", receivedAt: "2026-09-25T00:00:00Z" }],
+    meetingOptionsApproved: true,
+    meetingOptionsRecordedAt,
+    appointmentConfirmed: true,
+    appointment: { selectedSlot, durationMinutes, confirmedBy, confirmedAt },
+  };
+}
+
+test("prioritizes stop requests, human review, scheduling, and safe preparation", () => {
+  const result = buildSalesWorkQueue([
+    { id: "research", companyName: "株式会社研究", researchComplete: false },
+    { id: "reply", companyName: "株式会社返信", ...sentLead, replies: [{ type: "GENERAL_QUESTION", receivedAt: "2026-09-26T00:00:00Z" }] },
+    { id: "schedule", companyName: "株式会社日程", ...sentLead, replies: [{ type: "SCHEDULING", receivedAt: "2026-09-26T00:00:00Z" }] },
+    { id: "review", companyName: "株式会社確認", ...sentLead, replies: [{ type: "CONTRACT", receivedAt: "2026-09-26T00:00:00Z" }] },
+    { id: "stop", companyName: "株式会社停止", ...sentLead, optedOut: true },
+  ], { now: NOW });
+
+  assert.deepEqual(result.items.map(({ leadId, action, deliveryAllowed }) => ({ leadId, action, deliveryAllowed })), [
+    { leadId: "stop", action: SALES_ACTIONS.STOP_CONTACT, deliveryAllowed: false },
+    { leadId: "review", action: SALES_ACTIONS.HUMAN_REVIEW, deliveryAllowed: false },
+    { leadId: "schedule", action: SALES_ACTIONS.PREPARE_MEETING_OPTIONS, deliveryAllowed: false },
+    { leadId: "reply", action: SALES_ACTIONS.PREPARE_REPLY, deliveryAllowed: false },
+    { leadId: "research", action: SALES_ACTIONS.RESEARCH_COMPANY, deliveryAllowed: false },
+  ]);
+});
+
+test("fails safe when cached opt-out evidence has an invalid type", () => {
+  const result = buildSalesWorkQueue([{
+    id: "malformed-stop", companyName: "停止状態確認社", ...sentLead,
+    optedOut: "false",
+  }], { now: NOW });
+
+  assert.equal(result.counts.invalid, 0);
+  assert.equal(result.items[0].action, SALES_ACTIONS.STOP_CONTACT);
+  assert.equal(result.items[0].reason, "OPT_OUT");
+});
+
+test("excludes a lead with forged supplied research evidence", () => {
+  const result = buildSalesWorkQueue([
+    {
+      id: "forged-research",
+      companyName: "監査不正社",
+      researchComplete: true,
+      researchNotes: "公開情報を確認済み",
+      researchAudit: {
+        actorId: "researcher-1",
+        completedAt: "invalid",
+        sources: ["https://example.com/company"],
+      },
+    },
+    { id: "valid", companyName: "正常社", researchComplete: false },
+  ], { now: NOW });
+
+  assert.deepEqual(result.items.map((item) => item.leadId), ["valid"]);
+  assert.equal(result.counts.invalid, 1);
+});
+
+test("keeps a ninth final opt-out actionable after eight prior replies", () => {
+  const replies = Array.from({ length: 9 }, (_, index) => ({
+    type: index === 8 ? "OPT_OUT" : "GENERAL_QUESTION",
+    receivedAt: `2026-09-${18 + index}T00:00:00Z`,
+  }));
+  const result = buildSalesWorkQueue([{
+    id: "capacity-stop", companyName: "停止依頼社", ...sentLead,
+    outreachRecordedAt: "2026-09-17T00:00:00Z", replies, optedOut: true,
+  }], { now: NOW });
+  assert.equal(result.counts.invalid, 0);
+  assert.equal(result.items[0].action, SALES_ACTIONS.STOP_CONTACT);
+});
+
+test("fails safe when final opt-out evidence arrives before the cached flag", () => {
+  const replies = Array.from({ length: 9 }, (_, index) => ({
+    type: index === 8 ? "OPT_OUT" : "GENERAL_QUESTION",
+    receivedAt: `2026-09-${18 + index}T00:00:00Z`,
+  }));
+  const result = buildSalesWorkQueue([{
+    id: "stale-capacity-stop", companyName: "停止反映待ち社", ...sentLead,
+    outreachRecordedAt: "2026-09-17T00:00:00Z", replies, optedOut: false,
+  }], { now: NOW });
+  assert.equal(result.counts.invalid, 0);
+  assert.equal(result.items[0].action, SALES_ACTIONS.STOP_CONTACT);
+});
+
+test("keeps final opt-out evidence visible after appointment confirmation", () => {
+  const result = buildSalesWorkQueue([{
+    id: "appointment-stop", companyName: "面談後停止社", ...sentLead,
+    ...confirmedAppointmentState(),
+    replies: [{ type: "OPT_OUT", receivedAt: "2026-09-26T02:00:00Z" }],
+    optedOut: false,
+  }], { now: NOW });
+  assert.equal(result.counts.invalid, 0);
+  assert.equal(result.items[0].action, SALES_ACTIONS.STOP_CONTACT);
+  assert.equal(result.items[0].reason, "OPT_OUT");
+});
+
+test("keeps a sensitive reply visible after appointment confirmation", () => {
+  const result = buildSalesWorkQueue([{
+    id: "appointment-review", companyName: "面談後確認社", ...sentLead,
+    ...confirmedAppointmentState(),
+    replies: [{ type: "CONTRACT", receivedAt: "2026-09-26T02:00:00Z" }],
+  }], { now: NOW });
+  assert.equal(result.counts.invalid, 0);
+  assert.equal(result.items[0].action, SALES_ACTIONS.HUMAN_REVIEW);
+  assert.equal(result.items[0].reason, "SENSITIVE_REPLY_CONTRACT");
+});
+
+test("keeps manual send recording visible but omits genuinely completed or waiting leads", () => {
+  const result = buildSalesWorkQueue([
+    { id: "record", companyName: "記録待ち", researchComplete: true, outreachApproved: true },
+    { id: "waiting", companyName: "追客期限前", ...sentLead, outreachRecordedAt: "2026-09-26T00:00:00Z" },
+    { id: "done", companyName: "アポ確定", ...sentLead, appointmentConfirmed: true },
+  ], { now: NOW });
+
+  assert.equal(result.items.length, 1);
+  assert.equal(result.items[0].leadId, "record");
+  assert.equal(result.items[0].reason, "WAIT_FOR_HUMAN_SEND_RECORD");
+  assert.equal(result.counts.noAction, 1);
+  assert.equal(result.counts.invalid, 1);
+});
+
+test("keeps approved reply delivery recording visible", () => {
+  const result = buildSalesWorkQueue([{
+    id: "reply-record", companyName: "返信記録待ち", ...sentLead,
+    replies: [{ type: "GENERAL_QUESTION", receivedAt: "2026-09-26T00:00:00Z" }],
+    replyApproved: true,
+  }], { now: NOW });
+
+  assert.equal(result.items.length, 1);
+  assert.equal(result.items[0].leadId, "reply-record");
+  assert.equal(result.items[0].reason, "WAIT_FOR_HUMAN_REPLY_SEND_RECORD");
+});
+
+test("keeps approved follow-up delivery recording visible", () => {
+  const followUpDraft = {
+    subject: "ご確認", body: "本文", signature: "署名",
+    savedBy: "writer", savedAt: "2026-09-23T00:00:00Z",
+  };
+  const result = buildSalesWorkQueue([{
+    id: "follow-up-send", companyName: "追客送信待ち", ...sentLead,
+    followUpDraft, followUpApproved: true,
+  }], { now: NOW });
+  assert.equal(result.items[0].leadId, "follow-up-send");
+  assert.equal(result.items[0].reason, "WAIT_FOR_HUMAN_FOLLOW_UP_SEND_RECORD");
+});
+
+test("omits a reply after its manual delivery has been recorded", () => {
+  const result = buildSalesWorkQueue([{
+    id: "reply-done", companyName: "返信完了", ...sentLead,
+    replies: [{ type: "GENERAL_QUESTION", receivedAt: "2026-09-26T00:00:00Z" }],
+    replyApproved: true,
+    replyRecordedAt: "2026-09-26T01:00:00Z",
+  }], { now: NOW });
+
+  assert.equal(result.items.length, 0);
+  assert.equal(result.counts.noAction, 1);
+});
+
+test("keeps approved meeting-option sending visible", () => {
+  const result = buildSalesWorkQueue([{
+    id: "meeting-send", companyName: "候補送信待ち", ...sentLead,
+    replies: [{ type: "SCHEDULING", receivedAt: "2026-09-26T00:00:00Z" }],
+    meetingOptionsApproved: true,
+  }], { now: NOW });
+
+  assert.equal(result.items.length, 1);
+  assert.equal(result.items[0].leadId, "meeting-send");
+  assert.equal(result.items[0].reason, "WAIT_FOR_HUMAN_MEETING_OPTIONS_SEND_RECORD");
+});
+
+test("queues appointment confirmation after meeting options were delivered", () => {
+  const result = buildSalesWorkQueue([{
+    id: "meeting-wait", companyName: "候補回答待ち", ...sentLead,
+    replies: [{ type: "SCHEDULING", receivedAt: "2026-09-26T00:00:00Z" }],
+    meetingOptionsApproved: true,
+    meetingOptionsRecordedAt: "2026-09-26T01:00:00Z",
+  }], { now: NOW });
+
+  assert.equal(result.items.length, 1);
+  assert.equal(result.items[0].action, SALES_ACTIONS.CONFIRM_MEETING);
+  assert.equal(result.items[0].reason, "WAIT_FOR_MEETING_CONFIRMATION");
+});
+
+test("counts missing and forged appointment confirmation chronology as invalid", () => {
+  const confirmed = {
+    ...sentLead,
+    replies: [{ type: "SCHEDULING", receivedAt: "2026-09-25T00:00:00Z" }],
+    meetingOptionsApproved: true,
+    meetingOptionsRecordedAt: "2026-09-25T02:00:00Z",
+    appointmentConfirmed: true,
+    appointment: {
+      selectedSlot: "2026-09-27T01:00:00Z",
+      durationMinutes: 30,
+      confirmedBy: "scheduler",
+      confirmedAt: "2026-09-25T03:00:00Z",
+    },
+  };
+  const result = buildSalesWorkQueue([
+    {
+      id: "missing-confirmation-audit", companyName: "確定監査欠落社", ...confirmed,
+      appointment: {
+        selectedSlot: confirmed.appointment.selectedSlot,
+        durationMinutes: confirmed.appointment.durationMinutes,
+      },
+    },
+    {
+      id: "confirmed-before-options", companyName: "候補送信前確定社", ...confirmed,
+      appointment: { ...confirmed.appointment, confirmedAt: "2026-09-25T01:59:59Z" },
+    },
+    {
+      id: "confirmed-too-late", companyName: "開始直前確定社", ...confirmed,
+      appointment: { ...confirmed.appointment, selectedSlot: "2026-09-25T03:14:59Z" },
+    },
+    { id: "valid-confirmation", companyName: "正常確定社", ...confirmed },
+  ], { now: NOW });
+
+  assert.deepEqual(result.items.map((item) => item.leadId), ["valid-confirmation"]);
+  assert.deepEqual(result.counts, {
+    queued: 1, invalid: 3, duplicate: 0, noAction: 0, overflow: 0,
+  });
+});
+
+test("counts forged approval and delivery chronology as invalid", () => {
+  const result = buildSalesWorkQueue([
+    {
+      id: "reply-without-approval", companyName: "未承認返信記録", ...sentLead,
+      replies: [{ type: "GENERAL_QUESTION", receivedAt: "2026-09-26T00:00:00Z" }],
+      replyRecordedAt: "2026-09-26T01:00:00Z",
+    },
+    {
+      id: "meeting-before-reply", companyName: "返信前候補送信", ...sentLead,
+      replies: [{ type: "SCHEDULING", receivedAt: "2026-09-26T00:00:00Z" }],
+      meetingOptionsApproved: true,
+      meetingOptionsRecordedAt: "2026-09-25T23:59:59Z",
+    },
+  ], { now: NOW });
+
+  assert.equal(result.items.length, 0);
+  assert.equal(result.counts.invalid, 2);
+});
+
+test("queues appointment notice approval and manual delivery recording", () => {
+  const confirmed = confirmedAppointmentState();
+  const appointmentNoticeDraft = {
+    subject: "Web面談日時確定のご案内", body: "本文", signature: "署名",
+    savedBy: "scheduler", savedAt: "2026-09-27T01:00:00Z",
+  };
+  const result = buildSalesWorkQueue([
+    {
+      id: "notice-review", companyName: "案内承認待ち", ...sentLead,
+      ...confirmed, appointmentNoticeDraft,
+    },
+    {
+      id: "notice-send", companyName: "案内送信記録待ち", ...sentLead,
+      ...confirmed, appointmentNoticeDraft,
+      appointmentNoticeApproved: true,
+    },
+  ], { now: NOW });
+
+  assert.deepEqual(result.items.map(({ leadId, action, reason }) => ({ leadId, action, reason })), [
+    {
+      leadId: "notice-review", action: SALES_ACTIONS.PREPARE_APPOINTMENT_NOTICE,
+      reason: "APPOINTMENT_NOTICE_APPROVAL_REQUIRED",
+    },
+    {
+      leadId: "notice-send", action: SALES_ACTIONS.NO_ACTION,
+      reason: "WAIT_FOR_HUMAN_APPOINTMENT_NOTICE_SEND_RECORD",
+    },
+  ]);
+});
+
+test("queues appointment reminder approval and manual delivery recording", () => {
+  const confirmed = confirmedAppointmentState({ selectedSlot: "2026-09-27T12:00:00Z" });
+  const notice = {
+    appointmentNoticeDraft: {
+      subject: "確定案内", body: "本文", signature: "署名",
+      savedBy: "scheduler", savedAt: "2026-09-26T01:00:00Z",
+    },
+    appointmentNoticeApproved: true,
+    appointmentNoticeRecordedAt: "2026-09-26T02:00:00Z",
+  };
+  const appointmentReminderDraft = {
+    subject: "Web面談前日のご案内", body: "本文", signature: "署名",
+    savedBy: "scheduler", savedAt: "2026-09-27T00:00:00Z",
+  };
+  const result = buildSalesWorkQueue([
+    {
+      id: "reminder-review", companyName: "前日案内承認待ち", ...sentLead,
+      ...confirmed, ...notice, appointmentReminderDraft,
+    },
+    {
+      id: "reminder-send", companyName: "前日案内送信記録待ち", ...sentLead,
+      ...confirmed, ...notice, appointmentReminderDraft,
+      appointmentReminderApproved: true,
+    },
+  ], { now: NOW });
+
+  assert.deepEqual(result.items.map(({ leadId, action, reason }) => ({ leadId, action, reason })), [
+    {
+      leadId: "reminder-review", action: SALES_ACTIONS.PREPARE_APPOINTMENT_REMINDER,
+      reason: "APPOINTMENT_REMINDER_APPROVAL_REQUIRED",
+    },
+    {
+      leadId: "reminder-send", action: SALES_ACTIONS.NO_ACTION,
+      reason: "WAIT_FOR_HUMAN_APPOINTMENT_REMINDER_SEND_RECORD",
+    },
+  ]);
+});
+
+test("queues an ended appointment until its result is recorded", () => {
+  const result = buildSalesWorkQueue([{
+    id: "outcome", companyName: "結果待ち", ...sentLead,
+    ...confirmedAppointmentState({ selectedSlot: "2026-09-26T01:00:00Z" }),
+    appointmentOutcome: null,
+  }], { now: NOW });
+
+  assert.equal(result.items.length, 1);
+  assert.equal(result.items[0].action, SALES_ACTIONS.RECORD_APPOINTMENT_OUTCOME);
+  assert.equal(result.items[0].reason, "APPOINTMENT_OUTCOME_REQUIRED");
+  assert.equal(result.items[0].priority, 2);
+});
+
+test("queues required and overdue post-meeting follow-up work", () => {
+  const base = {
+    ...sentLead,
+    ...confirmedAppointmentState({ selectedSlot: "2026-09-26T01:00:00Z" }),
+    appointmentOutcome: { result: "FOLLOW_UP" },
+  };
+  const result = buildSalesWorkQueue([
+    { id: "schedule-follow-up", companyName: "設定待ち", ...base },
+    {
+      id: "complete-follow-up", companyName: "期限到来", ...base,
+      postMeetingFollowUp: {
+        dueAt: "2026-09-27T00:00:00Z",
+        createdAt: "2026-09-26T03:00:00Z",
+        completedAt: null,
+      },
+    },
+    {
+      id: "future-follow-up", companyName: "期限前", ...base,
+      postMeetingFollowUp: {
+        dueAt: "2026-09-28T00:00:00Z",
+        createdAt: "2026-09-26T03:00:00Z",
+        completedAt: null,
+      },
+    },
+  ], { now: NOW });
+
+  assert.deepEqual(result.items.map(({ leadId, action, reason }) => ({ leadId, action, reason })), [
+    {
+      leadId: "complete-follow-up",
+      action: SALES_ACTIONS.COMPLETE_POST_MEETING_FOLLOW_UP,
+      reason: "POST_MEETING_FOLLOW_UP_DUE",
+    },
+    {
+      leadId: "schedule-follow-up",
+      action: SALES_ACTIONS.SCHEDULE_POST_MEETING_FOLLOW_UP,
+      reason: "POST_MEETING_FOLLOW_UP_REQUIRED",
+    },
+  ]);
+  assert.equal(result.counts.noAction, 1);
+});
+
+test("deduplicates lead ids and reports malformed records without throwing", () => {
+  const hostile = new Proxy({}, { get() { throw new Error("blocked"); } });
+  const result = buildSalesWorkQueue([
+    { id: "one", companyName: "一社目" },
+    { id: "one", companyName: "重複" },
+    { id: "", companyName: "IDなし" },
+    hostile,
+  ], { now: NOW });
+
+  assert.equal(result.items.length, 1);
+  assert.deepEqual(result.counts, { queued: 1, invalid: 2, duplicate: 1, noAction: 0, overflow: 0 });
+});
+
+test("rejects oversized, non-array, and internally invalid workflow state", () => {
+  const result = buildSalesWorkQueue([
+    {
+      id: "reply-overflow", companyName: "返信超過",
+      ...sentLead,
+      replies: Array.from({ length: 9 }, (_, index) => ({
+        type: "GENERAL_QUESTION",
+        receivedAt: `2026-09-2${index % 7}T00:00:00Z`,
+      })),
+      followUps: [],
+    },
+    {
+      id: "follow-up-overflow", companyName: "追客超過",
+      ...sentLead,
+      replies: [],
+      followUps: [
+        { recordedAt: "2026-09-21T00:00:00Z" },
+        { recordedAt: "2026-09-22T00:00:00Z" },
+        { recordedAt: "2026-09-23T00:00:00Z" },
+      ],
+    },
+    { id: "reply-object", companyName: "返信配列不正", replies: {}, followUps: [] },
+    { id: "follow-up-object", companyName: "追客配列不正", replies: [], followUps: {} },
+    { id: "reply-entry", companyName: "返信要素不正", ...sentLead,
+      replies: [{}], followUps: [] },
+    { id: "follow-up-entry", companyName: "追客要素不正", ...sentLead,
+      replies: [], followUps: [{}] },
+    { id: "contact-order", companyName: "接触順序不正", ...sentLead,
+      replies: [{ type: "GENERAL_QUESTION", receivedAt: "2026-09-21T00:00:00Z" }],
+      followUps: [{ recordedAt: "2026-09-22T00:00:00Z" }] },
+    {
+      id: "planner-invalid", companyName: "内部状態不正",
+      ...sentLead,
+      appointmentConfirmed: true,
+      appointment: { selectedSlot: "2026-09-26T01:00:00Z", durationMinutes: 30 },
+      appointmentOutcome: { result: "FOLLOW_UP" },
+      postMeetingFollowUp: { dueAt: "invalid", createdAt: "2026-09-26T03:00:00Z", completedAt: null },
+      replies: [],
+      followUps: [],
+    },
+    { id: "valid", companyName: "正常", replies: [], followUps: [] },
+  ], { now: NOW });
+
+  assert.deepEqual(result.items.map((item) => item.leadId), ["valid"]);
+  assert.deepEqual(result.counts, {
+    queued: 1, invalid: 8, duplicate: 0, noAction: 0, overflow: 0,
+  });
+});
+
+test("caps output and preserves a deterministic order", () => {
+  const result = buildSalesWorkQueue([
+    { id: "b", companyName: "同名", researchComplete: false },
+    { id: "a", companyName: "同名", researchComplete: false },
+    { id: "c", companyName: "同名", researchComplete: false },
+  ], { now: NOW, limit: 2 });
+
+  assert.equal(result.items.length, 2);
+  assert.equal(result.counts.overflow, 1);
+  assert.deepEqual(result.items.map((item) => item.leadId), ["a", "b"]);
+});
+
+test("fails closed for invalid batches and dates", () => {
+  assert.equal(buildSalesWorkQueue(null, { now: NOW }).invalidBatch, true);
+  assert.equal(buildSalesWorkQueue([], { now: new Date("invalid") }).invalidBatch, true);
+});
+
+test("returns immutable queue records", () => {
+  const result = buildSalesWorkQueue([{ id: "one", companyName: "一社目" }], { now: NOW });
+  assert.equal(Object.isFrozen(result), true);
+  assert.equal(Object.isFrozen(result.items), true);
+  assert.equal(Object.isFrozen(result.items[0]), true);
+  assert.equal(Object.isFrozen(result.counts), true);
+});

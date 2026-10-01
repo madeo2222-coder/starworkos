@@ -1,1 +1,383 @@
-aW1wb3J0IHRlc3QgZnJvbSAibm9kZTp0ZXN0IjsKaW1wb3J0IGFzc2VydCBmcm9tICJub2RlOmFzc2VydC9zdHJpY3QiOwppbXBvcnQgeyBidWlsZFNhbGVzRnVubmVsTWV0cmljcyB9IGZyb20gIi4uL2xpYi9zYWxlcy1mdW5uZWwtbWV0cmljcy5qcyI7CgpmdW5jdGlvbiBsZWFkKG92ZXJyaWRlcyA9IHt9KSB7CiAgcmV0dXJuIHsKICAgIGlkOiBjcnlwdG8ucmFuZG9tVVVJRCgpLAogICAgcmVzZWFyY2hDb21wbGV0ZTogZmFsc2UsCiAgICBvdXRyZWFjaEFwcHJvdmVkOiBmYWxzZSwKICAgIG91dHJlYWNoUmVjb3JkZWRBdDogbnVsbCwKICAgIHJlcGxpZXM6IFtdLAogICAgZm9sbG93VXBzOiBbXSwKICAgIG1lZXRpbmdPcHRpb25zQXBwcm92ZWQ6IGZhbHNlLAogICAgbWVldGluZ09wdGlvbnNSZWNvcmRlZEF0OiBudWxsLAogICAgYXBwb2ludG1lbnRDb25maXJtZWQ6IGZhbHNlLAogICAgYXBwb2ludG1lbnQ6IG51bGwsCiAgICBhcHBvaW50bWVudE91dGNvbWU6IG51bGwsCiAgICBwb3N0TWVldGluZ0ZvbGxvd1VwOiBudWxsLAogICAgb3B0ZWRPdXQ6IGZhbHNlLAogICAgLi4ub3ZlcnJpZGVzLAogIH07Cn0KCnRlc3QoImJ1aWxkcyB0aGUgcmVnaXN0ZXJlZC10by1hcHBvaW50bWVudCBmdW5uZWwgYW5kIGNvbnZlcnNpb24gcmF0ZXMiLCAoKSA9PiB7CiAgY29uc3Qgc2VudCA9IHsKICAgIHJlc2VhcmNoQ29tcGxldGU6IHRydWUsCiAgICBvdXRyZWFjaEFwcHJvdmVkOiB0cnVlLAogICAgb3V0cmVhY2hSZWNvcmRlZEF0OiAiMjAyNi0wOS0yMFQwMDowMDowMC4wMDBaIiwKICB9OwogIGNvbnN0IG1ldHJpY3MgPSBidWlsZFNhbGVzRnVubmVsTWV0cmljcyhbCiAgICBsZWFkKCksCiAgICBsZWFkKHsgcmVzZWFyY2hDb21wbGV0ZTogdHJ1ZSB9KSwKICAgIGxlYWQoc2VudCksCiAgICBsZWFkKHsgLi4uc2VudCwgcmVwbGllczogW3sgdHlwZTogIkdFTkVSQUxfUVVFU1RJT04iLCByZWNlaXZlZEF0OiAiMjAyNi0wOS0yMVQwMDowMDowMC4wMDBaIiB9XSB9KSwKICAgIGxlYWQoewogICAgICAuLi5zZW50LAogICAgICByZXBsaWVzOiBbeyB0eXBlOiAiU0NIRURVTElORyIsIHJlY2VpdmVkQXQ6ICIyMDI2LTA5LTIxVDAwOjAwOjAwLjAwMFoiIH1dLAogICAgICBtZWV0aW5nT3B0aW9uc0FwcHJvdmVkOiB0cnVlLAogICAgICBtZWV0aW5nT3B0aW9uc1JlY29yZGVkQXQ6ICIyMDI2LTA5LTIxVDAxOjAwOjAwLjAwMFoiLAogICAgICBhcHBvaW50bWVudENvbmZpcm1lZDogdHJ1ZSwKICAgICAgYXBwb2ludG1lbnQ6IHsKICAgICAgICBzZWxlY3RlZFNsb3Q6ICIyMDI2LTA5LTI4VDAxOjAwOjAwLjAwMFoiLAogICAgICAgIGR1cmF0aW9uTWludXRlczogMzAsCiAgICAgICAgY29uZmlybWVkQnk6ICJzY2hlZHVsZXIiLAogICAgICAgIGNvbmZpcm1lZEF0OiAiMjAyNi0wOS0yMVQwMjowMDowMC4wMDBaIiwKICAgICAgfSwKICAgIH0pLAogIF0pOwoKICBhc3NlcnQuZGVlcEVxdWFsKG1ldHJpY3MuZnVubmVsLm1hcCgoeyBjb3VudCB9KSA9PiBjb3VudCksIFs1LCA0LCAzLCAyLCAxXSk7CiAgYXNzZXJ0LmVxdWFsKG1ldHJpY3MucmF0ZXMucmVwbHlSYXRlLCA2Ni43KTsKICBhc3NlcnQuZXF1YWwobWV0cmljcy5yYXRlcy5hcHBvaW50bWVudFJhdGUsIDMzLjMpOwp9KTsKCnRlc3QoInJlcG9ydHMgYXVkaXRlZCBhcHBvaW50bWVudCBvdXRjb21lcyBhbmQgb3ZlcmR1ZSBwb3N0LW1lZXRpbmcgd29yayIsICgpID0+IHsKICBjb25zdCBhcHBvaW50bWVudCA9IHsKICAgIHJlc2VhcmNoQ29tcGxldGU6IHRydWUsCiAgICBvdXRyZWFjaEFwcHJvdmVkOiB0cnVlLAogICAgb3V0cmVhY2hSZWNvcmRlZEF0OiAiMjAyNi0wOS0yMFQwMDowMDowMC4wMDBaIiwKICAgIHJlcGxpZXM6IFt7IHR5cGU6ICJTQ0hFRFVMSU5HIiwgcmVjZWl2ZWRBdDogIjIwMjYtMDktMjFUMDA6MDA6MDAuMDAwWiIgfV0sCiAgICBtZWV0aW5nT3B0aW9uc0FwcHJvdmVkOiB0cnVlLAogICAgbWVldGluZ09wdGlvbnNSZWNvcmRlZEF0OiAiMjAyNi0wOS0yMVQwMTowMDowMC4wMDBaIiwKICAgIGFwcG9pbnRtZW50Q29uZmlybWVkOiB0cnVlLAogICAgYXBwb2ludG1lbnQ6IHsKICAgICAgc2VsZWN0ZWRTbG90OiAiMjAyNi0wOS0yOFQwMTowMDowMC4wMDBaIiwKICAgICAgZHVyYXRpb25NaW51dGVzOiAzMCwKICAgICAgY29uZmlybWVkQnk6ICJzY2hlZHVsZXIiLAogICAgICBjb25maXJtZWRBdDogIjIwMjYtMDktMjFUMDI6MDA6MDAuMDAwWiIsCiAgICB9LAogIH07CiAgY29uc3Qgb3V0Y29tZSA9IChyZXN1bHQpID0+ICh7CiAgICByZXN1bHQsCiAgICBub3RlczogIumdouirh+e1kOaenOOCkueiuuiqjea4iOOBvyIsCiAgICBhY3RvcklkOiAic2FsZXMtbWFuYWdlciIsCiAgICByZWNvcmRlZEF0OiAiMjAyNi0wOS0yOFQwMjowMDowMC4wMDBaIiwKICB9KTsKICBjb25zdCBtZXRyaWNzID0gYnVpbGRTYWxlc0Z1bm5lbE1ldHJpY3MoWwogICAgbGVhZCh7IC4uLmFwcG9pbnRtZW50LCBhcHBvaW50bWVudE91dGNvbWU6IG91dGNvbWUoIldPTiIpIH0pLAogICAgbGVhZCh7IC4uLmFwcG9pbnRtZW50LCBhcHBvaW50bWVudE91dGNvbWU6IG91dGNvbWUoIkxPU1QiKSB9KSwKICAgIGxlYWQoeyAuLi5hcHBvaW50bWVudCwgYXBwb2ludG1lbnRPdXRjb21lOiBvdXRjb21lKCJOT19TSE9XIikgfSksCiAgICBsZWFkKHsKICAgICAgLi4uYXBwb2ludG1lbnQsCiAgICAgIGFwcG9pbnRtZW50T3V0Y29tZTogb3V0Y29tZSgiRk9MTE9XX1VQIiksCiAgICAgIHBvc3RNZWV0aW5nRm9sbG93VXA6IHsKICAgICAgICBhY3Rpb246ICLmrKHlm57mj5DmoYjjgpLmupblgpnjgZnjgosiLAogICAgICAgIG93bmVyOiAi5Za25qWt6LKs5Lu76ICFIiwKICAgICAgICBjcmVhdGVkQnk6ICJzYWxlcy1tYW5hZ2VyIiwKICAgICAgICBjcmVhdGVkQXQ6ICIyMDI2LTA5LTI4VDAyOjMwOjAwLjAwMFoiLAogICAgICAgIGR1ZUF0OiAiMjAyNi0wOS0zMFQwMTowMDowMC4wMDBaIiwKICAgICAgICBjb21wbGV0ZWRCeTogbnVsbCwKICAgICAgICBjb21wbGV0ZWRBdDogbnVsbCwKICAgICAgfSwKICAgIH0pLAogICAgbGVhZChhcHBvaW50bWVudCksCiAgXSwgeyBub3c6IG5ldyBEYXRlKCIyMDI2LTEwLTAxVDAwOjAwOjAwLjAwMFoiKSB9KTsKCiAgYXNzZXJ0LmVxdWFsKG1ldHJpY3MuY291bnRzLmFwcG9pbnRtZW50T3V0Y29tZXMsIDQpOwogIGFzc2VydC5lcXVhbChtZXRyaWNzLmNvdW50cy5wZW5kaW5nQXBwb2ludG1lbnRPdXRjb21lcywgMSk7CiAgYXNzZXJ0LmVxdWFsKG1ldHJpY3MuY291bnRzLndvbiwgMSk7CiAgYXNzZXJ0LmVxdWFsKG1ldHJpY3MuY291bnRzLmxvc3QsIDEpOwogIGFzc2VydC5lcXVhbChtZXRyaWNzLmNvdW50cy5ub1Nob3csIDEpOwogIGFzc2VydC5lcXVhbChtZXRyaWNzLmNvdW50cy5uZXh0QWN0aW9uLCAxKTsKICBhc3NlcnQuZXF1YWwobWV0cmljcy5jb3VudHMucG9zdE1lZXRpbmdGb2xsb3dVcHMsIDEpOwogIGFzc2VydC5lcXVhbChtZXRyaWNzLmNvdW50cy5vdmVyZHVlUG9zdE1lZXRpbmdGb2xsb3dVcHMsIDEpOwogIGFzc2VydC5lcXVhbChtZXRyaWNzLnJhdGVzLmFwcG9pbnRtZW50T3V0Y29tZVJhdGUsIDgwKTsKICBhc3NlcnQuZXF1YWwobWV0cmljcy5yYXRlcy53aW5SYXRlLCA1MCk7Cn0pOwoKdGVzdCgiZXhjbHVkZXMgZm9yZ2VkIG1lZXRpbmcgcmVzdWx0cyBhbmQgaW5jb25zaXN0ZW50IHBvc3QtbWVldGluZyB3b3JrIiwgKCkgPT4gewogIGNvbnN0IGFwcG9pbnRtZW50ID0gewogICAgcmVzZWFyY2hDb21wbGV0ZTogdHJ1ZSwKICAgIG91dHJlYWNoQXBwcm92ZWQ6IHRydWUsCiAgICBvdXRyZWFjaFJlY29yZGVkQXQ6ICIyMDI2LTA5LTIwVDAwOjAwOjAwLjAwMFoiLAogICAgcmVwbGllczogW3sgdHlwZTogIlNDSEVEVUxJTkciLCByZWNlaXZlZEF0OiAiMjAyNi0wOS0yMVQwMDowMDowMC4wMDBaIiB9XSwKICAgIG1lZXRpbmdPcHRpb25zQXBwcm92ZWQ6IHRydWUsCiAgICBtZWV0aW5nT3B0aW9uc1JlY29yZGVkQXQ6ICIyMDI2LTA5LTIxVDAxOjAwOjAwLjAwMFoiLAogICAgYXBwb2ludG1lbnRDb25maXJtZWQ6IHRydWUsCiAgICBhcHBvaW50bWVudDogewogICAgICBzZWxlY3RlZFNsb3Q6ICIyMDI2LTA5LTI4VDAxOjAwOjAwLjAwMFoiLAogICAgICBkdXJhdGlvbk1pbnV0ZXM6IDMwLAogICAgICBjb25maXJtZWRCeTogInNjaGVkdWxlciIsCiAgICAgIGNvbmZpcm1lZEF0OiAiMjAyNi0wOS0yMVQwMjowMDowMC4wMDBaIiwKICAgIH0sCiAgfTsKICBjb25zdCBlYXJseU91dGNvbWUgPSB7CiAgICByZXN1bHQ6ICJXT04iLCBub3RlczogIuaXqeOBmeOBjuOCi+iomOmMsiIsIGFjdG9ySWQ6ICJtYW5hZ2VyIiwKICAgIHJlY29yZGVkQXQ6ICIyMDI2LTA5LTI4VDAxOjEwOjAwLjAwMFoiLAogIH07CiAgY29uc3QgaW5jb25zaXN0ZW50Rm9sbG93VXAgPSB7CiAgICBhY3Rpb246ICLkuI3opoHjgarmrKHlm57lr77lv5wiLCBvd25lcjogIuWWtualreiyrOS7u+iAhSIsIGNyZWF0ZWRCeTogIm1hbmFnZXIiLAogICAgY3JlYXRlZEF0OiAiMjAyNi0wOS0yOFQwMjozMDowMC4wMDBaIiwgZHVlQXQ6ICIyMDI2LTA5LTMwVDAxOjAwOjAwLjAwMFoiLAogICAgY29tcGxldGVkQnk6IG51bGwsIGNvbXBsZXRlZEF0OiBudWxsLAogIH07CiAgY29uc3QgbWV0cmljcyA9IGJ1aWxkU2FsZXNGdW5uZWxNZXRyaWNzKFsKICAgIGxlYWQoKSwKICAgIGxlYWQoeyAuLi5hcHBvaW50bWVudCwgYXBwb2ludG1lbnRPdXRjb21lOiBlYXJseU91dGNvbWUgfSksCiAgICBsZWFkKHsKICAgICAgLi4uYXBwb2ludG1lbnQsCiAgICAgIGFwcG9pbnRtZW50T3V0Y29tZTogewogICAgICAgIHJlc3VsdDogIkxPU1QiLCBub3RlczogIuWkseazqCIsIGFjdG9ySWQ6ICJtYW5hZ2VyIiwKICAgICAgICByZWNvcmRlZEF0OiAiMjAyNi0wOS0yOFQwMjowMDowMC4wMDBaIiwKICAgICAgfSwKICAgICAgcG9zdE1lZXRpbmdGb2xsb3dVcDogaW5jb25zaXN0ZW50Rm9sbG93VXAsCiAgICB9KSwKICBdLCB7IG5vdzogbmV3IERhdGUoIjIwMjYtMTAtMDFUMDA6MDA6MDAuMDAwWiIpIH0pOwoKICBhc3NlcnQuZXF1YWwobWV0cmljcy5jb3VudHMucmVnaXN0ZXJlZCwgMSk7CiAgYXNzZXJ0LmVxdWFsKG1ldHJpY3MuY291bnRzLmludmFsaWQsIDIpOwogIGFzc2VydC5lcXVhbChtZXRyaWNzLmNvdW50cy5hcHBvaW50bWVudE91dGNvbWVzLCAwKTsKfSk7Cgp0ZXN0KCJjb3VudHMgYXVkaXRlZCBzdXBwb3J0aW5nIG91dGNvbWVzIHdpdGhvdXQgcmVhZGluZyBtZXNzYWdlIGNvbnRlbnRzIiwgKCkgPT4gewogIGNvbnN0IG1ldHJpY3MgPSBidWlsZFNhbGVzRnVubmVsTWV0cmljcyhbCiAgICBsZWFkKHsKICAgICAgcmVzZWFyY2hDb21wbGV0ZTogdHJ1ZSwKICAgICAgb3V0cmVhY2hBcHByb3ZlZDogdHJ1ZSwKICAgICAgb3V0cmVhY2hSZWNvcmRlZEF0OiAiMjAyNi0wOS0xOVQwMDowMDowMC4wMDBaIiwKICAgICAgZm9sbG93VXBzOiBbeyByZWNvcmRlZEF0OiAiMjAyNi0wOS0yMFQwMDowMDowMC4wMDBaIiB9XSwKICAgIH0pLAogICAgbGVhZCh7CiAgICAgIHJlc2VhcmNoQ29tcGxldGU6IHRydWUsCiAgICAgIG91dHJlYWNoQXBwcm92ZWQ6IHRydWUsCiAgICAgIG91dHJlYWNoUmVjb3JkZWRBdDogIjIwMjYtMDktMjBUMDA6MDA6MDAuMDAwWiIsCiAgICAgIHJlcGxpZXM6IFt7IHR5cGU6ICJTQ0hFRFVMSU5HIiwgcmVjZWl2ZWRBdDogIjIwMjYtMDktMjFUMDA6MDA6MDAuMDAwWiIsIG1lc3NhZ2U6ICLnp5jlr4YiIH1dLAogICAgICBtZWV0aW5nT3B0aW9uc0FwcHJvdmVkOiB0cnVlLAogICAgICBtZWV0aW5nT3B0aW9uc1JlY29yZGVkQXQ6ICIyMDI2LTA5LTIxVDAxOjAwOjAwLjAwMFoiLAogICAgfSksCiAgICBsZWFkKHsKICAgICAgcmVzZWFyY2hDb21wbGV0ZTogdHJ1ZSwKICAgICAgb3V0cmVhY2hBcHByb3ZlZDogdHJ1ZSwKICAgICAgb3V0cmVhY2hSZWNvcmRlZEF0OiAiMjAyNi0wOS0yMFQwMDowMDowMC4wMDBaIiwKICAgICAgcmVwbGllczogW3sgdHlwZTogIk9QVF9PVVQiLCByZWNlaXZlZEF0OiAiMjAyNi0wOS0yMVQwMDowMDowMC4wMDBaIiB9XSwKICAgICAgb3B0ZWRPdXQ6IHRydWUsCiAgICB9KSwKICBdKTsKCiAgYXNzZXJ0LmVxdWFsKG1ldHJpY3MuY291bnRzLmZvbGxvd1VwTGVhZHMsIDEpOwogIGFzc2VydC5lcXVhbChtZXRyaWNzLmNvdW50cy5tZWV0aW5nT3B0aW9uc1NlbnQsIDEpOwogIGFzc2VydC5lcXVhbChtZXRyaWNzLmNvdW50cy5vcHRlZE91dCwgMSk7CiAgYXNzZXJ0LmVxdWFsKCJtZXNzYWdlIiBpbiBtZXRyaWNzLmZ1bm5lbFswXSwgZmFsc2UpOwp9KTsKCnRlc3QoImV4Y2x1ZGVzIGZvcmdlZCBtZWV0aW5nLW9wdGlvbiBhcHByb3ZhbCBhbmQgZGVsaXZlcnkgY2hyb25vbG9neSIsICgpID0+IHsKICBjb25zdCBzZW50ID0gewogICAgcmVzZWFyY2hDb21wbGV0ZTogdHJ1ZSwKICAgIG91dHJlYWNoQXBwcm92ZWQ6IHRydWUsCiAgICBvdXRyZWFjaFJlY29yZGVkQXQ6ICIyMDI2LTA5LTIwVDAwOjAwOjAwLjAwMFoiLAogICAgcmVwbGllczogW3sgdHlwZTogIlNDSEVEVUxJTkciLCByZWNlaXZlZEF0OiAiMjAyNi0wOS0yMVQwMDowMDowMC4wMDBaIiB9XSwKICB9OwogIGNvbnN0IG1ldHJpY3MgPSBidWlsZFNhbGVzRnVubmVsTWV0cmljcyhbCiAgICBsZWFkKHsKICAgICAgLi4uc2VudCwKICAgICAgbWVldGluZ09wdGlvbnNSZWNvcmRlZEF0OiAiMjAyNi0wOS0yMVQwMTowMDowMC4wMDBaIiwKICAgIH0pLAogICAgbGVhZCh7CiAgICAgIC4uLnNlbnQsCiAgICAgIG1lZXRpbmdPcHRpb25zQXBwcm92ZWQ6IHRydWUsCiAgICAgIG1lZXRpbmdPcHRpb25zUmVjb3JkZWRBdDogIjIwMjYtMDktMjBUMjM6NTk6NTkuOTk5WiIsCiAgICB9KSwKICAgIGxlYWQoewogICAgICAuLi5zZW50LAogICAgICBtZWV0aW5nT3B0aW9uc0FwcHJvdmVkOiB0cnVlLAogICAgICBtZWV0aW5nT3B0aW9uc1JlY29yZGVkQXQ6ICIyMDI2LTA5LTIxVDAxOjAwOjAwLjAwMFoiLAogICAgfSksCiAgXSk7CgogIGFzc2VydC5lcXVhbChtZXRyaWNzLmNvdW50cy5pbnZhbGlkLCAyKTsKICBhc3NlcnQuZXF1YWwobWV0cmljcy5jb3VudHMucmVnaXN0ZXJlZCwgMSk7CiAgYXNzZXJ0LmVxdWFsKG1ldHJpY3MuY291bnRzLm1lZXRpbmdPcHRpb25zU2VudCwgMSk7Cn0pOwoKdGVzdCgiZXhjbHVkZXMgYXBwb2ludG1lbnRzIHdpdGggbWlzc2luZyBvciBmb3JnZWQgY29uZmlybWF0aW9uIGNocm9ub2xvZ3kiLCAoKSA9PiB7CiAgY29uc3Qgc2VudCA9IHsKICAgIHJlc2VhcmNoQ29tcGxldGU6IHRydWUsCiAgICBvdXRyZWFjaEFwcHJvdmVkOiB0cnVlLAogICAgb3V0cmVhY2hSZWNvcmRlZEF0OiAiMjAyNi0wOS0yMFQwMDowMDowMC4wMDBaIiwKICAgIHJlcGxpZXM6IFt7IHR5cGU6ICJTQ0hFRFVMSU5HIiwgcmVjZWl2ZWRBdDogIjIwMjYtMDktMjFUMDA6MDA6MDAuMDAwWiIgfV0sCiAgICBtZWV0aW5nT3B0aW9uc0FwcHJvdmVkOiB0cnVlLAogICAgbWVldGluZ09wdGlvbnNSZWNvcmRlZEF0OiAiMjAyNi0wOS0yMVQwMTowMDowMC4wMDBaIiwKICAgIGFwcG9pbnRtZW50Q29uZmlybWVkOiB0cnVlLAogIH07CiAgY29uc3QgdmFsaWRBcHBvaW50bWVudCA9IHsKICAgIHNlbGVjdGVkU2xvdDogIjIwMjYtMDktMjFUMDM6MDA6MDAuMDAwWiIsCiAgICBkdXJhdGlvbk1pbnV0ZXM6IDMwLAogICAgY29uZmlybWVkQnk6ICJzY2hlZHVsZXIiLAogICAgY29uZmlybWVkQXQ6ICIyMDI2LTA5LTIxVDAyOjAwOjAwLjAwMFoiLAogIH07CiAgY29uc3QgbWV0cmljcyA9IGJ1aWxkU2FsZXNGdW5uZWxNZXRyaWNzKFsKICAgIGxlYWQoewogICAgICAuLi5zZW50LAogICAgICBhcHBvaW50bWVudDogeyBzZWxlY3RlZFNsb3Q6IHZhbGlkQXBwb2ludG1lbnQuc2VsZWN0ZWRTbG90LCBkdXJhdGlvbk1pbnV0ZXM6IDMwIH0sCiAgICB9KSwKICAgIGxlYWQoewogICAgICAuLi5zZW50LAogICAgICBhcHBvaW50bWVudDogeyAuLi52YWxpZEFwcG9pbnRtZW50LCBjb25maXJtZWRBdDogIjIwMjYtMDktMjFUMDA6NTk6NTkuOTk5WiIgfSwKICAgIH0pLAogICAgbGVhZCh7CiAgICAgIC4uLnNlbnQsCiAgICAgIGFwcG9pbnRtZW50OiB7CiAgICAgICAgLi4udmFsaWRBcHBvaW50bWVudCwKICAgICAgICBzZWxlY3RlZFNsb3Q6ICIyMDI2LTA5LTIxVDAyOjE0OjU5Ljk5OVoiLAogICAgICB9LAogICAgfSksCiAgICBsZWFkKHsgLi4uc2VudCwgYXBwb2ludG1lbnQ6IHZhbGlkQXBwb2ludG1lbnQgfSksCiAgXSk7CgogIGFzc2VydC5lcXVhbChtZXRyaWNzLmNvdW50cy5pbnZhbGlkLCAzKTsKICBhc3NlcnQuZXF1YWwobWV0cmljcy5jb3VudHMucmVnaXN0ZXJlZCwgMSk7CiAgYXNzZXJ0LmVxdWFsKG1ldHJpY3MuY291bnRzLmFwcG9pbnRtZW50cywgMSk7CiAgYXNzZXJ0LmVxdWFsKG1ldHJpY3MucmF0ZXMuYXBwb2ludG1lbnRSYXRlLCAxMDApOwp9KTsKCnRlc3QoInJlamVjdHMgdW5zdXBwb3J0ZWQgcmVwbHkgdHlwZXMgYW5kIG9wdC1vdXQgZmxhZ3MgaW5jb25zaXN0ZW50IHdpdGggaGlzdG9yeSIsICgpID0+IHsKICBjb25zdCBzZW50ID0gewogICAgcmVzZWFyY2hDb21wbGV0ZTogdHJ1ZSwKICAgIG91dHJlYWNoQXBwcm92ZWQ6IHRydWUsCiAgICBvdXRyZWFjaFJlY29yZGVkQXQ6ICIyMDI2LTA5LTIwVDAwOjAwOjAwLjAwMFoiLAogIH07CiAgY29uc3QgcmVwbHkgPSAodHlwZSkgPT4gKHsgdHlwZSwgcmVjZWl2ZWRBdDogIjIwMjYtMDktMjFUMDA6MDA6MDAuMDAwWiIgfSk7CiAgY29uc3QgaW52YWxpZFN0YXRlcyA9IFsKICAgIHsgb3B0ZWRPdXQ6IHRydWUgfSwKICAgIHsgb3B0ZWRPdXQ6ICJmYWxzZSIgfSwKICAgIHsgb3B0ZWRPdXQ6IGZhbHNlLCByZXBsaWVzOiBbcmVwbHkoIk9QVF9PVVQiKV0gfSwKICAgIHsgb3B0ZWRPdXQ6IHRydWUsIHJlcGxpZXM6IFtyZXBseSgiR0VORVJBTF9RVUVTVElPTiIpXSB9LAogICAgeyBvcHRlZE91dDogdHJ1ZSwgcmVwbGllczogW3JlcGx5KCJPUFRfT1VUIiksIHJlcGx5KCJPUFRfT1VUIildIH0sCiAgICB7IG9wdGVkT3V0OiB0cnVlLCByZXBsaWVzOiBbcmVwbHkoIk9QVF9PVVQiKSwgcmVwbHkoIkdFTkVSQUxfUVVFU1RJT04iKV0gfSwKICAgIHsgcmVwbGllczogW3JlcGx5KCJOT1RfQV9SRVBMWV9UWVBFIildIH0sCiAgICB7IHJlcGxpZXM6IFtyZXBseSgidG9TdHJpbmciKV0gfSwKICBdOwogIGZvciAoY29uc3QgaW52YWxpZCBvZiBpbnZhbGlkU3RhdGVzKSB7CiAgICBjb25zdCBtZXRyaWNzID0gYnVpbGRTYWxlc0Z1bm5lbE1ldHJpY3MoW2xlYWQoc2VudCksIGxlYWQoeyAuLi5zZW50LCAuLi5pbnZhbGlkIH0pXSk7CiAgICBhc3NlcnQuZXF1YWwobWV0cmljcy5jb3VudHMuaW52YWxpZCwgMSwgSlNPTi5zdHJpbmdpZnkoaW52YWxpZCkpOwogICAgYXNzZXJ0LmVxdWFsKG1ldHJpY3MuY291bnRzLnJlZ2lzdGVyZWQsIDEpOwogICAgYXNzZXJ0LmVxdWFsKG1ldHJpY3MuY291bnRzLm91dHJlYWNoU2VudCwgMSk7CiAgICBhc3NlcnQuZXF1YWwobWV0cmljcy5jb3VudHMucmVwbGllZCwgMCk7CiAgICBhc3NlcnQuZXF1YWwobWV0cmljcy5jb3VudHMub3B0ZWRPdXQsIDApOwogICAgYXNzZXJ0LmVxdWFsKG1ldHJpY3MucmF0ZXMucmVwbHlSYXRlLCAwKTsKICB9Cn0pOwoKdGVzdCgiY291bnRzIGEgZmluYWwgb3B0LW91dCBhdCByZXBseSBjYXBhY2l0eSBhbmQgYWNjZXB0cyB0aGUgZXhwbGljaXQgVU5LTk9XTiBjYXRlZ29yeSIsICgpID0+IHsKICBjb25zdCBzZW50ID0gewogICAgcmVzZWFyY2hDb21wbGV0ZTogdHJ1ZSwKICAgIG91dHJlYWNoQXBwcm92ZWQ6IHRydWUsCiAgICBvdXRyZWFjaFJlY29yZGVkQXQ6ICIyMDI2LTA5LTIwVDAwOjAwOjAwLjAwMFoiLAogIH07CiAgY29uc3QgcmVwbGllcyA9IEFycmF5LmZyb20oeyBsZW5ndGg6IDkgfSwgKF8sIGluZGV4KSA9PiAoewogICAgdHlwZTogaW5kZXggPT09IDggPyAiT1BUX09VVCIgOiAiR0VORVJBTF9RVUVTVElPTiIsCiAgICByZWNlaXZlZEF0OiBgMjAyNi0wOS0kezIxICsgaW5kZXh9VDAwOjAwOjAwLjAwMFpgLAogIH0pKTsKICBjb25zdCBtZXRyaWNzID0gYnVpbGRTYWxlc0Z1bm5lbE1ldHJpY3MoWwogICAgbGVhZCh7IC4uLnNlbnQsIG9wdGVkT3V0OiB0cnVlLCByZXBsaWVzIH0pLAogICAgbGVhZCh7IC4uLnNlbnQsIHJlcGxpZXM6IFt7IHR5cGU6ICJVTktOT1dOIiwgcmVjZWl2ZWRBdDogIjIwMjYtMDktMjFUMDA6MDA6MDAuMDAwWiIgfV0gfSksCiAgXSk7CiAgYXNzZXJ0LmVxdWFsKG1ldHJpY3MuY291bnRzLmludmFsaWQsIDApOwogIGFzc2VydC5lcXVhbChtZXRyaWNzLmNvdW50cy5yZXBsaWVkLCAyKTsKICBhc3NlcnQuZXF1YWwobWV0cmljcy5jb3VudHMub3B0ZWRPdXQsIDEpOwogIGFzc2VydC5lcXVhbChtZXRyaWNzLnJhdGVzLnJlcGx5UmF0ZSwgMTAwKTsKfSk7Cgp0ZXN0KCJzaG93cyB1bmF2YWlsYWJsZSByYXRlcyBpbnN0ZWFkIG9mIGEgbWlzbGVhZGluZyB6ZXJvIHBlcmNlbnQiLCAoKSA9PiB7CiAgY29uc3QgbWV0cmljcyA9IGJ1aWxkU2FsZXNGdW5uZWxNZXRyaWNzKFtsZWFkKCldKTsKCiAgYXNzZXJ0LmVxdWFsKG1ldHJpY3MucmF0ZXMucmVwbHlSYXRlLCBudWxsKTsKICBhc3NlcnQuZXF1YWwobWV0cmljcy5yYXRlcy5hcHBvaW50bWVudFJhdGUsIG51bGwpOwp9KTsKCnRlc3QoImV4Y2x1ZGVzIGV4Y2VzcyBhbmQgb3V0LW9mLW9yZGVyIGNvbnRhY3QgaGlzdG9yeSBmcm9tIGZ1bm5lbCBkZW5vbWluYXRvcnMiLCAoKSA9PiB7CiAgY29uc3Qgc2VudCA9IHsKICAgIHJlc2VhcmNoQ29tcGxldGU6IHRydWUsCiAgICBvdXRyZWFjaEFwcHJvdmVkOiB0cnVlLAogICAgb3V0cmVhY2hSZWNvcmRlZEF0OiAiMjAyNi0wOS0yMFQwMDowMDowMC4wMDBaIiwKICB9OwogIGNvbnN0IGZvbGxvd1VwID0gKGRheSkgPT4gKHsgcmVjb3JkZWRBdDogYDIwMjYtMDktJHtkYXl9VDAwOjAwOjAwLjAwMFpgIH0pOwogIGNvbnN0IHJlcGx5ID0gKGRheSkgPT4gKHsgdHlwZTogIkdFTkVSQUxfUVVFU1RJT04iLCByZWNlaXZlZEF0OiBgMjAyNi0wOS0ke2RheX1UMDA6MDA6MDAuMDAwWmAgfSk7CiAgY29uc3QgaW52YWxpZEhpc3RvcmllcyA9IFsKICAgIHsgZm9sbG93VXBzOiBbZm9sbG93VXAoMjEpLCBmb2xsb3dVcCgyMiksIGZvbGxvd1VwKDIzKV0gfSwKICAgIHsgZm9sbG93VXBzOiBbZm9sbG93VXAoMTkpXSB9LAogICAgeyBmb2xsb3dVcHM6IFtmb2xsb3dVcCgyMiksIGZvbGxvd1VwKDIxKV0gfSwKICAgIHsgcmVwbGllczogW3JlcGx5KDE5KV0gfSwKICAgIHsgcmVwbGllczogW3JlcGx5KDIyKSwgcmVwbHkoMjEpXSB9LAogICAgeyBmb2xsb3dVcHM6IFtmb2xsb3dVcCgyMildLCByZXBsaWVzOiBbcmVwbHkoMjEpXSB9LAogIF07CiAgZm9yIChjb25zdCBoaXN0b3J5IG9mIGludmFsaWRIaXN0b3JpZXMpIHsKICAgIGNvbnN0IG1ldHJpY3MgPSBidWlsZFNhbGVzRnVubmVsTWV0cmljcyhbbGVhZChzZW50KSwgbGVhZCh7IC4uLnNlbnQsIC4uLmhpc3RvcnkgfSldKTsKICAgIGFzc2VydC5lcXVhbChtZXRyaWNzLmNvdW50cy5pbnZhbGlkLCAxLCBKU09OLnN0cmluZ2lmeShoaXN0b3J5KSk7CiAgICBhc3NlcnQuZXF1YWwobWV0cmljcy5jb3VudHMucmVnaXN0ZXJlZCwgMSk7CiAgICBhc3NlcnQuZXF1YWwobWV0cmljcy5jb3VudHMub3V0cmVhY2hTZW50LCAxKTsKICAgIGFzc2VydC5lcXVhbChtZXRyaWNzLmNvdW50cy5yZXBsaWVkLCAwKTsKICAgIGFzc2VydC5lcXVhbChtZXRyaWNzLmNvdW50cy5mb2xsb3dVcExlYWRzLCAwKTsKICAgIGFzc2VydC5lcXVhbChtZXRyaWNzLnJhdGVzLnJlcGx5UmF0ZSwgMCk7CiAgfQp9KTsKCnRlc3QoInJldGFpbnMgdHdvIGZvbGxvdy11cHMgYW5kIG9yZGVyZWQgcmVwbGllcyB3aXRob3V0IG11dGF0aW5nIGF1ZGl0IGhpc3RvcnkiLCAoKSA9PiB7CiAgY29uc3QgdmFsdWUgPSBsZWFkKHsKICAgIHJlc2VhcmNoQ29tcGxldGU6IHRydWUsCiAgICBvdXRyZWFjaEFwcHJvdmVkOiB0cnVlLAogICAgb3V0cmVhY2hSZWNvcmRlZEF0OiAiMjAyNi0wOS0yMFQwMDowMDowMC4wMDBaIiwKICAgIGZvbGxvd1VwczogWwogICAgICB7IHJlY29yZGVkQXQ6ICIyMDI2LTA5LTIxVDAwOjAwOjAwLjAwMFoiIH0sCiAgICAgIHsgcmVjb3JkZWRBdDogIjIwMjYtMDktMjJUMDA6MDA6MDBaIiB9LAogICAgXSwKICAgIHJlcGxpZXM6IFsKICAgICAgeyB0eXBlOiAiR0VORVJBTF9RVUVTVElPTiIsIHJlY2VpdmVkQXQ6ICIyMDI2LTA5LTIyVDAwOjAwOjAwLjAwMFoiIH0sCiAgICAgIHsgdHlwZTogIk1BVEVSSUFMX1JFUVVFU1QiLCByZWNlaXZlZEF0OiAiMjAyNi0wOS0yM1QwMDowMDowMC4wMDBaIiB9LAogICAgXSwKICB9KTsKICBjb25zdCBiZWZvcmUgPSBzdHJ1Y3R1cmVkQ2xvbmUodmFsdWUpOwogIGNvbnN0IG1ldHJpY3MgPSBidWlsZFNhbGVzRnVubmVsTWV0cmljcyhbdmFsdWVdKTsKICBhc3NlcnQuZXF1YWwobWV0cmljcy5jb3VudHMuaW52YWxpZCwgMCk7CiAgYXNzZXJ0LmVxdWFsKG1ldHJpY3MuY291bnRzLnJlZ2lzdGVyZWQsIDEpOwogIGFzc2VydC5lcXVhbChtZXRyaWNzLmNvdW50cy5mb2xsb3dVcExlYWRzLCAxKTsKICBhc3NlcnQuZXF1YWwobWV0cmljcy5jb3VudHMucmVwbGllZCwgMSk7CiAgYXNzZXJ0LmVxdWFsKG1ldHJpY3MucmF0ZXMucmVwbHlSYXRlLCAxMDApOwogIGFzc2VydC5kZWVwRXF1YWwodmFsdWUsIGJlZm9yZSk7Cn0pOwoKdGVzdCgiZGVkdXBsaWNhdGVzLCByZWplY3RzIGZvcmdlZCBjaHJvbm9sb2d5LCBhbmQgY2FwcyB2YWxpZCBsZWFkcyBhdCAxMDAiLCAoKSA9PiB7CiAgY29uc3QgZmlyc3QgPSBsZWFkKHsgaWQ6ICJzYW1lLWlkIiB9KTsKICBjb25zdCBpbnB1dCA9IFsKICAgIGZpcnN0LAogICAgeyAuLi5maXJzdCB9LAogICAgbGVhZCh7IHJlcGxpZXM6IFt7IHR5cGU6ICJHRU5FUkFMX1FVRVNUSU9OIiwgcmVjZWl2ZWRBdDogIjIwMjYtMDktMjFUMDA6MDA6MDAuMDAwWiIgfV0gfSksCiAgXTsKICBmb3IgKGxldCBpbmRleCA9IDA7IGluZGV4IDwgMTEwOyBpbmRleCArPSAxKSBpbnB1dC5wdXNoKGxlYWQoKSk7CiAgY29uc3QgbWV0cmljcyA9IGJ1aWxkU2FsZXNGdW5uZWxNZXRyaWNzKGlucHV0KTsKCiAgYXNzZXJ0LmVxdWFsKG1ldHJpY3MuY291bnRzLnJlZ2lzdGVyZWQsIDEwMCk7CiAgYXNzZXJ0LmVxdWFsKG1ldHJpY3MuY291bnRzLmR1cGxpY2F0ZSwgMSk7CiAgYXNzZXJ0LmVxdWFsKG1ldHJpY3MuY291bnRzLmludmFsaWQsIDEpOwp9KTsKCnRlc3QoImZhaWxzIGNsb3NlZCBmb3IgaW52YWxpZCBiYXRjaGVzIGFuZCByZXR1cm5zIGltbXV0YWJsZSByZXN1bHRzIiwgKCkgPT4gewogIGNvbnN0IG1ldHJpY3MgPSBidWlsZFNhbGVzRnVubmVsTWV0cmljcyhudWxsKTsKCiAgYXNzZXJ0LmVxdWFsKG1ldHJpY3MuaW52YWxpZEJhdGNoLCB0cnVlKTsKICBhc3NlcnQuZXF1YWwobWV0cmljcy5jb3VudHMucmVnaXN0ZXJlZCwgMCk7CiAgYXNzZXJ0LmVxdWFsKE9iamVjdC5pc0Zyb3plbihtZXRyaWNzKSwgdHJ1ZSk7CiAgYXNzZXJ0LmVxdWFsKE9iamVjdC5pc0Zyb3plbihtZXRyaWNzLmZ1bm5lbCksIHRydWUpOwogIGFzc2VydC5lcXVhbChPYmplY3QuaXNGcm96ZW4obWV0cmljcy5jb3VudHMpLCB0cnVlKTsKICBhc3NlcnQuZXF1YWwoT2JqZWN0LmlzRnJvemVuKG1ldHJpY3MucmF0ZXMpLCB0cnVlKTsKfSk7Cg==
+import test from "node:test";
+import assert from "node:assert/strict";
+import { buildSalesFunnelMetrics } from "../lib/sales-funnel-metrics.js";
+
+function lead(overrides = {}) {
+  return {
+    id: crypto.randomUUID(),
+    researchComplete: false,
+    outreachApproved: false,
+    outreachRecordedAt: null,
+    replies: [],
+    followUps: [],
+    meetingOptionsApproved: false,
+    meetingOptionsRecordedAt: null,
+    appointmentConfirmed: false,
+    appointment: null,
+    appointmentOutcome: null,
+    postMeetingFollowUp: null,
+    optedOut: false,
+    ...overrides,
+  };
+}
+
+test("builds the registered-to-appointment funnel and conversion rates", () => {
+  const sent = {
+    researchComplete: true,
+    outreachApproved: true,
+    outreachRecordedAt: "2026-09-20T00:00:00.000Z",
+  };
+  const metrics = buildSalesFunnelMetrics([
+    lead(),
+    lead({ researchComplete: true }),
+    lead(sent),
+    lead({ ...sent, replies: [{ type: "GENERAL_QUESTION", receivedAt: "2026-09-21T00:00:00.000Z" }] }),
+    lead({
+      ...sent,
+      replies: [{ type: "SCHEDULING", receivedAt: "2026-09-21T00:00:00.000Z" }],
+      meetingOptionsApproved: true,
+      meetingOptionsRecordedAt: "2026-09-21T01:00:00.000Z",
+      appointmentConfirmed: true,
+      appointment: {
+        selectedSlot: "2026-09-28T01:00:00.000Z",
+        durationMinutes: 30,
+        confirmedBy: "scheduler",
+        confirmedAt: "2026-09-21T02:00:00.000Z",
+      },
+    }),
+  ]);
+
+  assert.deepEqual(metrics.funnel.map(({ count }) => count), [5, 4, 3, 2, 1]);
+  assert.equal(metrics.rates.replyRate, 66.7);
+  assert.equal(metrics.rates.appointmentRate, 33.3);
+});
+
+test("reports audited appointment outcomes and overdue post-meeting work", () => {
+  const appointment = {
+    researchComplete: true,
+    outreachApproved: true,
+    outreachRecordedAt: "2026-09-20T00:00:00.000Z",
+    replies: [{ type: "SCHEDULING", receivedAt: "2026-09-21T00:00:00.000Z" }],
+    meetingOptionsApproved: true,
+    meetingOptionsRecordedAt: "2026-09-21T01:00:00.000Z",
+    appointmentConfirmed: true,
+    appointment: {
+      selectedSlot: "2026-09-28T01:00:00.000Z",
+      durationMinutes: 30,
+      confirmedBy: "scheduler",
+      confirmedAt: "2026-09-21T02:00:00.000Z",
+    },
+  };
+  const outcome = (result) => ({
+    result,
+    notes: "面談結果を確認済み",
+    actorId: "sales-manager",
+    recordedAt: "2026-09-28T02:00:00.000Z",
+  });
+  const metrics = buildSalesFunnelMetrics([
+    lead({ ...appointment, appointmentOutcome: outcome("WON") }),
+    lead({ ...appointment, appointmentOutcome: outcome("LOST") }),
+    lead({ ...appointment, appointmentOutcome: outcome("NO_SHOW") }),
+    lead({
+      ...appointment,
+      appointmentOutcome: outcome("FOLLOW_UP"),
+      postMeetingFollowUp: {
+        action: "次回提案を準備する",
+        owner: "営業責任者",
+        createdBy: "sales-manager",
+        createdAt: "2026-09-28T02:30:00.000Z",
+        dueAt: "2026-09-30T01:00:00.000Z",
+        completedBy: null,
+        completedAt: null,
+      },
+    }),
+    lead(appointment),
+  ], { now: new Date("2026-10-01T00:00:00.000Z") });
+
+  assert.equal(metrics.counts.appointmentOutcomes, 4);
+  assert.equal(metrics.counts.pendingAppointmentOutcomes, 1);
+  assert.equal(metrics.counts.won, 1);
+  assert.equal(metrics.counts.lost, 1);
+  assert.equal(metrics.counts.noShow, 1);
+  assert.equal(metrics.counts.nextAction, 1);
+  assert.equal(metrics.counts.postMeetingFollowUps, 1);
+  assert.equal(metrics.counts.overduePostMeetingFollowUps, 1);
+  assert.equal(metrics.rates.appointmentOutcomeRate, 80);
+  assert.equal(metrics.rates.winRate, 50);
+});
+
+test("excludes forged meeting results and inconsistent post-meeting work", () => {
+  const appointment = {
+    researchComplete: true,
+    outreachApproved: true,
+    outreachRecordedAt: "2026-09-20T00:00:00.000Z",
+    replies: [{ type: "SCHEDULING", receivedAt: "2026-09-21T00:00:00.000Z" }],
+    meetingOptionsApproved: true,
+    meetingOptionsRecordedAt: "2026-09-21T01:00:00.000Z",
+    appointmentConfirmed: true,
+    appointment: {
+      selectedSlot: "2026-09-28T01:00:00.000Z",
+      durationMinutes: 30,
+      confirmedBy: "scheduler",
+      confirmedAt: "2026-09-21T02:00:00.000Z",
+    },
+  };
+  const earlyOutcome = {
+    result: "WON", notes: "早すぎる記録", actorId: "manager",
+    recordedAt: "2026-09-28T01:10:00.000Z",
+  };
+  const inconsistentFollowUp = {
+    action: "不要な次回対応", owner: "営業責任者", createdBy: "manager",
+    createdAt: "2026-09-28T02:30:00.000Z", dueAt: "2026-09-30T01:00:00.000Z",
+    completedBy: null, completedAt: null,
+  };
+  const metrics = buildSalesFunnelMetrics([
+    lead(),
+    lead({ ...appointment, appointmentOutcome: earlyOutcome }),
+    lead({
+      ...appointment,
+      appointmentOutcome: {
+        result: "LOST", notes: "失注", actorId: "manager",
+        recordedAt: "2026-09-28T02:00:00.000Z",
+      },
+      postMeetingFollowUp: inconsistentFollowUp,
+    }),
+  ], { now: new Date("2026-10-01T00:00:00.000Z") });
+
+  assert.equal(metrics.counts.registered, 1);
+  assert.equal(metrics.counts.invalid, 2);
+  assert.equal(metrics.counts.appointmentOutcomes, 0);
+});
+
+test("counts audited supporting outcomes without reading message contents", () => {
+  const metrics = buildSalesFunnelMetrics([
+    lead({
+      researchComplete: true,
+      outreachApproved: true,
+      outreachRecordedAt: "2026-09-19T00:00:00.000Z",
+      followUps: [{ recordedAt: "2026-09-20T00:00:00.000Z" }],
+    }),
+    lead({
+      researchComplete: true,
+      outreachApproved: true,
+      outreachRecordedAt: "2026-09-20T00:00:00.000Z",
+      replies: [{ type: "SCHEDULING", receivedAt: "2026-09-21T00:00:00.000Z", message: "秘密" }],
+      meetingOptionsApproved: true,
+      meetingOptionsRecordedAt: "2026-09-21T01:00:00.000Z",
+    }),
+    lead({
+      researchComplete: true,
+      outreachApproved: true,
+      outreachRecordedAt: "2026-09-20T00:00:00.000Z",
+      replies: [{ type: "OPT_OUT", receivedAt: "2026-09-21T00:00:00.000Z" }],
+      optedOut: true,
+    }),
+  ]);
+
+  assert.equal(metrics.counts.followUpLeads, 1);
+  assert.equal(metrics.counts.meetingOptionsSent, 1);
+  assert.equal(metrics.counts.optedOut, 1);
+  assert.equal("message" in metrics.funnel[0], false);
+});
+
+test("excludes forged meeting-option approval and delivery chronology", () => {
+  const sent = {
+    researchComplete: true,
+    outreachApproved: true,
+    outreachRecordedAt: "2026-09-20T00:00:00.000Z",
+    replies: [{ type: "SCHEDULING", receivedAt: "2026-09-21T00:00:00.000Z" }],
+  };
+  const metrics = buildSalesFunnelMetrics([
+    lead({
+      ...sent,
+      meetingOptionsRecordedAt: "2026-09-21T01:00:00.000Z",
+    }),
+    lead({
+      ...sent,
+      meetingOptionsApproved: true,
+      meetingOptionsRecordedAt: "2026-09-20T23:59:59.999Z",
+    }),
+    lead({
+      ...sent,
+      meetingOptionsApproved: true,
+      meetingOptionsRecordedAt: "2026-09-21T01:00:00.000Z",
+    }),
+  ]);
+
+  assert.equal(metrics.counts.invalid, 2);
+  assert.equal(metrics.counts.registered, 1);
+  assert.equal(metrics.counts.meetingOptionsSent, 1);
+});
+
+test("excludes appointments with missing or forged confirmation chronology", () => {
+  const sent = {
+    researchComplete: true,
+    outreachApproved: true,
+    outreachRecordedAt: "2026-09-20T00:00:00.000Z",
+    replies: [{ type: "SCHEDULING", receivedAt: "2026-09-21T00:00:00.000Z" }],
+    meetingOptionsApproved: true,
+    meetingOptionsRecordedAt: "2026-09-21T01:00:00.000Z",
+    appointmentConfirmed: true,
+  };
+  const validAppointment = {
+    selectedSlot: "2026-09-21T03:00:00.000Z",
+    durationMinutes: 30,
+    confirmedBy: "scheduler",
+    confirmedAt: "2026-09-21T02:00:00.000Z",
+  };
+  const metrics = buildSalesFunnelMetrics([
+    lead({
+      ...sent,
+      appointment: { selectedSlot: validAppointment.selectedSlot, durationMinutes: 30 },
+    }),
+    lead({
+      ...sent,
+      appointment: { ...validAppointment, confirmedAt: "2026-09-21T00:59:59.999Z" },
+    }),
+    lead({
+      ...sent,
+      appointment: {
+        ...validAppointment,
+        selectedSlot: "2026-09-21T02:14:59.999Z",
+      },
+    }),
+    lead({ ...sent, appointment: validAppointment }),
+  ]);
+
+  assert.equal(metrics.counts.invalid, 3);
+  assert.equal(metrics.counts.registered, 1);
+  assert.equal(metrics.counts.appointments, 1);
+  assert.equal(metrics.rates.appointmentRate, 100);
+});
+
+test("rejects unsupported reply types and opt-out flags inconsistent with history", () => {
+  const sent = {
+    researchComplete: true,
+    outreachApproved: true,
+    outreachRecordedAt: "2026-09-20T00:00:00.000Z",
+  };
+  const reply = (type) => ({ type, receivedAt: "2026-09-21T00:00:00.000Z" });
+  const invalidStates = [
+    { optedOut: true },
+    { optedOut: "false" },
+    { optedOut: false, replies: [reply("OPT_OUT")] },
+    { optedOut: true, replies: [reply("GENERAL_QUESTION")] },
+    { optedOut: true, replies: [reply("OPT_OUT"), reply("OPT_OUT")] },
+    { optedOut: true, replies: [reply("OPT_OUT"), reply("GENERAL_QUESTION")] },
+    { replies: [reply("NOT_A_REPLY_TYPE")] },
+    { replies: [reply("toString")] },
+  ];
+  for (const invalid of invalidStates) {
+    const metrics = buildSalesFunnelMetrics([lead(sent), lead({ ...sent, ...invalid })]);
+    assert.equal(metrics.counts.invalid, 1, JSON.stringify(invalid));
+    assert.equal(metrics.counts.registered, 1);
+    assert.equal(metrics.counts.outreachSent, 1);
+    assert.equal(metrics.counts.replied, 0);
+    assert.equal(metrics.counts.optedOut, 0);
+    assert.equal(metrics.rates.replyRate, 0);
+  }
+});
+
+test("counts a final opt-out at reply capacity and accepts the explicit UNKNOWN category", () => {
+  const sent = {
+    researchComplete: true,
+    outreachApproved: true,
+    outreachRecordedAt: "2026-09-20T00:00:00.000Z",
+  };
+  const replies = Array.from({ length: 9 }, (_, index) => ({
+    type: index === 8 ? "OPT_OUT" : "GENERAL_QUESTION",
+    receivedAt: `2026-09-${21 + index}T00:00:00.000Z`,
+  }));
+  const metrics = buildSalesFunnelMetrics([
+    lead({ ...sent, optedOut: true, replies }),
+    lead({ ...sent, replies: [{ type: "UNKNOWN", receivedAt: "2026-09-21T00:00:00.000Z" }] }),
+  ]);
+  assert.equal(metrics.counts.invalid, 0);
+  assert.equal(metrics.counts.replied, 2);
+  assert.equal(metrics.counts.optedOut, 1);
+  assert.equal(metrics.rates.replyRate, 100);
+});
+
+test("shows unavailable rates instead of a misleading zero percent", () => {
+  const metrics = buildSalesFunnelMetrics([lead()]);
+
+  assert.equal(metrics.rates.replyRate, null);
+  assert.equal(metrics.rates.appointmentRate, null);
+});
+
+test("excludes excess and out-of-order contact history from funnel denominators", () => {
+  const sent = {
+    researchComplete: true,
+    outreachApproved: true,
+    outreachRecordedAt: "2026-09-20T00:00:00.000Z",
+  };
+  const followUp = (day) => ({ recordedAt: `2026-09-${day}T00:00:00.000Z` });
+  const reply = (day) => ({ type: "GENERAL_QUESTION", receivedAt: `2026-09-${day}T00:00:00.000Z` });
+  const invalidHistories = [
+    { followUps: [followUp(21), followUp(22), followUp(23)] },
+    { followUps: [followUp(19)] },
+    { followUps: [followUp(22), followUp(21)] },
+    { replies: [reply(19)] },
+    { replies: [reply(22), reply(21)] },
+    { followUps: [followUp(22)], replies: [reply(21)] },
+  ];
+  for (const history of invalidHistories) {
+    const metrics = buildSalesFunnelMetrics([lead(sent), lead({ ...sent, ...history })]);
+    assert.equal(metrics.counts.invalid, 1, JSON.stringify(history));
+    assert.equal(metrics.counts.registered, 1);
+    assert.equal(metrics.counts.outreachSent, 1);
+    assert.equal(metrics.counts.replied, 0);
+    assert.equal(metrics.counts.followUpLeads, 0);
+    assert.equal(metrics.rates.replyRate, 0);
+  }
+});
+
+test("retains two follow-ups and ordered replies without mutating audit history", () => {
+  const value = lead({
+    researchComplete: true,
+    outreachApproved: true,
+    outreachRecordedAt: "2026-09-20T00:00:00.000Z",
+    followUps: [
+      { recordedAt: "2026-09-21T00:00:00.000Z" },
+      { recordedAt: "2026-09-22T00:00:00Z" },
+    ],
+    replies: [
+      { type: "GENERAL_QUESTION", receivedAt: "2026-09-22T00:00:00.000Z" },
+      { type: "MATERIAL_REQUEST", receivedAt: "2026-09-23T00:00:00.000Z" },
+    ],
+  });
+  const before = structuredClone(value);
+  const metrics = buildSalesFunnelMetrics([value]);
+  assert.equal(metrics.counts.invalid, 0);
+  assert.equal(metrics.counts.registered, 1);
+  assert.equal(metrics.counts.followUpLeads, 1);
+  assert.equal(metrics.counts.replied, 1);
+  assert.equal(metrics.rates.replyRate, 100);
+  assert.deepEqual(value, before);
+});
+
+test("deduplicates, rejects forged chronology, and caps valid leads at 100", () => {
+  const first = lead({ id: "same-id" });
+  const input = [
+    first,
+    { ...first },
+    lead({ replies: [{ type: "GENERAL_QUESTION", receivedAt: "2026-09-21T00:00:00.000Z" }] }),
+  ];
+  for (let index = 0; index < 110; index += 1) input.push(lead());
+  const metrics = buildSalesFunnelMetrics(input);
+
+  assert.equal(metrics.counts.registered, 100);
+  assert.equal(metrics.counts.duplicate, 1);
+  assert.equal(metrics.counts.invalid, 1);
+});
+
+test("fails closed for invalid batches and returns immutable results", () => {
+  const metrics = buildSalesFunnelMetrics(null);
+
+  assert.equal(metrics.invalidBatch, true);
+  assert.equal(metrics.counts.registered, 0);
+  assert.equal(Object.isFrozen(metrics), true);
+  assert.equal(Object.isFrozen(metrics.funnel), true);
+  assert.equal(Object.isFrozen(metrics.counts), true);
+  assert.equal(Object.isFrozen(metrics.rates), true);
+});

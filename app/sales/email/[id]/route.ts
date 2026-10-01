@@ -1,1 +1,47 @@
-aW1wb3J0IHsgY3JlYXRlQ2xpZW50IH0gZnJvbSAiQC91dGlscy9zdXBhYmFzZS9zZXJ2ZXIiOwppbXBvcnQgeyBidWlsZFVuc2VudFNhbGVzRW1haWwgfSBmcm9tICJAL2xpYi9zYWxlcy1lbWFpbC1leHBvcnQuanMiOwppbXBvcnQgeyBwYXJzZVNhbGVzTGVhZFJlY29yZCB9IGZyb20gIkAvbGliL3NhbGVzLWxlYWQtcmVjb3JkLmpzIjsKCnR5cGUgU2FsZXNUYXNrID0gewogIGlkOiBzdHJpbmc7CiAgY29udGVudDogc3RyaW5nIHwgbnVsbDsKfTsKCmNvbnN0IFVVSURfUEFUVEVSTiA9IC9eWzAtOWEtZl17OH0oLVswLTlhLWZdezR9KXszfS1bMC05YS1mXXsxMn0kL2k7CgpleHBvcnQgYXN5bmMgZnVuY3Rpb24gR0VUKAogIF9yZXF1ZXN0OiBSZXF1ZXN0LAogIHsgcGFyYW1zIH06IHsgcGFyYW1zOiBQcm9taXNlPHsgaWQ6IHN0cmluZyB9PiB9LAopIHsKICBjb25zdCBzdXBhYmFzZSA9IGF3YWl0IGNyZWF0ZUNsaWVudCgpOwogIGNvbnN0IHsgZGF0YTogeyB1c2VyIH0gfSA9IGF3YWl0IHN1cGFiYXNlLmF1dGguZ2V0VXNlcigpOwogIGlmICghdXNlcikgcmV0dXJuIHJlc3BvbnNlKCJVbmF1dGhvcml6ZWQiLCA0MDEpOwoKICBjb25zdCB7IGlkIH0gPSBhd2FpdCBwYXJhbXM7CiAgaWYgKCFVVUlEX1BBVFRFUk4udGVzdChpZCkpIHJldHVybiByZXNwb25zZSgiTm90IGZvdW5kIiwgNDA0KTsKCiAgY29uc3QgeyBkYXRhLCBlcnJvciB9ID0gYXdhaXQgc3VwYWJhc2UuZnJvbSgidGFza3MiKQogICAgLnNlbGVjdCgiaWQsIGNvbnRlbnQiKS5lcSgiaWQiLCBpZCkubWF5YmVTaW5nbGUoKTsKICBjb25zdCB0YXNrID0gZGF0YSBhcyBTYWxlc1Rhc2sgfCBudWxsOwogIGlmIChlcnJvciB8fCAhdGFzaykgcmV0dXJuIHJlc3BvbnNlKCJOb3QgZm91bmQiLCA0MDQpOwoKICBjb25zdCBsZWFkID0gcGFyc2VTYWxlc0xlYWRSZWNvcmQodGFzay5pZCwgdGFzay5jb250ZW50KTsKICBjb25zdCBlbWFpbCA9IGxlYWQgPyBidWlsZFVuc2VudFNhbGVzRW1haWwobGVhZCkgOiBudWxsOwogIGlmICghZW1haWwpIHJldHVybiByZXNwb25zZSgi5pyq6YCB5L+h44Gu5Za25qWt44Oh44O844Or44KS5Ye65Yqb44Gn44GN44G+44Gb44KT44Gn44GX44Gf44CCIiwgNDA5KTsKCiAgcmV0dXJuIG5ldyBSZXNwb25zZShlbWFpbCwgewogICAgaGVhZGVyczogewogICAgICAiY2FjaGUtY29udHJvbCI6ICJuby1zdG9yZSIsCiAgICAgICJjb250ZW50LWRpc3Bvc2l0aW9uIjogYGF0dGFjaG1lbnQ7IGZpbGVuYW1lPSJzdGFyLXdvcmstb3Mtc2FsZXMtJHtpZH0uZW1sImAsCiAgICAgICJjb250ZW50LXR5cGUiOiAibWVzc2FnZS9yZmM4MjI7IGNoYXJzZXQ9dXMtYXNjaWkiLAogICAgICAieC1jb250ZW50LXR5cGUtb3B0aW9ucyI6ICJub3NuaWZmIiwKICAgIH0sCiAgfSk7Cn0KCmZ1bmN0aW9uIHJlc3BvbnNlKG1lc3NhZ2U6IHN0cmluZywgc3RhdHVzOiBudW1iZXIpIHsKICByZXR1cm4gbmV3IFJlc3BvbnNlKG1lc3NhZ2UsIHsKICAgIHN0YXR1cywKICAgIGhlYWRlcnM6IHsgImNhY2hlLWNvbnRyb2wiOiAibm8tc3RvcmUiLCAieC1jb250ZW50LXR5cGUtb3B0aW9ucyI6ICJub3NuaWZmIiB9LAogIH0pOwp9Cg==
+import { createClient } from "@/utils/supabase/server";
+import { buildUnsentSalesEmail } from "@/lib/sales-email-export.js";
+import { parseSalesLeadRecord } from "@/lib/sales-lead-record.js";
+
+type SalesTask = {
+  id: string;
+  content: string | null;
+};
+
+const UUID_PATTERN = /^[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i;
+
+export async function GET(
+  _request: Request,
+  { params }: { params: Promise<{ id: string }> },
+) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return response("Unauthorized", 401);
+
+  const { id } = await params;
+  if (!UUID_PATTERN.test(id)) return response("Not found", 404);
+
+  const { data, error } = await supabase.from("tasks")
+    .select("id, content").eq("id", id).maybeSingle();
+  const task = data as SalesTask | null;
+  if (error || !task) return response("Not found", 404);
+
+  const lead = parseSalesLeadRecord(task.id, task.content);
+  const email = lead ? buildUnsentSalesEmail(lead) : null;
+  if (!email) return response("未送信の営業メールを出力できませんでした。", 409);
+
+  return new Response(email, {
+    headers: {
+      "cache-control": "no-store",
+      "content-disposition": `attachment; filename="star-work-os-sales-${id}.eml"`,
+      "content-type": "message/rfc822; charset=us-ascii",
+      "x-content-type-options": "nosniff",
+    },
+  });
+}
+
+function response(message: string, status: number) {
+  return new Response(message, {
+    status,
+    headers: { "cache-control": "no-store", "x-content-type-options": "nosniff" },
+  });
+}

@@ -1,1 +1,18 @@
-aW1wb3J0IHRlc3QgZnJvbSAibm9kZTp0ZXN0IjsKaW1wb3J0IGFzc2VydCBmcm9tICJub2RlOmFzc2VydC9zdHJpY3QiOwppbXBvcnQgeyByZWFkRmlsZVN5bmMgfSBmcm9tICJub2RlOmZzIjsKCnRlc3QoInByb2ZpbGUgZWRpdGluZyBhdXRoZW50aWNhdGVzLCByZWplY3RzIGR1cGxpY2F0ZXMsIGFuZCB1c2VzIG9wdGltaXN0aWMgY29uY3VycmVuY3kiLCAoKSA9PiB7CiAgY29uc3QgcGFnZSA9IHJlYWRGaWxlU3luYyhuZXcgVVJMKCIuLi9hcHAvc2FsZXMvcGFnZS50c3giLCBpbXBvcnQubWV0YS51cmwpLCAidXRmOCIpOwogIGNvbnN0IGFjdGlvbiA9IHBhZ2Uuc2xpY2UoCiAgICBwYWdlLmluZGV4T2YoImFzeW5jIGZ1bmN0aW9uIHVwZGF0ZUxlYWRQcm9maWxlKCIpLAogICAgcGFnZS5pbmRleE9mKCJhc3luYyBmdW5jdGlvbiBjcmVhdGVTYWxlc0xlYWRzQnVsaygiKSwKICApOwoKICBhc3NlcnQub2soYWN0aW9uLmluZGV4T2YoInN1cGFiYXNlLmF1dGguZ2V0VXNlcigpIikgPCBhY3Rpb24uaW5kZXhPZignLnNlbGVjdCgiaWQsIGNvbnRlbnQsIHVwZGF0ZWRfYXQsIHN0YXR1cyIpJykpOwogIGFzc2VydC5vayhhY3Rpb24uaW5jbHVkZXMoImNvbXBhbnlOYW1lS2V5KGN1cnJlbnRMZWFkLmNvbXBhbnlOYW1lKSIpKTsKICBhc3NlcnQub2soYWN0aW9uLmluY2x1ZGVzKCJvdGhlci5pZCAhPT0gaWQiKSk7CiAgYXNzZXJ0Lm9rKGFjdGlvbi5pbmRleE9mKCJwcm9maWxlLWR1cGxpY2F0ZSIpIDwgYWN0aW9uLmxhc3RJbmRleE9mKCIudXBkYXRlKCIpKTsKICBhc3NlcnQub2soYWN0aW9uLmluY2x1ZGVzKCcuZXEoInVwZGF0ZWRfYXQiLCB2ZXJzaW9uKS5lcSgiY29udGVudCIsIHRhc2suY29udGVudCkuZXEoInN0YXR1cyIsIHRhc2suc3RhdHVzKScpKTsKICBhc3NlcnQuZG9lc05vdE1hdGNoKGFjdGlvbiwgL3Rocm93IG5ldyBFcnJvcnxcLm1lc3NhZ2UvdSk7Cn0pOwo=
+import test from "node:test";
+import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
+
+test("profile editing authenticates, rejects duplicates, and uses optimistic concurrency", () => {
+  const page = readFileSync(new URL("../app/sales/page.tsx", import.meta.url), "utf8");
+  const action = page.slice(
+    page.indexOf("async function updateLeadProfile("),
+    page.indexOf("async function createSalesLeadsBulk("),
+  );
+
+  assert.ok(action.indexOf("supabase.auth.getUser()") < action.indexOf('.select("id, content, updated_at, status")'));
+  assert.ok(action.includes("companyNameKey(currentLead.companyName)"));
+  assert.ok(action.includes("other.id !== id"));
+  assert.ok(action.indexOf("profile-duplicate") < action.lastIndexOf(".update("));
+  assert.ok(action.includes('.eq("updated_at", version).eq("content", task.content).eq("status", task.status)'));
+  assert.doesNotMatch(action, /throw new Error|\.message/u);
+});

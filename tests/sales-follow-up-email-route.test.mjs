@@ -1,1 +1,18 @@
-aW1wb3J0IHRlc3QgZnJvbSAibm9kZTp0ZXN0IjsKaW1wb3J0IGFzc2VydCBmcm9tICJub2RlOmFzc2VydC9zdHJpY3QiOwppbXBvcnQgZnMgZnJvbSAibm9kZTpmcyI7Cgpjb25zdCBzb3VyY2UgPSBmcy5yZWFkRmlsZVN5bmMobmV3IFVSTCgiLi4vYXBwL3NhbGVzL2ZvbGxvdy11cC1lbWFpbC9baWRdL3JvdXRlLnRzIiwgaW1wb3J0Lm1ldGEudXJsKSwgInV0ZjgiKTsKCnRlc3QoImZvbGxvdy11cCBlbWFpbCByb3V0ZSBhdXRoZW50aWNhdGVzIGJlZm9yZSBvbmUgUkxTLXNjb3BlZCByb3cgcmVhZCIsICgpID0+IHsKICBhc3NlcnQub2soc291cmNlLmluZGV4T2YoImF1dGguZ2V0VXNlcigpIikgPCBzb3VyY2UuaW5kZXhPZignZnJvbSgidGFza3MiKScpKTsKICBhc3NlcnQubWF0Y2goc291cmNlLCAvc2VsZWN0XCgiaWQsIGNvbnRlbnQiXClcLmVxXCgiaWQiLCBpZFwpXC5tYXliZVNpbmdsZVwoXCkvdSk7CiAgYXNzZXJ0LmRvZXNOb3RNYXRjaChzb3VyY2UsIC9zZXJ2aWNlW18tXT9yb2xlfGNyZWF0ZUNsaWVudFwoW14pXSpzZWNyZXQvaXUpOwp9KTsKCnRlc3QoImZvbGxvdy11cCBlbWFpbCByb3V0ZSBpcyBkb3dubG9hZC1vbmx5IGFuZCBuZXZlciBzZW5kcyBvciBtdXRhdGVzIiwgKCkgPT4gewogIGFzc2VydC5tYXRjaChzb3VyY2UsIC9idWlsZFVuc2VudFNhbGVzRm9sbG93VXBFbWFpbC91KTsKICBhc3NlcnQubWF0Y2goc291cmNlLCAvbWVzc2FnZVwvcmZjODIyL3UpOwogIGFzc2VydC5tYXRjaChzb3VyY2UsIC9jYWNoZS1jb250cm9sIjogIm5vLXN0b3JlIi91KTsKICBhc3NlcnQuZG9lc05vdE1hdGNoKHNvdXJjZSwgL1wuaW5zZXJ0XCh8XC51cGRhdGVcKHxcLmRlbGV0ZVwofGZldGNoXCh8cmVzZW5kfHNlbmRNYWlsL2l1KTsKfSk7Cg==
+import test from "node:test";
+import assert from "node:assert/strict";
+import fs from "node:fs";
+
+const source = fs.readFileSync(new URL("../app/sales/follow-up-email/[id]/route.ts", import.meta.url), "utf8");
+
+test("follow-up email route authenticates before one RLS-scoped row read", () => {
+  assert.ok(source.indexOf("auth.getUser()") < source.indexOf('from("tasks")'));
+  assert.match(source, /select\("id, content"\)\.eq\("id", id\)\.maybeSingle\(\)/u);
+  assert.doesNotMatch(source, /service[_-]?role|createClient\([^)]*secret/iu);
+});
+
+test("follow-up email route is download-only and never sends or mutates", () => {
+  assert.match(source, /buildUnsentSalesFollowUpEmail/u);
+  assert.match(source, /message\/rfc822/u);
+  assert.match(source, /cache-control": "no-store"/u);
+  assert.doesNotMatch(source, /\.insert\(|\.update\(|\.delete\(|fetch\(|resend|sendMail/iu);
+});

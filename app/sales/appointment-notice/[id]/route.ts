@@ -1,1 +1,39 @@
-aW1wb3J0IHsgY3JlYXRlQ2xpZW50IH0gZnJvbSAiQC91dGlscy9zdXBhYmFzZS9zZXJ2ZXIiOwppbXBvcnQgeyBidWlsZFVuc2VudFNhbGVzQXBwb2ludG1lbnROb3RpY2UgfSBmcm9tICJAL2xpYi9zYWxlcy1hcHBvaW50bWVudC1ub3RpY2UtZXhwb3J0LmpzIjsKaW1wb3J0IHsgcGFyc2VTYWxlc0xlYWRSZWNvcmQgfSBmcm9tICJAL2xpYi9zYWxlcy1sZWFkLXJlY29yZC5qcyI7Cgp0eXBlIFNhbGVzVGFzayA9IHsgaWQ6IHN0cmluZzsgY29udGVudDogc3RyaW5nIHwgbnVsbCB9Owpjb25zdCBVVUlEX1BBVFRFUk4gPSAvXlswLTlhLWZdezh9KC1bMC05YS1mXXs0fSl7M30tWzAtOWEtZl17MTJ9JC9pOwoKZXhwb3J0IGFzeW5jIGZ1bmN0aW9uIEdFVCgKICBfcmVxdWVzdDogUmVxdWVzdCwKICB7IHBhcmFtcyB9OiB7IHBhcmFtczogUHJvbWlzZTx7IGlkOiBzdHJpbmcgfT4gfSwKKSB7CiAgY29uc3Qgc3VwYWJhc2UgPSBhd2FpdCBjcmVhdGVDbGllbnQoKTsKICBjb25zdCB7IGRhdGE6IHsgdXNlciB9IH0gPSBhd2FpdCBzdXBhYmFzZS5hdXRoLmdldFVzZXIoKTsKICBpZiAoIXVzZXIpIHJldHVybiByZXNwb25zZSgiVW5hdXRob3JpemVkIiwgNDAxKTsKICBjb25zdCB7IGlkIH0gPSBhd2FpdCBwYXJhbXM7CiAgaWYgKCFVVUlEX1BBVFRFUk4udGVzdChpZCkpIHJldHVybiByZXNwb25zZSgiTm90IGZvdW5kIiwgNDA0KTsKICBjb25zdCB7IGRhdGEsIGVycm9yIH0gPSBhd2FpdCBzdXBhYmFzZS5mcm9tKCJ0YXNrcyIpCiAgICAuc2VsZWN0KCJpZCwgY29udGVudCIpLmVxKCJpZCIsIGlkKS5tYXliZVNpbmdsZSgpOwogIGNvbnN0IHRhc2sgPSBkYXRhIGFzIFNhbGVzVGFzayB8IG51bGw7CiAgaWYgKGVycm9yIHx8ICF0YXNrKSByZXR1cm4gcmVzcG9uc2UoIk5vdCBmb3VuZCIsIDQwNCk7CiAgY29uc3QgbGVhZCA9IHBhcnNlU2FsZXNMZWFkUmVjb3JkKHRhc2suaWQsIHRhc2suY29udGVudCk7CiAgY29uc3QgZW1haWwgPSBsZWFkID8gYnVpbGRVbnNlbnRTYWxlc0FwcG9pbnRtZW50Tm90aWNlKGxlYWQpIDogbnVsbDsKICBpZiAoIWVtYWlsKSByZXR1cm4gcmVzcG9uc2UoIuacqumAgeS/oeOBruOCouODneOCpOODs+ODiOeiuuWumuahiOWGheOCkuWHuuWKm+OBp+OBjeOBvuOBm+OCk+OBp+OBl+OBn+OAgiIsIDQwOSk7CiAgcmV0dXJuIG5ldyBSZXNwb25zZShlbWFpbCwgewogICAgaGVhZGVyczogewogICAgICAiY2FjaGUtY29udHJvbCI6ICJuby1zdG9yZSIsCiAgICAgICJjb250ZW50LWRpc3Bvc2l0aW9uIjogYGF0dGFjaG1lbnQ7IGZpbGVuYW1lPSJzdGFyLXdvcmstb3MtYXBwb2ludG1lbnQtbm90aWNlLSR7aWR9LmVtbCJgLAogICAgICAiY29udGVudC10eXBlIjogIm1lc3NhZ2UvcmZjODIyOyBjaGFyc2V0PXVzLWFzY2lpIiwKICAgICAgIngtY29udGVudC10eXBlLW9wdGlvbnMiOiAibm9zbmlmZiIsCiAgICB9LAogIH0pOwp9CgpmdW5jdGlvbiByZXNwb25zZShtZXNzYWdlOiBzdHJpbmcsIHN0YXR1czogbnVtYmVyKSB7CiAgcmV0dXJuIG5ldyBSZXNwb25zZShtZXNzYWdlLCB7CiAgICBzdGF0dXMsCiAgICBoZWFkZXJzOiB7ICJjYWNoZS1jb250cm9sIjogIm5vLXN0b3JlIiwgIngtY29udGVudC10eXBlLW9wdGlvbnMiOiAibm9zbmlmZiIgfSwKICB9KTsKfQo=
+import { createClient } from "@/utils/supabase/server";
+import { buildUnsentSalesAppointmentNotice } from "@/lib/sales-appointment-notice-export.js";
+import { parseSalesLeadRecord } from "@/lib/sales-lead-record.js";
+
+type SalesTask = { id: string; content: string | null };
+const UUID_PATTERN = /^[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i;
+
+export async function GET(
+  _request: Request,
+  { params }: { params: Promise<{ id: string }> },
+) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return response("Unauthorized", 401);
+  const { id } = await params;
+  if (!UUID_PATTERN.test(id)) return response("Not found", 404);
+  const { data, error } = await supabase.from("tasks")
+    .select("id, content").eq("id", id).maybeSingle();
+  const task = data as SalesTask | null;
+  if (error || !task) return response("Not found", 404);
+  const lead = parseSalesLeadRecord(task.id, task.content);
+  const email = lead ? buildUnsentSalesAppointmentNotice(lead) : null;
+  if (!email) return response("未送信のアポイント確定案内を出力できませんでした。", 409);
+  return new Response(email, {
+    headers: {
+      "cache-control": "no-store",
+      "content-disposition": `attachment; filename="star-work-os-appointment-notice-${id}.eml"`,
+      "content-type": "message/rfc822; charset=us-ascii",
+      "x-content-type-options": "nosniff",
+    },
+  });
+}
+
+function response(message: string, status: number) {
+  return new Response(message, {
+    status,
+    headers: { "cache-control": "no-store", "x-content-type-options": "nosniff" },
+  });
+}

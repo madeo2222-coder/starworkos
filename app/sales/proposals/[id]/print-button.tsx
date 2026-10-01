@@ -1,1 +1,9 @@
-InVzZSBjbGllbnQiOwoKZXhwb3J0IGZ1bmN0aW9uIFByaW50UHJvcG9zYWxCdXR0b24oKSB7CiAgcmV0dXJuICgKICAgIDxidXR0b24gdHlwZT0iYnV0dG9uIiBvbkNsaWNrPXsoKSA9PiB3aW5kb3cucHJpbnQoKX0gY2xhc3NOYW1lPSJyb3VuZGVkLXhsIGJnLXppbmMtOTUwIHB4LTQgcHktMi41IHRleHQtc20gZm9udC1zZW1pYm9sZCB0ZXh0LXdoaXRlIGhvdmVyOmJnLXppbmMtODAwIj4KICAgICAg5Y2w5Yi344O7UERG5L+d5a2YCiAgICA8L2J1dHRvbj4KICApOwp9Cg==
+"use client";
+
+export function PrintProposalButton() {
+  return (
+    <button type="button" onClick={() => window.print()} className="rounded-xl bg-zinc-950 px-4 py-2.5 text-sm font-semibold text-white hover:bg-zinc-800">
+      印刷・PDF保存
+    </button>
+  );
+}

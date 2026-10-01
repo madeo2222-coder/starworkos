@@ -1,1 +1,47 @@
-aW1wb3J0IHsgY3JlYXRlQ2xpZW50IH0gZnJvbSAiQC91dGlscy9zdXBhYmFzZS9zZXJ2ZXIiOwppbXBvcnQgeyBidWlsZFNhbGVzUGlwZWxpbmVDc3YgfSBmcm9tICJAL2xpYi9zYWxlcy1waXBlbGluZS1leHBvcnQuanMiOwppbXBvcnQgeyBwYXJzZVNhbGVzTGVhZFJlY29yZCwgU0FMRVNfTEVBRF9SRUNPUkRfUFJFRklYIH0gZnJvbSAiQC9saWIvc2FsZXMtbGVhZC1yZWNvcmQuanMiOwoKdHlwZSBTYWxlc1Rhc2sgPSB7CiAgaWQ6IHN0cmluZzsKICBjb250ZW50OiBzdHJpbmcgfCBudWxsOwp9OwoKZXhwb3J0IGFzeW5jIGZ1bmN0aW9uIEdFVCgpIHsKICBjb25zdCBzdXBhYmFzZSA9IGF3YWl0IGNyZWF0ZUNsaWVudCgpOwogIGNvbnN0IHsgZGF0YTogeyB1c2VyIH0gfSA9IGF3YWl0IHN1cGFiYXNlLmF1dGguZ2V0VXNlcigpOwogIGlmICghdXNlcikgcmV0dXJuIG5ldyBSZXNwb25zZSgiVW5hdXRob3JpemVkIiwgewogICAgc3RhdHVzOiA0MDEsCiAgICBoZWFkZXJzOiB7ICJjYWNoZS1jb250cm9sIjogIm5vLXN0b3JlIiB9LAogIH0pOwoKICBjb25zdCB7IGRhdGEsIGVycm9yIH0gPSBhd2FpdCBzdXBhYmFzZQogICAgLmZyb20oInRhc2tzIikKICAgIC5zZWxlY3QoImlkLCBjb250ZW50IikKICAgIC5saWtlKCJjb250ZW50IiwgYCR7U0FMRVNfTEVBRF9SRUNPUkRfUFJFRklYfSVgKQogICAgLm9yZGVyKCJjcmVhdGVkX2F0IiwgeyBhc2NlbmRpbmc6IGZhbHNlIH0pCiAgICAubGltaXQoMTAwKTsKCiAgaWYgKGVycm9yKSByZXR1cm4gbmV3IFJlc3BvbnNlKCLllrbmpa3moYjku7bjgpLlj5blvpfjgafjgY3jgb7jgZvjgpPjgafjgZfjgZ/jgIIiLCB7CiAgICBzdGF0dXM6IDUwMCwKICAgIGhlYWRlcnM6IHsgImNhY2hlLWNvbnRyb2wiOiAibm8tc3RvcmUiIH0sCiAgfSk7CgogIGNvbnN0IGxlYWRzID0gKChkYXRhID8/IFtdKSBhcyBTYWxlc1Rhc2tbXSkKICAgIC5tYXAoKHRhc2spID0+IHBhcnNlU2FsZXNMZWFkUmVjb3JkKHRhc2suaWQsIHRhc2suY29udGVudCkpCiAgICAuZmlsdGVyKChsZWFkKSA9PiBsZWFkICE9PSBudWxsKTsKICBjb25zdCBjc3YgPSBidWlsZFNhbGVzUGlwZWxpbmVDc3YobGVhZHMpOwogIGlmIChjc3YgPT09IG51bGwpIHJldHVybiBuZXcgUmVzcG9uc2UoIuWWtualreahiOS7tuOCkuWHuuWKm+OBp+OBjeOBvuOBm+OCk+OBp+OBl+OBn+OAgiIsIHsKICAgIHN0YXR1czogNTAwLAogICAgaGVhZGVyczogeyAiY2FjaGUtY29udHJvbCI6ICJuby1zdG9yZSIgfSwKICB9KTsKCiAgcmV0dXJuIG5ldyBSZXNwb25zZShjc3YsIHsKICAgIGhlYWRlcnM6IHsKICAgICAgImNhY2hlLWNvbnRyb2wiOiAibm8tc3RvcmUiLAogICAgICAiY29udGVudC1kaXNwb3NpdGlvbiI6ICJhdHRhY2htZW50OyBmaWxlbmFtZT1zdGFyLXdvcmstb3Mtc2FsZXMtcGlwZWxpbmUuY3N2IiwKICAgICAgImNvbnRlbnQtdHlwZSI6ICJ0ZXh0L2NzdjsgY2hhcnNldD11dGYtOCIsCiAgICAgICJ4LWNvbnRlbnQtdHlwZS1vcHRpb25zIjogIm5vc25pZmYiLAogICAgfSwKICB9KTsKfQo=
+import { createClient } from "@/utils/supabase/server";
+import { buildSalesPipelineCsv } from "@/lib/sales-pipeline-export.js";
+import { parseSalesLeadRecord, SALES_LEAD_RECORD_PREFIX } from "@/lib/sales-lead-record.js";
+
+type SalesTask = {
+  id: string;
+  content: string | null;
+};
+
+export async function GET() {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return new Response("Unauthorized", {
+    status: 401,
+    headers: { "cache-control": "no-store" },
+  });
+
+  const { data, error } = await supabase
+    .from("tasks")
+    .select("id, content")
+    .like("content", `${SALES_LEAD_RECORD_PREFIX}%`)
+    .order("created_at", { ascending: false })
+    .limit(100);
+
+  if (error) return new Response("営業案件を取得できませんでした。", {
+    status: 500,
+    headers: { "cache-control": "no-store" },
+  });
+
+  const leads = ((data ?? []) as SalesTask[])
+    .map((task) => parseSalesLeadRecord(task.id, task.content))
+    .filter((lead) => lead !== null);
+  const csv = buildSalesPipelineCsv(leads);
+  if (csv === null) return new Response("営業案件を出力できませんでした。", {
+    status: 500,
+    headers: { "cache-control": "no-store" },
+  });
+
+  return new Response(csv, {
+    headers: {
+      "cache-control": "no-store",
+      "content-disposition": "attachment; filename=star-work-os-sales-pipeline.csv",
+      "content-type": "text/csv; charset=utf-8",
+      "x-content-type-options": "nosniff",
+    },
+  });
+}

@@ -1,1 +1,18 @@
-aW1wb3J0IHRlc3QgZnJvbSAibm9kZTp0ZXN0IjsKaW1wb3J0IGFzc2VydCBmcm9tICJub2RlOmFzc2VydC9zdHJpY3QiOwppbXBvcnQgZnMgZnJvbSAibm9kZTpmcyI7Cgpjb25zdCBzb3VyY2UgPSBmcy5yZWFkRmlsZVN5bmMobmV3IFVSTCgiLi4vYXBwL3NhbGVzL2FwcG9pbnRtZW50LW5vdGljZS9baWRdL3JvdXRlLnRzIiwgaW1wb3J0Lm1ldGEudXJsKSwgInV0ZjgiKTsKCnRlc3QoImFwcG9pbnRtZW50IG5vdGljZSByb3V0ZSBhdXRoZW50aWNhdGVzIGJlZm9yZSBvbmUgUkxTLXNjb3BlZCByb3cgcmVhZCIsICgpID0+IHsKICBhc3NlcnQub2soc291cmNlLmluZGV4T2YoImF1dGguZ2V0VXNlcigpIikgPCBzb3VyY2UuaW5kZXhPZignZnJvbSgidGFza3MiKScpKTsKICBhc3NlcnQubWF0Y2goc291cmNlLCAvc2VsZWN0XCgiaWQsIGNvbnRlbnQiXClcLmVxXCgiaWQiLCBpZFwpXC5tYXliZVNpbmdsZVwoXCkvdSk7CiAgYXNzZXJ0LmRvZXNOb3RNYXRjaChzb3VyY2UsIC9zZXJ2aWNlW18tXT9yb2xlfGNyZWF0ZUNsaWVudFwoW14pXSpzZWNyZXQvaXUpOwp9KTsKCnRlc3QoImFwcG9pbnRtZW50IG5vdGljZSByb3V0ZSBvbmx5IGRvd25sb2FkcyBhbmQgbmV2ZXIgc2VuZHMgb3IgbXV0YXRlcyIsICgpID0+IHsKICBhc3NlcnQubWF0Y2goc291cmNlLCAvYnVpbGRVbnNlbnRTYWxlc0FwcG9pbnRtZW50Tm90aWNlL3UpOwogIGFzc2VydC5tYXRjaChzb3VyY2UsIC9tZXNzYWdlXC9yZmM4MjIvdSk7CiAgYXNzZXJ0Lm1hdGNoKHNvdXJjZSwgL2NhY2hlLWNvbnRyb2wiOiAibm8tc3RvcmUiL3UpOwogIGFzc2VydC5kb2VzTm90TWF0Y2goc291cmNlLCAvXC5pbnNlcnRcKHxcLnVwZGF0ZVwofFwuZGVsZXRlXCh8ZmV0Y2hcKHxyZXNlbmR8c2VuZE1haWwvaXUpOwp9KTsK
+import test from "node:test";
+import assert from "node:assert/strict";
+import fs from "node:fs";
+
+const source = fs.readFileSync(new URL("../app/sales/appointment-notice/[id]/route.ts", import.meta.url), "utf8");
+
+test("appointment notice route authenticates before one RLS-scoped row read", () => {
+  assert.ok(source.indexOf("auth.getUser()") < source.indexOf('from("tasks")'));
+  assert.match(source, /select\("id, content"\)\.eq\("id", id\)\.maybeSingle\(\)/u);
+  assert.doesNotMatch(source, /service[_-]?role|createClient\([^)]*secret/iu);
+});
+
+test("appointment notice route only downloads and never sends or mutates", () => {
+  assert.match(source, /buildUnsentSalesAppointmentNotice/u);
+  assert.match(source, /message\/rfc822/u);
+  assert.match(source, /cache-control": "no-store"/u);
+  assert.doesNotMatch(source, /\.insert\(|\.update\(|\.delete\(|fetch\(|resend|sendMail/iu);
+});

@@ -1,1 +1,75 @@
-aW1wb3J0IExpbmsgZnJvbSAibmV4dC9saW5rIjsKaW1wb3J0IHsgbm90Rm91bmQsIHJlZGlyZWN0IH0gZnJvbSAibmV4dC9uYXZpZ2F0aW9uIjsKaW1wb3J0IHsgYnVpbGRTYWxlc1Byb3Bvc2FsIH0gZnJvbSAiQC9saWIvc2FsZXMtcHJvcG9zYWwuanMiOwppbXBvcnQgeyBwYXJzZVNhbGVzTGVhZFJlY29yZCB9IGZyb20gIkAvbGliL3NhbGVzLWxlYWQtcmVjb3JkLmpzIjsKaW1wb3J0IHsgY3JlYXRlQ2xpZW50IH0gZnJvbSAiQC91dGlscy9zdXBhYmFzZS9zZXJ2ZXIiOwppbXBvcnQgeyBQcmludFByb3Bvc2FsQnV0dG9uIH0gZnJvbSAiLi9wcmludC1idXR0b24iOwoKZXhwb3J0IGRlZmF1bHQgYXN5bmMgZnVuY3Rpb24gU2FsZXNQcm9wb3NhbFBhZ2UoeyBwYXJhbXMgfTogewogIHBhcmFtczogUHJvbWlzZTx7IGlkOiBzdHJpbmcgfT47Cn0pIHsKICBjb25zdCBzdXBhYmFzZSA9IGF3YWl0IGNyZWF0ZUNsaWVudCgpOwogIGNvbnN0IHsgZGF0YTogeyB1c2VyIH0gfSA9IGF3YWl0IHN1cGFiYXNlLmF1dGguZ2V0VXNlcigpOwogIGlmICghdXNlcikgcmVkaXJlY3QoIi9sb2dpbiIpOwoKICBjb25zdCB7IGlkIH0gPSBhd2FpdCBwYXJhbXM7CiAgaWYgKCEvXlswLTlhLWZdezh9KC1bMC05YS1mXXs0fSl7M30tWzAtOWEtZl17MTJ9JC9pLnRlc3QoaWQpKSBub3RGb3VuZCgpOwoKICBjb25zdCB7IGRhdGE6IHRhc2ssIGVycm9yIH0gPSBhd2FpdCBzdXBhYmFzZS5mcm9tKCJ0YXNrcyIpCiAgICAuc2VsZWN0KCJpZCwgY29udGVudCIpCiAgICAuZXEoImlkIiwgaWQpCiAgICAuc2luZ2xlKCk7CiAgaWYgKGVycm9yIHx8ICF0YXNrKSBub3RGb3VuZCgpOwoKICBjb25zdCBsZWFkID0gcGFyc2VTYWxlc0xlYWRSZWNvcmQoU3RyaW5nKHRhc2suaWQpLCB0YXNrLmNvbnRlbnQpOwogIGNvbnN0IHByb3Bvc2FsID0gYnVpbGRTYWxlc1Byb3Bvc2FsKGxlYWQpOwogIGlmICghcHJvcG9zYWwpIG5vdEZvdW5kKCk7CgogIHJldHVybiAoCiAgICA8bWFpbiBjbGFzc05hbWU9InNhbGVzLXByb3Bvc2FsLXNoZWxsIG1pbi1oLXNjcmVlbiBiZy16aW5jLTEwMCBweC00IHB5LTYgdGV4dC16aW5jLTk1MCBtZDpweC04Ij4KICAgICAgPGRpdiBjbGFzc05hbWU9InNhbGVzLXByb3Bvc2FsLXRvb2xiYXIgbXgtYXV0byBtYi00IGZsZXggbWF4LXctWzIxMG1tXSBmbGV4LXdyYXAgaXRlbXMtY2VudGVyIGp1c3RpZnktYmV0d2VlbiBnYXAtMyBwcmludDpoaWRkZW4iPgogICAgICAgIDxMaW5rIGhyZWY9Ii9zYWxlcy9wcm9wb3NhbHMiIGNsYXNzTmFtZT0icm91bmRlZC14bCBib3JkZXIgYm9yZGVyLXppbmMtMzAwIGJnLXdoaXRlIHB4LTQgcHktMi41IHRleHQtc20gZm9udC1zZW1pYm9sZCB0ZXh0LXppbmMtNzAwIGhvdmVyOmJnLXppbmMtNTAiPuaPkOahiOabuOS4gOimp+OBuOaIu+OCizwvTGluaz4KICAgICAgICA8UHJpbnRQcm9wb3NhbEJ1dHRvbiAvPgogICAgICA8L2Rpdj4KCiAgICAgIDxhcnRpY2xlIGNsYXNzTmFtZT0ic2FsZXMtcHJvcG9zYWwtc2hlZXQgbXgtYXV0byBtaW4taC1bMjk3bW1dIHctWzIxMG1tXSBtYXgtdy1mdWxsIGJvcmRlciBib3JkZXItemluYy0yMDAgYmctd2hpdGUgcHgtWzE2bW1dIHB5LVsxOG1tXSBzaGFkb3cteGwiPgogICAgICAgIDxoZWFkZXIgY2xhc3NOYW1lPSJib3JkZXItYi0yIGJvcmRlci16aW5jLTk1MCBwYi03Ij4KICAgICAgICAgIDxwIGNsYXNzTmFtZT0idGV4dC14cyBmb250LWJvbGQgdHJhY2tpbmctWzAuMmVtXSB0ZXh0LXppbmMtNTAwIj5TVEFSIFdPUksgT1MgLyBTQUxFUyBQUk9QT1NBTDwvcD4KICAgICAgICAgIDxoMSBjbGFzc05hbWU9Im10LTUgdGV4dC0zeGwgZm9udC1zZW1pYm9sZCB0cmFja2luZy1bLTAuMDRlbV0iPuS9j+WuheioreWCmeW7tumVt+S/neiovOOBruOBlOaPkOahiDwvaDE+CiAgICAgICAgICA8cCBjbGFzc05hbWU9Im10LTYgdGV4dC1sZyBmb250LXNlbWlib2xkIj57cHJvcG9zYWwuY29tcGFueU5hbWV9IOW+oeS4rTwvcD4KICAgICAgICA8L2hlYWRlcj4KCiAgICAgICAgPHNlY3Rpb24gY2xhc3NOYW1lPSJtdC05Ij4KICAgICAgICAgIDxwIGNsYXNzTmFtZT0idGV4dC1zbSBsZWFkaW5nLTcgdGV4dC16aW5jLTcwMCI+CiAgICAgICAgICAgIOiytOekvuOBruOBiuWuouanmOOBq+OCiOOCiumVt+OBj+WuieW/g+OBl+OBpuS9j+WuheioreWCmeOCkuOBlOWIqeeUqOOBhOOBn+OBoOOBj+OBn+OCgeOAgeW7tumVt+S/neiovOOCkua0u+eUqOOBl+OBn+OCouODleOCv+ODvOOCteODneODvOODiOS9k+WItuOBpeOBj+OCiuOCkuOBlOaPkOahiOOBl+OBvuOBmeOAggogICAgICAgICAgPC9wPgogICAgICAgIDwvc2VjdGlvbj4KCiAgICAgICAgPHNlY3Rpb24gY2xhc3NOYW1lPSJtdC05IHJvdW5kZWQtMnhsIGJnLXppbmMtNTAgcC02Ij4KICAgICAgICAgIDxwIGNsYXNzTmFtZT0idGV4dC14cyBmb250LWJvbGQgdHJhY2tpbmctWzAuMTRlbV0gdGV4dC16aW5jLTUwMCI+QkFDS0dST1VORDwvcD4KICAgICAgICAgIDxoMiBjbGFzc05hbWU9Im10LTIgdGV4dC14bCBmb250LXNlbWlib2xkIj7ku4rlm57jga7jgZTmj5DmoYjog4zmma88L2gyPgogICAgICAgICAgPHAgY2xhc3NOYW1lPSJtdC00IHdoaXRlc3BhY2UtcHJlLXdyYXAgYnJlYWstd29yZHMgdGV4dC1zbSBsZWFkaW5nLTcgdGV4dC16aW5jLTcwMCI+e3Byb3Bvc2FsLnByb3Bvc2FsRml0fTwvcD4KICAgICAgICA8L3NlY3Rpb24+CgogICAgICAgIDxzZWN0aW9uIGNsYXNzTmFtZT0ibXQtOSI+CiAgICAgICAgICA8cCBjbGFzc05hbWU9InRleHQteHMgZm9udC1ib2xkIHRyYWNraW5nLVswLjE0ZW1dIHRleHQtemluYy01MDAiPkRJUkVDVElPTjwvcD4KICAgICAgICAgIDxoMiBjbGFzc05hbWU9Im10LTIgdGV4dC14bCBmb250LXNlbWlib2xkIj7jgZTmj5DmoYjjga7mlrnlkJHmgKc8L2gyPgogICAgICAgICAgPHVsIGNsYXNzTmFtZT0ibXQtNSBncmlkIGdhcC0zIHRleHQtc20gbGVhZGluZy02IHRleHQtemluYy03MDAiPgogICAgICAgICAgICA8bGkgY2xhc3NOYW1lPSJyb3VuZGVkLXhsIGJvcmRlciBib3JkZXItemluYy0yMDAgcC00Ij48c3Ryb25nIGNsYXNzTmFtZT0idGV4dC16aW5jLTk1MCI+5a6J5b+D44Gu57aZ57aaPC9zdHJvbmc+PGJyIC8+44Oh44O844Kr44O85L+d6Ki857WC5LqG5b6M44KC44CB5L2P5a6F6Kit5YKZ44Gu5LiN5ris44Gu5pWF6Zqc44Gr5YKZ44GI44KL6YG45oqe6IKi44KS5pW044GI44G+44GZ44CCPC9saT4KICAgICAgICAgICAgPGxpIGNsYXNzTmFtZT0icm91bmRlZC14bCBib3JkZXIgYm9yZGVyLXppbmMtMjAwIHAtNCI+PHN0cm9uZyBjbGFzc05hbWU9InRleHQtemluYy05NTAiPumhp+WuouaOpeeCueOBruW8t+WMljwvc3Ryb25nPjxiciAvPuW8leOBjea4oeOBl+W+jOOBruebuOirh+eqk+WPo+OCkuaYjueiuuOBq+OBl+OAgemVt+acn+eahOOBqumWouS/guOBpeOBj+OCiuOCkuaUr+aPtOOBl+OBvuOBmeOAgjwvbGk+CiAgICAgICAgICAgIDxsaSBjbGFzc05hbWU9InJvdW5kZWQteGwgYm9yZGVyIGJvcmRlci16aW5jLTIwMCBwLTQiPjxzdHJvbmcgY2xhc3NOYW1lPSJ0ZXh0LXppbmMtOTUwIj7pgYvnlKjosqDmi4Xjga7mlbTnkIY8L3N0cm9uZz48YnIgLz7kv53oqLzlj5fku5jjgYvjgonmoYjlhoXjgb7jgafjga7mtYHjgozjgpLnorroqo3jgZfjgIHosrTnpL7jga7pgYvnlKjjgavlkIjjgYblvaLjgpLmpJzoqI7jgZfjgb7jgZnjgII8L2xpPgogICAgICAgICAgPC91bD4KICAgICAgICA8L3NlY3Rpb24+CgogICAgICAgIDxzZWN0aW9uIGNsYXNzTmFtZT0ibXQtOSBib3JkZXItdCBib3JkZXItemluYy0yMDAgcHQtNyI+CiAgICAgICAgICA8aDIgY2xhc3NOYW1lPSJ0ZXh0LWxnIGZvbnQtc2VtaWJvbGQiPuasoeOBruOCueODhuODg+ODlzwvaDI+CiAgICAgICAgICA8cCBjbGFzc05hbWU9Im10LTMgdGV4dC1zbSBsZWFkaW5nLTcgdGV4dC16aW5jLTcwMCI+54++5Zyo44Gu44Ki44OV44K/44O844K144Od44O844OI5L2T5Yi244Go44GU6KaB5pyb44KSV2Vi6Z2i6KuH44Gn5Ly644GE44CB5a++6LGh6Kit5YKZ44KE6YGL55So5pa55rOV44KS5YCL5Yil44Gr5pW055CG44GX44G+44GZ44CCPC9wPgogICAgICAgIDwvc2VjdGlvbj4KCiAgICAgICAgPGZvb3RlciBjbGFzc05hbWU9Im10LTEwIGJvcmRlci10IGJvcmRlci16aW5jLTIwMCBwdC01IHRleHQtWzEwcHhdIGxlYWRpbmctNSB0ZXh0LXppbmMtNTAwIj4KICAgICAgICAgIOacrOizh+aWmeOBr+OBlOebuOirh+eUqOOBruaPkOahiOS4i+abuOOBjeOBp+OBmeOAguS+oeagvOOAgeS/neiovOevhOWbsuOAgeS/neiovOacn+mWk+OAgeWlkee0hOadoeS7tuOCkueiuue0hOOBmeOCi+OCguOBruOBp+OBr+OBguOCiuOBvuOBm+OCk+OAguato+W8j+OBquWGheWuueOBr+WAi+WIpeeiuuiqjeOBqOS6uumWk+OBq+OCiOOCi+aJv+iqjeW+jOOBq+eiuuWumuOBl+OBvuOBmeOAggogICAgICAgIDwvZm9vdGVyPgogICAgICA8L2FydGljbGU+CiAgICA8L21haW4+CiAgKTsKfQo=
+import Link from "next/link";
+import { notFound, redirect } from "next/navigation";
+import { buildSalesProposal } from "@/lib/sales-proposal.js";
+import { parseSalesLeadRecord } from "@/lib/sales-lead-record.js";
+import { createClient } from "@/utils/supabase/server";
+import { PrintProposalButton } from "./print-button";
+
+export default async function SalesProposalPage({ params }: {
+  params: Promise<{ id: string }>;
+}) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) redirect("/login");
+
+  const { id } = await params;
+  if (!/^[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i.test(id)) notFound();
+
+  const { data: task, error } = await supabase.from("tasks")
+    .select("id, content")
+    .eq("id", id)
+    .single();
+  if (error || !task) notFound();
+
+  const lead = parseSalesLeadRecord(String(task.id), task.content);
+  const proposal = buildSalesProposal(lead);
+  if (!proposal) notFound();
+
+  return (
+    <main className="sales-proposal-shell min-h-screen bg-zinc-100 px-4 py-6 text-zinc-950 md:px-8">
+      <div className="sales-proposal-toolbar mx-auto mb-4 flex max-w-[210mm] flex-wrap items-center justify-between gap-3 print:hidden">
+        <Link href="/sales/proposals" className="rounded-xl border border-zinc-300 bg-white px-4 py-2.5 text-sm font-semibold text-zinc-700 hover:bg-zinc-50">提案書一覧へ戻る</Link>
+        <PrintProposalButton />
+      </div>
+
+      <article className="sales-proposal-sheet mx-auto min-h-[297mm] w-[210mm] max-w-full border border-zinc-200 bg-white px-[16mm] py-[18mm] shadow-xl">
+        <header className="border-b-2 border-zinc-950 pb-7">
+          <p className="text-xs font-bold tracking-[0.2em] text-zinc-500">STAR WORK OS / SALES PROPOSAL</p>
+          <h1 className="mt-5 text-3xl font-semibold tracking-[-0.04em]">住宅設備延長保証のご提案</h1>
+          <p className="mt-6 text-lg font-semibold">{proposal.companyName} 御中</p>
+        </header>
+
+        <section className="mt-9">
+          <p className="text-sm leading-7 text-zinc-700">
+            貴社のお客様により長く安心して住宅設備をご利用いただくため、延長保証を活用したアフターサポート体制づくりをご提案します。
+          </p>
+        </section>
+
+        <section className="mt-9 rounded-2xl bg-zinc-50 p-6">
+          <p className="text-xs font-bold tracking-[0.14em] text-zinc-500">BACKGROUND</p>
+          <h2 className="mt-2 text-xl font-semibold">今回のご提案背景</h2>
+          <p className="mt-4 whitespace-pre-wrap break-words text-sm leading-7 text-zinc-700">{proposal.proposalFit}</p>
+        </section>
+
+        <section className="mt-9">
+          <p className="text-xs font-bold tracking-[0.14em] text-zinc-500">DIRECTION</p>
+          <h2 className="mt-2 text-xl font-semibold">ご提案の方向性</h2>
+          <ul className="mt-5 grid gap-3 text-sm leading-6 text-zinc-700">
+            <li className="rounded-xl border border-zinc-200 p-4"><strong className="text-zinc-950">安心の継続</strong><br />メーカー保証終了後も、住宅設備の不測の故障に備える選択肢を整えます。</li>
+            <li className="rounded-xl border border-zinc-200 p-4"><strong className="text-zinc-950">顧客接点の強化</strong><br />引き渡し後の相談窓口を明確にし、長期的な関係づくりを支援します。</li>
+            <li className="rounded-xl border border-zinc-200 p-4"><strong className="text-zinc-950">運用負担の整理</strong><br />保証受付から案内までの流れを確認し、貴社の運用に合う形を検討します。</li>
+          </ul>
+        </section>
+
+        <section className="mt-9 border-t border-zinc-200 pt-7">
+          <h2 className="text-lg font-semibold">次のステップ</h2>
+          <p className="mt-3 text-sm leading-7 text-zinc-700">現在のアフターサポート体制とご要望をWeb面談で伺い、対象設備や運用方法を個別に整理します。</p>
+        </section>
+
+        <footer className="mt-10 border-t border-zinc-200 pt-5 text-[10px] leading-5 text-zinc-500">
+          本資料はご相談用の提案下書きです。価格、保証範囲、保証期間、契約条件を確約するものではありません。正式な内容は個別確認と人間による承認後に確定します。
+        </footer>
+      </article>
+    </main>
+  );
+}

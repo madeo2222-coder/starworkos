@@ -1,1 +1,18 @@
-aW1wb3J0IHRlc3QgZnJvbSAibm9kZTp0ZXN0IjsKaW1wb3J0IGFzc2VydCBmcm9tICJub2RlOmFzc2VydC9zdHJpY3QiOwppbXBvcnQgZnMgZnJvbSAibm9kZTpmcyI7Cgpjb25zdCBzb3VyY2UgPSBmcy5yZWFkRmlsZVN5bmMobmV3IFVSTCgiLi4vYXBwL3NhbGVzL3JlcGx5LWVtYWlsL1tpZF0vcm91dGUudHMiLCBpbXBvcnQubWV0YS51cmwpLCAidXRmOCIpOwoKdGVzdCgicmVwbHkgZW1haWwgcm91dGUgYXV0aGVudGljYXRlcyBiZWZvcmUgb25lIFJMUy1zY29wZWQgcm93IHJlYWQiLCAoKSA9PiB7CiAgYXNzZXJ0Lm9rKHNvdXJjZS5pbmRleE9mKCJhdXRoLmdldFVzZXIoKSIpIDwgc291cmNlLmluZGV4T2YoJ2Zyb20oInRhc2tzIiknKSk7CiAgYXNzZXJ0Lm1hdGNoKHNvdXJjZSwgL3NlbGVjdFwoImlkLCBjb250ZW50IlwpXC5lcVwoImlkIiwgaWRcKVwubWF5YmVTaW5nbGVcKFwpL3UpOwogIGFzc2VydC5kb2VzTm90TWF0Y2goc291cmNlLCAvc2VydmljZVtfLV0/cm9sZXxjcmVhdGVDbGllbnRcKFteKV0qc2VjcmV0L2l1KTsKfSk7Cgp0ZXN0KCJyZXBseSBlbWFpbCByb3V0ZSBpcyBkb3dubG9hZC1vbmx5IGFuZCBuZXZlciBzZW5kcyBvciBtdXRhdGVzIiwgKCkgPT4gewogIGFzc2VydC5tYXRjaChzb3VyY2UsIC9idWlsZFVuc2VudFNhbGVzUmVwbHlFbWFpbC91KTsKICBhc3NlcnQubWF0Y2goc291cmNlLCAvbWVzc2FnZVwvcmZjODIyL3UpOwogIGFzc2VydC5tYXRjaChzb3VyY2UsIC9jYWNoZS1jb250cm9sIjogIm5vLXN0b3JlIi91KTsKICBhc3NlcnQuZG9lc05vdE1hdGNoKHNvdXJjZSwgL1wuaW5zZXJ0XCh8XC51cGRhdGVcKHxcLmRlbGV0ZVwofGZldGNoXCh8cmVzZW5kfHNlbmRNYWlsL2l1KTsKfSk7Cg==
+import test from "node:test";
+import assert from "node:assert/strict";
+import fs from "node:fs";
+
+const source = fs.readFileSync(new URL("../app/sales/reply-email/[id]/route.ts", import.meta.url), "utf8");
+
+test("reply email route authenticates before one RLS-scoped row read", () => {
+  assert.ok(source.indexOf("auth.getUser()") < source.indexOf('from("tasks")'));
+  assert.match(source, /select\("id, content"\)\.eq\("id", id\)\.maybeSingle\(\)/u);
+  assert.doesNotMatch(source, /service[_-]?role|createClient\([^)]*secret/iu);
+});
+
+test("reply email route is download-only and never sends or mutates", () => {
+  assert.match(source, /buildUnsentSalesReplyEmail/u);
+  assert.match(source, /message\/rfc822/u);
+  assert.match(source, /cache-control": "no-store"/u);
+  assert.doesNotMatch(source, /\.insert\(|\.update\(|\.delete\(|fetch\(|resend|sendMail/iu);
+});

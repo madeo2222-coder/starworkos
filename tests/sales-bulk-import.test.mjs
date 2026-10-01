@@ -1,1 +1,80 @@
-aW1wb3J0IHRlc3QgZnJvbSAibm9kZTp0ZXN0IjsKaW1wb3J0IGFzc2VydCBmcm9tICJub2RlOmFzc2VydC9zdHJpY3QiOwppbXBvcnQgeyByZWFkRmlsZVN5bmMgfSBmcm9tICJub2RlOmZzIjsKaW1wb3J0IHsKICBjb21wYW55TmFtZUtleSwKICBNQVhfU0FMRVNfQlVMS19JTVBPUlRfTEVOR1RILAogIE1BWF9TQUxFU19CVUxLX0lNUE9SVF9ST1dTLAogIHByZXBhcmVTYWxlc0J1bGtJbXBvcnQsCn0gZnJvbSAiLi4vbGliL3NhbGVzLWJ1bGstaW1wb3J0LmpzIjsKaW1wb3J0IHsgcGFyc2VTYWxlc0xlYWRSZWNvcmQgfSBmcm9tICIuLi9saWIvc2FsZXMtbGVhZC1yZWNvcmQuanMiOwoKdGVzdCgicHJlcGFyZXMgZm91ci1jb2x1bW4gRXhjZWwgcm93cyBhcyBvbmUgYm91bmRlZCBpbnNlcnQgcGF5bG9hZCIsICgpID0+IHsKICBjb25zdCByb3dzID0gcHJlcGFyZVNhbGVzQnVsa0ltcG9ydChbCiAgICAi5LyB5qWt5ZCNXHRXZWLjgrXjgqTjg4hcdOeqk+WPo1x05o+Q5qGI55CG55SxIiwKICAgICIg44OG44K544OI5bel5YuZ5bqXIFx0aHR0cHM6Ly9leGFtcGxlLmNvbVx0c2FsZXNAZXhhbXBsZS5jb21cdOS/neiovOOBruaPkOahiOWAmeijnCIsCiAgICAi56ys5LqM5L2P5a6FXHRcdOWWtualremDqFx05pei5a2Y6aGn5a6i5pSv5o+0IiwKICBdLmpvaW4oIlxyXG4iKSk7CgogIGFzc2VydC5lcXVhbChyb3dzPy5sZW5ndGgsIDIpOwogIGFzc2VydC5kZWVwRXF1YWwocm93cz8ubWFwKChyb3cpID0+IHJvdy50aXRsZSksIFsi5Za25qWt6KaL6L6844G/77ya44OG44K544OI5bel5YuZ5bqXIiwgIuWWtualreimi+i+vOOBv++8muesrOS6jOS9j+WuhSJdKTsKICBhc3NlcnQuZGVlcEVxdWFsKHJvd3M/Lm1hcCgocm93LCBpbmRleCkgPT4gcGFyc2VTYWxlc0xlYWRSZWNvcmQoYGxlYWQtJHtpbmRleH1gLCByb3cuY29udGVudCkuY29tcGFueU5hbWUpLCBbCiAgICAi44OG44K544OI5bel5YuZ5bqXIiwgIuesrOS6jOS9j+WuhSIsCiAgXSk7CiAgYXNzZXJ0Lm9rKHJvd3M/LmV2ZXJ5KChyb3cpID0+IHJvdy5wcmlvcml0eSA9PT0gIumrmCIgJiYgcm93LnN0YXR1cyA9PT0gIk5FVyIpKTsKICBhc3NlcnQub2soT2JqZWN0LmlzRnJvemVuKHJvd3MpKTsKICBhc3NlcnQub2socm93cz8uZXZlcnkoT2JqZWN0LmlzRnJvemVuKSk7Cn0pOwoKdGVzdCgiYWNjZXB0cyBoZWFkZXJsZXNzIHJvd3MgYW5kIGlnbm9yZXMgYmxhbmsgbGluZXMiLCAoKSA9PiB7CiAgY29uc3Qgcm93cyA9IHByZXBhcmVTYWxlc0J1bGtJbXBvcnQoIlxu5qCq5byP5Lya56S+QVx0aHR0cHM6Ly9hLmV4YW1wbGVcdOWWtualremDqFx05YCZ6KOcXG5cbiIpOwogIGFzc2VydC5lcXVhbChyb3dzPy5sZW5ndGgsIDEpOwogIGFzc2VydC5lcXVhbChwYXJzZVNhbGVzTGVhZFJlY29yZCgibGVhZC1hIiwgcm93c1swXS5jb250ZW50KS5jb21wYW55TmFtZSwgIuagquW8j+S8muekvkEiKTsKfSk7Cgp0ZXN0KCJyZWplY3RzIG1hbGZvcm1lZCBoZWFkZXJzLCBjb2x1bW4gY291bnRzLCBmaWVsZHMsIGFuZCBvdmVyc2l6ZWQgaW5wdXQiLCAoKSA9PiB7CiAgYXNzZXJ0LmVxdWFsKHByZXBhcmVTYWxlc0J1bGtJbXBvcnQoIiIpLCBudWxsKTsKICBhc3NlcnQuZXF1YWwocHJlcGFyZVNhbGVzQnVsa0ltcG9ydCgi5LyB5qWt5ZCNXHRVUkxcdOeqk+WPo1x05o+Q5qGI55CG55SxXG7kvIHmpa1cdGh0dHBzOi8vYS5leGFtcGxlXHTnqpPlj6NcdOeQhueUsSIpLCBudWxsKTsKICBhc3NlcnQuZXF1YWwocHJlcGFyZVNhbGVzQnVsa0ltcG9ydCgi5LyB5qWtXHRodHRwczovL2EuZXhhbXBsZVx056qT5Y+jIiksIG51bGwpOwogIGFzc2VydC5lcXVhbChwcmVwYXJlU2FsZXNCdWxrSW1wb3J0KCLkvIHmpa1cdGphdmFzY3JpcHQ6YWxlcnQoMSlcdOeqk+WPo1x055CG55SxIiksIG51bGwpOwogIGFzc2VydC5lcXVhbChwcmVwYXJlU2FsZXNCdWxrSW1wb3J0KCLkvIHmpa1cdGh0dHBzOi8vYS5leGFtcGxlXHTnqpPlj6NcdOeQhueUsVx05L2Z5YiGIiksIG51bGwpOwogIGFzc2VydC5lcXVhbChwcmVwYXJlU2FsZXNCdWxrSW1wb3J0KCJ4Ii5yZXBlYXQoTUFYX1NBTEVTX0JVTEtfSU1QT1JUX0xFTkdUSCArIDEpKSwgbnVsbCk7Cn0pOwoKdGVzdCgicmVqZWN0cyBtb3JlIHRoYW4gZmlmdHkgY29tcGFuaWVzIHdpdGhvdXQgcmV0dXJuaW5nIGEgcGFydGlhbCBwYXlsb2FkIiwgKCkgPT4gewogIGNvbnN0IGlucHV0ID0gQXJyYXkuZnJvbSh7IGxlbmd0aDogTUFYX1NBTEVTX0JVTEtfSU1QT1JUX1JPV1MgKyAxIH0sIChfLCBpbmRleCkgPT4gKAogICAgYOS8gealrSR7aW5kZXh9XHRodHRwczovL2V4YW1wbGUuY29tLyR7aW5kZXh9XHTllrbmpa3pg6hcdOWAmeijnGAKICApKS5qb2luKCJcbiIpOwogIGFzc2VydC5lcXVhbChwcmVwYXJlU2FsZXNCdWxrSW1wb3J0KGlucHV0KSwgbnVsbCk7Cn0pOwoKdGVzdCgicmVqZWN0cyBub3JtYWxpemVkIGR1cGxpY2F0ZXMgd2l0aGluIHRoZSBiYXRjaCBvciBleGlzdGluZyBSTFMtdmlzaWJsZSBsZWFkcyIsICgpID0+IHsKICBhc3NlcnQuZXF1YWwocHJlcGFyZVNhbGVzQnVsa0ltcG9ydChbCiAgICAi5qCq5byP5Lya56S+77yh77yi77yjXHRodHRwczovL2EuZXhhbXBsZVx05Za25qWt6YOoXHTlgJnoo5wiLAogICAgIuagquW8j+S8muekvmFiY1x0aHR0cHM6Ly9iLmV4YW1wbGVcdOWWtualremDqFx05YCZ6KOcIiwKICBdLmpvaW4oIlxuIikpLCBudWxsKTsKICBhc3NlcnQuZXF1YWwocHJlcGFyZVNhbGVzQnVsa0ltcG9ydCgKICAgICIg5qCq5byP5Lya56S+IEFCQyBcdGh0dHBzOi8vYS5leGFtcGxlXHTllrbmpa3pg6hcdOWAmeijnCIsCiAgICBbIuagquW8j+S8muekviAgIO+8oe+8ou+8oyJdLAogICksIG51bGwpOwogIGFzc2VydC5lcXVhbChjb21wYW55TmFtZUtleSgiIOagquW8j+S8muekvuOAgO+8oe+8ou+8oyAiKSwgIuagquW8j+S8muekviBhYmMiKTsKfSk7Cgp0ZXN0KCJmYWlscyBjbG9zZWQgZm9yIGhvc3RpbGUgdmFsdWVzIGFuZCBhbiB1bmJvdW5kZWQgZXhpc3RpbmctbmFtZSBzbmFwc2hvdCIsICgpID0+IHsKICBjb25zdCBob3N0aWxlID0gbmV3IFByb3h5KFtdLCB7IGdldCgpIHsgdGhyb3cgbmV3IEVycm9yKCJibG9ja2VkIik7IH0gfSk7CiAgYXNzZXJ0LmVxdWFsKHByZXBhcmVTYWxlc0J1bGtJbXBvcnQoIuS8gealrVx0XHRcdCIsIGhvc3RpbGUpLCBudWxsKTsKICBhc3NlcnQuZXF1YWwocHJlcGFyZVNhbGVzQnVsa0ltcG9ydCgi5LyB5qWtXHRcdFx0IiwgQXJyYXkuZnJvbSh7IGxlbmd0aDogNTAxIH0sICgpID0+ICLkvIHmpa0iKSksIG51bGwpOwp9KTsKCnRlc3QoInNpbmdsZSByZWdpc3RyYXRpb24gYXV0aGVudGljYXRlcywgY2hlY2tzIG5vcm1hbGl6ZWQgZHVwbGljYXRlcywgYW5kIGV4cG9zZXMgbm8gcmF3IGVycm9ycyIsICgpID0+IHsKICBjb25zdCBwYWdlID0gcmVhZEZpbGVTeW5jKG5ldyBVUkwoIi4uL2FwcC9zYWxlcy9wYWdlLnRzeCIsIGltcG9ydC5tZXRhLnVybCksICJ1dGY4Iik7CiAgY29uc3QgYWN0aW9uID0gcGFnZS5zbGljZSgKICAgIHBhZ2UuaW5kZXhPZigiYXN5bmMgZnVuY3Rpb24gY3JlYXRlU2FsZXNMZWFkKCIpLAogICAgcGFnZS5pbmRleE9mKCJhc3luYyBmdW5jdGlvbiBjcmVhdGVTYWxlc0xlYWRzQnVsaygiKSwKICApOwogIGFzc2VydC5vayhhY3Rpb24uaW5kZXhPZigic3VwYWJhc2UuYXV0aC5nZXRVc2VyKCkiKSA8IGFjdGlvbi5pbmRleE9mKCIuc2VsZWN0KFwiaWQsIGNvbnRlbnRcIikiKSk7CiAgYXNzZXJ0Lm9rKGFjdGlvbi5pbmNsdWRlcygiY29tcGFueU5hbWVLZXkobGVhZC5jb21wYW55TmFtZSkiKSk7CiAgYXNzZXJ0Lm9rKGFjdGlvbi5pbmNsdWRlcygiY29tcGFueU5hbWVLZXkoY29tcGFueU5hbWUpID09PSBjYW5kaWRhdGVLZXkiKSk7CiAgYXNzZXJ0Lm9rKGFjdGlvbi5pbmRleE9mKCJsZWFkLWR1cGxpY2F0ZSIpIDwgYWN0aW9uLmxhc3RJbmRleE9mKCIuaW5zZXJ0KCIpKTsKICBhc3NlcnQuZG9lc05vdE1hdGNoKGFjdGlvbiwgL3Rocm93IG5ldyBFcnJvcnxcLm1lc3NhZ2UvdSk7Cn0pOwo=
+import test from "node:test";
+import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
+import {
+  companyNameKey,
+  MAX_SALES_BULK_IMPORT_LENGTH,
+  MAX_SALES_BULK_IMPORT_ROWS,
+  prepareSalesBulkImport,
+} from "../lib/sales-bulk-import.js";
+import { parseSalesLeadRecord } from "../lib/sales-lead-record.js";
+
+test("prepares four-column Excel rows as one bounded insert payload", () => {
+  const rows = prepareSalesBulkImport([
+    "企業名\tWebサイト\t窓口\t提案理由",
+    " テスト工務店 \thttps://example.com\tsales@example.com\t保証の提案候補",
+    "第二住宅\t\t営業部\t既存顧客支援",
+  ].join("\r\n"));
+
+  assert.equal(rows?.length, 2);
+  assert.deepEqual(rows?.map((row) => row.title), ["営業見込み：テスト工務店", "営業見込み：第二住宅"]);
+  assert.deepEqual(rows?.map((row, index) => parseSalesLeadRecord(`lead-${index}`, row.content).companyName), [
+    "テスト工務店", "第二住宅",
+  ]);
+  assert.ok(rows?.every((row) => row.priority === "高" && row.status === "NEW"));
+  assert.ok(Object.isFrozen(rows));
+  assert.ok(rows?.every(Object.isFrozen));
+});
+
+test("accepts headerless rows and ignores blank lines", () => {
+  const rows = prepareSalesBulkImport("\n株式会社A\thttps://a.example\t営業部\t候補\n\n");
+  assert.equal(rows?.length, 1);
+  assert.equal(parseSalesLeadRecord("lead-a", rows[0].content).companyName, "株式会社A");
+});
+
+test("rejects malformed headers, column counts, fields, and oversized input", () => {
+  assert.equal(prepareSalesBulkImport(""), null);
+  assert.equal(prepareSalesBulkImport("企業名\tURL\t窓口\t提案理由\n企業\thttps://a.example\t窓口\t理由"), null);
+  assert.equal(prepareSalesBulkImport("企業\thttps://a.example\t窓口"), null);
+  assert.equal(prepareSalesBulkImport("企業\tjavascript:alert(1)\t窓口\t理由"), null);
+  assert.equal(prepareSalesBulkImport("企業\thttps://a.example\t窓口\t理由\t余分"), null);
+  assert.equal(prepareSalesBulkImport("x".repeat(MAX_SALES_BULK_IMPORT_LENGTH + 1)), null);
+});
+
+test("rejects more than fifty companies without returning a partial payload", () => {
+  const input = Array.from({ length: MAX_SALES_BULK_IMPORT_ROWS + 1 }, (_, index) => (
+    `企業${index}\thttps://example.com/${index}\t営業部\t候補`
+  )).join("\n");
+  assert.equal(prepareSalesBulkImport(input), null);
+});
+
+test("rejects normalized duplicates within the batch or existing RLS-visible leads", () => {
+  assert.equal(prepareSalesBulkImport([
+    "株式会社ＡＢＣ\thttps://a.example\t営業部\t候補",
+    "株式会社abc\thttps://b.example\t営業部\t候補",
+  ].join("\n")), null);
+  assert.equal(prepareSalesBulkImport(
+    " 株式会社 ABC \thttps://a.example\t営業部\t候補",
+    ["株式会社   ＡＢＣ"],
+  ), null);
+  assert.equal(companyNameKey(" 株式会社　ＡＢＣ "), "株式会社 abc");
+});
+
+test("fails closed for hostile values and an unbounded existing-name snapshot", () => {
+  const hostile = new Proxy([], { get() { throw new Error("blocked"); } });
+  assert.equal(prepareSalesBulkImport("企業\t\t\t", hostile), null);
+  assert.equal(prepareSalesBulkImport("企業\t\t\t", Array.from({ length: 501 }, () => "企業")), null);
+});
+
+test("single registration authenticates, checks normalized duplicates, and exposes no raw errors", () => {
+  const page = readFileSync(new URL("../app/sales/page.tsx", import.meta.url), "utf8");
+  const action = page.slice(
+    page.indexOf("async function createSalesLead("),
+    page.indexOf("async function createSalesLeadsBulk("),
+  );
+  assert.ok(action.indexOf("supabase.auth.getUser()") < action.indexOf(".select(\"id, content\")"));
+  assert.ok(action.includes("companyNameKey(lead.companyName)"));
+  assert.ok(action.includes("companyNameKey(companyName) === candidateKey"));
+  assert.ok(action.indexOf("lead-duplicate") < action.lastIndexOf(".insert("));
+  assert.doesNotMatch(action, /throw new Error|\.message/u);
+});
