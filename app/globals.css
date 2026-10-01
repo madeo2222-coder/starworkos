@@ -61,3 +61,27 @@ textarea {
   letter-spacing: 0.14em;
   text-transform: uppercase;
 }
+
+@page {
+  size: A4;
+  margin: 0;
+}
+
+@media print {
+  body {
+    background: #ffffff;
+  }
+
+  .sales-proposal-shell {
+    min-height: auto;
+    padding: 0;
+  }
+
+  .sales-proposal-sheet {
+    min-height: 297mm;
+    width: 210mm;
+    max-width: none;
+    border: 0;
+    box-shadow: none;
+  }
+}
