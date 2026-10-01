@@ -5,6 +5,7 @@ import { createClient } from "@/utils/supabase/server";
 import { buildSalesWorkQueue } from "@/lib/sales-work-queue.js";
 import { buildSalesAuditTimeline } from "@/lib/sales-audit-timeline.js";
 import { buildSalesFunnelMetrics } from "@/lib/sales-funnel-metrics.js";
+import { buildSalesIntegrationReadiness } from "@/lib/sales-integration-readiness.js";
 import {
   companyNameKey,
   prepareSalesBulkImport,
@@ -816,6 +817,7 @@ export default async function SalesCommandCenterPage({ searchParams }: {
     .filter((lead) => lead !== null);
   const queue = buildSalesWorkQueue(leads);
   const funnelMetrics = buildSalesFunnelMetrics(leads);
+  const integrations = buildSalesIntegrationReadiness();
   const leadMap = new Map(leads.map((lead) => [lead.id, lead]));
   const versions = new Map(((data ?? []) as SalesTask[]).map((task) => [task.id, task.updated_at]));
   const replyWaitingLeads = leads.filter((lead) => lead.outreachRecordedAt !== null
@@ -904,6 +906,37 @@ export default async function SalesCommandCenterPage({ searchParams }: {
           <Summary label="次の作業" value={queue.counts.queued} />
           <Summary label="確定アポ" value={confirmedAppointments.length} />
           <Summary label="要確認データ" value={queue.counts.invalid + queue.counts.duplicate} tone="amber" />
+        </section>
+
+        <section className="os-surface mt-6 rounded-[22px] p-6" aria-labelledby="sales-integration-heading">
+          <div className="flex flex-wrap items-end justify-between gap-3">
+            <div>
+              <p className="os-eyebrow">Integration readiness</p>
+              <h2 id="sales-integration-heading" className="mt-2 text-xl font-semibold text-zinc-950">営業連携の準備状況</h2>
+              <p className="mt-2 text-sm text-zinc-500">設定の有無だけを確認します。秘密情報は表示せず、ここからメール・LINE送信やカレンダー登録は行いません。</p>
+            </div>
+            <p className="rounded-full bg-amber-50 px-3 py-1 text-xs font-semibold text-amber-900">すべて人の承認後に有効化</p>
+          </div>
+          <div className="mt-5 grid gap-3 md:grid-cols-3">
+            {integrations.map((integration) => (
+              <article key={integration.key} className="rounded-2xl border border-zinc-200 bg-white p-4">
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <p className="text-sm font-semibold text-zinc-950">{integration.label}</p>
+                    <p className="mt-1 text-xs text-zinc-500">{integration.provider}</p>
+                  </div>
+                  <span className={`rounded-full px-2.5 py-1 text-[11px] font-semibold ${integration.ready ? "bg-emerald-50 text-emerald-800" : "bg-zinc-100 text-zinc-600"}`}>
+                    {integration.ready ? "設定済み・未有効" : "設定待ち"}
+                  </span>
+                </div>
+                {integration.ready ? (
+                  <p className="mt-4 text-xs leading-5 text-emerald-800">接続情報は登録済みです。送信・登録の実行機能はまだ停止しています。</p>
+                ) : (
+                  <p className="mt-4 text-xs leading-5 text-zinc-600">接続情報の登録後、テスト送信ではなく下書き確認から段階的に有効化します。</p>
+                )}
+              </article>
+            ))}
+          </div>
         </section>
 
         <section className="os-surface mt-6 rounded-[22px] p-6" aria-labelledby="sales-funnel-heading">
