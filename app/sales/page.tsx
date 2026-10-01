@@ -1,6 +1,3 @@
-Warning: truncated output (original token count: 30344)
-Total output lines: 1781
-
 import Link from "next/link";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
@@ -834,7 +831,470 @@ export default async function SalesCommandCenterPage({ searchParams }: {
     "reply-invalid": "送信済み案件、返信手段、分類、本文を確認してください。返信は1件ずつ処理します。",
     "reply-draft-saved": "一次返信案を保存しました。保存済みの内容を確認して承認してください。",
     "reply-draft-approved": "一次返信案を承認しました。まだ送信されていません。",
-    "reply-draft-invalid": "安全対象の返信、件名、本文、署名と確認チェックを見直し…10344 tokens truncated…ded-xl border border-zinc-200 bg-zinc-50 p-3">
+    "reply-draft-invalid": "安全対象の返信、件名、本文、署名と確認チェックを見直してください。",
+    "reply-delivery-recorded": "外部での一次返信送信を記録しました。WORK OSからの送信は行っていません。",
+    "reply-delivery-invalid": "承認済み返信案と送信確認を見直してください。二重記録はできません。",
+    "follow-up-saved": "追客メール案を保存しました。内容を確認して承認してください。",
+    "follow-up-approved": "追客メール案を承認しました。まだ送信されていません。",
+    "follow-up-invalid": "期限到来済みの未返信案件か、件名・本文・承認状態を確認してください。",
+    "follow-up-delivery-recorded": "外部での追客メール送信を記録しました。WORK OSからの送信は行っていません。",
+    "follow-up-delivery-invalid": "承認済み追客メールと送信確認を見直してください。二重記録はできません。",
+    "meeting-options-saved": "面談候補日時を保存しました。保存済み候補を確認して承認してください。",
+    "meeting-options-approved": "面談候補日時を承認しました。まだ相手への送信やカレンダー登録は行っていません。",
+    "meeting-options-invalid": "日程調整返信と候補日時を確認してください。30分以上先から180日以内の異なる2〜3枠が必要です。",
+    "meeting-options-delivery-recorded": "外部での面談候補送信を記録しました。相手の候補選択待ちです。",
+    "meeting-options-delivery-invalid": "承認済み候補と送信確認を見直してください。期限間近の候補や二重記録は保存できません。",
+    "appointment-confirmed": "アポイントを確定し、確定案内案を保存しました。内容を確認して承認してください。まだ送信されていません。",
+    "appointment-invalid": "送信済み候補から日時を選び、有効なHTTPSのWeb面談URLを入力してください。期限直前や二重確定は保存できません。",
+    "appointment-notice-prepared": "アポイント確定案内案を保存しました。内容を確認して承認してください。",
+    "appointment-notice-approved": "アポイント確定案内を承認しました。まだ送信されていません。",
+    "appointment-notice-invalid": "確定日時・案内内容・承認状態を確認してください。開始済みの面談には案内できません。",
+    "appointment-notice-delivery-recorded": "外部でのアポイント確定案内送信を記録しました。WORK OSからの送信は行っていません。",
+    "appointment-notice-delivery-invalid": "承認済み案内と送信確認を見直してください。開始後や二重記録は保存できません。",
+    "appointment-reminder-prepared": "アポイント前日案内を保存しました。内容を確認して承認してください。",
+    "appointment-reminder-approved": "アポイント前日案内を承認しました。まだ送信されていません。",
+    "appointment-reminder-invalid": "確定案内送信後かつ開始24時間前からの案件か、案内内容・承認状態を確認してください。",
+    "appointment-reminder-delivery-recorded": "外部でのアポイント前日案内送信を記録しました。WORK OSからの送信は行っていません。",
+    "appointment-reminder-delivery-invalid": "承認済み前日案内と送信確認を見直してください。開始後や二重記録は保存できません。",
+    "appointment-outcome-recorded": "面談結果を記録しました。外部送信やカレンダー変更は行っていません。",
+    "appointment-outcome-invalid": "面談終了後の未記録案件か、結果・面談メモ・確認チェックを見直してください。二重記録はできません。",
+    "post-meeting-follow-up-scheduled": "面談後フォローを設定しました。期限到来時に優先キューへ表示します。",
+    "post-meeting-follow-up-completed": "面談後フォローの完了を記録しました。外部送信は行っていません。",
+    "post-meeting-follow-up-invalid": "次回対応の面談結果、内容、期限、担当者、確認チェックを見直してください。二重記録はできません。",
+    "outreach-invalid": "件名・本文・署名と確認チェックを見直してください。進行済みの案件は変更できません。",
+    "research-saved": "調査結果を保存しました。次は初回提案の準備です。",
+    "lead-created": "見込み企業を登録しました。次の営業仕事を確認してください。",
+    "lead-invalid": "登録を停止しました。企業名、Webサイト、連絡先、提案理由を確認してください。",
+    "lead-duplicate": "同じ企業名の見込み企業がすでに登録されています。既存案件を確認してください。",
+    "lead-failed": "見込み企業を登録できませんでした。権限や接続を確認し、再度お試しください。",
+    "profile-saved": "企業の基本情報を更新しました。調査結果と下書きは保持し、承認済み文面は再承認待ちに戻しました。",
+    "profile-invalid": "更新を停止しました。初回送信前の案件か、企業名、Webサイト、連絡先、提案理由に変更があるか確認してください。",
+    "profile-duplicate": "更新後の企業名と同じ見込み企業がすでに登録されています。既存案件を確認してください。",
+    "profile-failed": "企業情報を更新できませんでした。権限や接続を確認し、再度お試しください。",
+    "bulk-created": "見込み企業を一括登録しました。次の営業仕事を確認してください。",
+    "bulk-invalid": "一括登録を停止しました。4列の形式、50社上限、入力内容、企業名の重複を確認してください。",
+    "bulk-failed": "一括登録を保存できませんでした。権限や接続を確認し、再度お試しください。",
+    conflict: "保存できませんでした。他の更新や権限を確認し、再読み込みしてください。",
+    invalid: "調査結果を入力してください。この案件はすでに進行している可能性があります。",
+  };
+
+  return (
+    <main className="min-h-screen bg-[#f7f7f5] px-4 py-5 md:px-8 md:py-8">
+      <div className="mx-auto max-w-7xl">
+        <header className="os-surface rounded-[24px] p-6 md:p-8">
+          <div className="flex flex-wrap items-center justify-between gap-4">
+            <div>
+              <p className="os-eyebrow">AI sales department</p>
+              <h1 className="mt-3 text-3xl font-semibold tracking-[-0.04em] text-zinc-950 md:text-4xl">営業司令塔</h1>
+              <p className="mt-3 max-w-2xl text-sm leading-6 text-zinc-500">
+                見込み企業を登録すると、WORK OSが担当AIと次の作業を整理します。現在は準備・確認までで、メールやLINEは送信しません。
+              </p>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              <Link href="/sales/proposals" className="rounded-xl border border-zinc-200 bg-white px-4 py-2.5 text-sm font-semibold text-zinc-700 hover:bg-zinc-50">企業別提案書</Link>
+              <a href="/sales/export" className="rounded-xl border border-zinc-200 bg-white px-4 py-2.5 text-sm font-semibold text-zinc-700 hover:bg-zinc-50">営業一覧CSV</a>
+              <Link href="/dashboard" className="rounded-xl border border-zinc-200 bg-white px-4 py-2.5 text-sm font-semibold text-zinc-700 hover:bg-zinc-50">Dashboardへ戻る</Link>
+            </div>
+          </div>
+        </header>
+        {notice && notices[notice] && <p role="status" className="mt-4 rounded-xl bg-blue-50 p-4 text-sm text-blue-900">{notices[notice]}</p>}
+
+        <section className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <Summary label="見込み企業" value={leads.length} />
+          <Summary label="次の作業" value={queue.counts.queued} />
+          <Summary label="確定アポ" value={confirmedAppointments.length} />
+          <Summary label="要確認データ" value={queue.counts.invalid + queue.counts.duplicate} tone="amber" />
+        </section>
+
+        <section className="os-surface mt-6 rounded-[22px] p-6" aria-labelledby="sales-funnel-heading">
+          <div className="flex flex-wrap items-end justify-between gap-3">
+            <div>
+              <p className="os-eyebrow">Sales funnel</p>
+              <h2 id="sales-funnel-heading" className="mt-2 text-xl font-semibold text-zinc-950">営業KPIファネル</h2>
+              <p className="mt-2 text-sm text-zinc-500">RLSで閲覧できる最新100社を、保存済みの監査履歴だけで集計します。</p>
+            </div>
+            <div className="flex flex-wrap gap-2 text-xs font-semibold">
+              <span className="rounded-full bg-blue-50 px-3 py-1 text-blue-800">返信率 {formatFunnelRate(funnelMetrics.rates.replyRate)}</span>
+              <span className="rounded-full bg-emerald-50 px-3 py-1 text-emerald-800">アポ獲得率 {formatFunnelRate(funnelMetrics.rates.appointmentRate)}</span>
+              <span className="rounded-full bg-violet-50 px-3 py-1 text-violet-800">結果記録率 {formatFunnelRate(funnelMetrics.rates.appointmentOutcomeRate)}</span>
+              <span className="rounded-full bg-amber-50 px-3 py-1 text-amber-800">成約率 {formatFunnelRate(funnelMetrics.rates.winRate)}</span>
+            </div>
+          </div>
+          <ol className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+            {funnelMetrics.funnel.map((stage, index) => {
+              const share = funnelMetrics.counts.registered === 0
+                ? 0 : Math.round((stage.count / funnelMetrics.counts.registered) * 100);
+              return (
+                <li key={stage.key} className="rounded-2xl border border-zinc-200 bg-white p-4">
+                  <p className="text-xs font-semibold text-zinc-500">STEP {index + 1}</p>
+                  <div className="mt-2 flex items-end justify-between gap-2">
+                    <p className="text-sm font-semibold text-zinc-900">{stage.label}</p>
+                    <p className="text-2xl font-semibold text-zinc-950">{stage.count}</p>
+                  </div>
+                  <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-zinc-100" aria-hidden="true">
+                    <div className="h-full rounded-full bg-zinc-900" style={{ width: `${share}%` }} />
+                  </div>
+                  <p className="mt-2 text-right text-[11px] text-zinc-500">登録比 {share}%</p>
+                </li>
+              );
+            })}
+          </ol>
+          <dl className="mt-4 grid gap-3 sm:grid-cols-3">
+            <FunnelSupport label="追客実施" value={funnelMetrics.counts.followUpLeads} />
+            <FunnelSupport label="面談候補送信" value={funnelMetrics.counts.meetingOptionsSent} />
+            <FunnelSupport label="配信停止" value={funnelMetrics.counts.optedOut} />
+          </dl>
+          <section className="mt-5 rounded-2xl border border-zinc-200 bg-zinc-50 p-4" aria-labelledby="sales-outcome-heading">
+            <div className="flex flex-wrap items-end justify-between gap-2">
+              <div>
+                <h3 id="sales-outcome-heading" className="font-semibold text-zinc-950">面談後の営業成果</h3>
+                <p className="mt-1 text-xs text-zinc-500">受注・失注と、期限超過した次回対応を監査記録から集計します。</p>
+              </div>
+              <p className="text-xs font-semibold text-zinc-600">結果記録済み {funnelMetrics.counts.appointmentOutcomes}件</p>
+            </div>
+            <dl className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+              <FunnelSupport label="結果未記録" value={funnelMetrics.counts.pendingAppointmentOutcomes} />
+              <FunnelSupport label="受注" value={funnelMetrics.counts.won} />
+              <FunnelSupport label="次回対応" value={funnelMetrics.counts.nextAction} />
+              <FunnelSupport label="期限超過フォロー" value={funnelMetrics.counts.overduePostMeetingFollowUps} />
+            </dl>
+            <p className="mt-3 text-xs text-zinc-500">
+              失注 {funnelMetrics.counts.lost}件／不参加 {funnelMetrics.counts.noShow}件／面談後フォロー完了 {funnelMetrics.counts.completedPostMeetingFollowUps}件
+            </p>
+          </section>
+        </section>
+
+        <section className="mt-6 grid gap-6 xl:grid-cols-12">
+          <div className="os-surface rounded-[22px] p-6 xl:col-span-5">
+            <p className="os-eyebrow">New prospect</p>
+            <h2 className="mt-2 text-xl font-semibold text-zinc-950">見込み企業を登録</h2>
+            <form action={createSalesLead} className="mt-5 space-y-4">
+              <Field label="企業名" name="companyName" required placeholder="例：〇〇工務店" />
+              <Field label="Webサイト" name="website" type="url" placeholder="https://example.com" />
+              <Field label="連絡先" name="contact" placeholder="メールアドレス、担当部署など" />
+              <label className="block text-sm font-semibold text-zinc-800">
+                提案できそうな理由
+                <textarea name="proposalFit" maxLength={2000} rows={4} className="mt-2 w-full rounded-xl border border-zinc-200 bg-white px-4 py-3 text-sm outline-none focus:border-zinc-500" placeholder="相手企業に響きそうなポイント" />
+              </label>
+              <button type="submit" className="w-full rounded-xl bg-zinc-950 px-4 py-3 text-sm font-semibold text-white hover:bg-zinc-800">登録して次の作業を確認</button>
+            </form>
+            <details className="mt-5 rounded-2xl border border-zinc-200 bg-zinc-50 p-4">
+              <summary className="cursor-pointer text-sm font-semibold text-zinc-900">Excelから最大50社を一括登録</summary>
+              <p className="mt-2 text-xs leading-5 text-zinc-500">
+                企業名／Webサイト／窓口／提案理由の4列をコピーして貼り付けます。全件を検証し、1件でも不備や重複があれば登録しません。
+              </p>
+              <form action={createSalesLeadsBulk} className="mt-3 space-y-3">
+                <label className="block text-xs font-semibold text-zinc-700">
+                  Excelの4列
+                  <textarea name="bulkLeads" required maxLength={MAX_SALES_BULK_IMPORT_LENGTH} rows={8} className="mt-1 w-full rounded-xl border border-zinc-300 bg-white p-3 font-mono text-xs outline-none focus:border-zinc-500" placeholder={"企業名\tWebサイト\t窓口\t提案理由\n〇〇工務店\thttps://example.com\t営業部\t保証の提案候補"} />
+                </label>
+                <p className="text-[11px] leading-4 text-zinc-500">登録済み企業との重複も検査します。外部AI・メール送信は行いません。</p>
+                <button className="w-full rounded-xl border border-zinc-300 bg-white px-4 py-3 text-sm font-semibold text-zinc-800 hover:bg-zinc-100">全件を検証して一括登録</button>
+              </form>
+            </details>
+          </div>
+
+          <div className="os-surface rounded-[22px] p-6 xl:col-span-7">
+            <div className="flex items-end justify-between gap-4">
+              <div>
+                <p className="os-eyebrow">Priority queue</p>
+                <h2 className="mt-2 text-xl font-semibold text-zinc-950">次にやる営業仕事</h2>
+              </div>
+              <span className="rounded-full bg-zinc-100 px-3 py-1 text-xs font-semibold text-zinc-600">外部送信OFF</span>
+            </div>
+
+            <div className="mt-5 space-y-3">
+              {queue.items.map((item, index) => {
+                const lead = leadMap.get(item.leadId);
+                const latestReply = lead?.replies[lead.replies.length - 1];
+                const replyDefaults = lead && latestReply
+                  ? defaultReplyDraft(lead.companyName, latestReply.type, lead.outreachDraft?.signature ?? "")
+                  : null;
+                const followUpDefaults = lead ? defaultFollowUpDraft(lead.companyName) : null;
+                return (
+                  <article key={item.leadId} className="rounded-2xl border border-zinc-200 bg-white p-4">
+                    <div className="flex items-start gap-4">
+                      <span className="grid size-9 shrink-0 place-items-center rounded-xl bg-zinc-950 text-sm font-bold text-white">{index + 1}</span>
+                      <div className="min-w-0 flex-1">
+                        <div className="flex flex-wrap items-center justify-between gap-2">
+                          <h3 className="font-semibold text-zinc-950">{item.companyName}</h3>
+                          <span className="rounded-full bg-zinc-100 px-2.5 py-1 text-[11px] font-semibold text-zinc-600">{roleLabels[item.ownerRole] ?? item.ownerRole}</span>
+                        </div>
+                        <p className="mt-2 text-sm font-semibold text-zinc-800">{actionLabels[item.action] ?? item.action}</p>
+                        {lead?.proposalFit && <p className="mt-1 line-clamp-2 text-xs leading-5 text-zinc-500">{lead.proposalFit}</p>}
+                        {lead?.researchNotes && <p className="mt-2 whitespace-pre-wrap text-sm text-zinc-600">調査結果：{lead.researchNotes}</p>}
+                        {lead?.researchAudit && (
+                          <ul className="mt-2 space-y-1 text-xs">
+                            {lead.researchAudit.sources.map((source: string) => (
+                              <li key={source}>
+                                <a href={source} target="_blank" rel="noreferrer" className="break-all font-semibold text-blue-700 underline">
+                                  調査根拠を開く
+                                </a>
+                              </li>
+                            ))}
+                          </ul>
+                        )}
+                        {lead && lead.appointment && (item.action === "PREPARE_APPOINTMENT_NOTICE"
+                          || item.reason === "WAIT_FOR_HUMAN_APPOINTMENT_NOTICE_SEND_RECORD") && (
+                          <section className="mt-4 space-y-3 rounded-xl border border-teal-200 bg-teal-50 p-3 text-xs text-teal-950">
+                            <p className="font-semibold">アポイント確定案内</p>
+                            <p>{formatMeetingSlot(lead.appointment.selectedSlot)}／{lead.appointment.durationMinutes}分</p>
+                            {!lead.appointmentNoticeDraft && (
+                              <form action={reviewAppointmentNotice} className="space-y-2">
+                                <input type="hidden" name="id" value={item.leadId} />
+                                <input type="hidden" name="version" value={versions.get(item.leadId) ?? ""} />
+                                <input type="hidden" name="operation" value="prepare" />
+                                <label className="flex items-start gap-2">
+                                  <input type="checkbox" name="confirmed" value="yes" required />
+                                  確定日時・Web面談URLから案内案を作成します。
+                                </label>
+                                <button className="rounded-lg bg-teal-800 px-3 py-2 font-semibold text-white">確定案内案を作成</button>
+                              </form>
+                            )}
+                            {lead.appointmentNoticeDraft && (
+                              <div className="space-y-2 rounded-lg border border-teal-200 bg-white p-3">
+                                <p className="font-semibold">件名：{lead.appointmentNoticeDraft.subject}</p>
+                                <p className="whitespace-pre-wrap text-sm leading-6">{lead.appointmentNoticeDraft.body}</p>
+                                {lead.appointmentNoticeDraft.signature && (
+                                  <p className="whitespace-pre-wrap border-t border-teal-100 pt-2 text-sm">{lead.appointmentNoticeDraft.signature}</p>
+                                )}
+                              </div>
+                            )}
+                            {lead.appointmentNoticeDraft && !lead.appointmentNoticeApproved && (
+                              <form action={reviewAppointmentNotice} className="space-y-2">
+                                <input type="hidden" name="id" value={item.leadId} />
+                                <input type="hidden" name="version" value={versions.get(item.leadId) ?? ""} />
+                                <input type="hidden" name="operation" value="approve" />
+                                <label className="flex items-start gap-2">
+                                  <input type="checkbox" name="confirmed" value="yes" required />
+                                  確定日時・参加URL・署名を確認しました。
+                                </label>
+                                <button className="rounded-lg border border-teal-400 bg-white px-3 py-2 font-semibold text-teal-950">確定案内を承認</button>
+                              </form>
+                            )}
+                            {lead.appointmentNoticeApproved && !lead.appointmentNoticeRecordedAt && (
+                              <div className="space-y-3 border-t border-teal-200 pt-3">
+                                {lead.meetingOptionsDelivery?.channel === "EMAIL"
+                                  && salesEmailRecipient(lead.contact) && (
+                                  <a href={`/sales/appointment-notice/${lead.id}`} className="inline-flex rounded-lg bg-blue-800 px-3 py-2 font-semibold text-white">
+                                    承認済み未送信の確定案内（.eml）
+                                  </a>
+                                )}
+                                {lead.meetingOptionsDelivery?.channel === "LINE" && (
+                                  <p className="rounded-lg bg-white p-2 text-teal-900">上の承認済み本文をLINEへコピーしてください。</p>
+                                )}
+                                {(lead.meetingOptionsDelivery?.channel === "LINE"
+                                  || Boolean(salesEmailRecipient(lead.contact))) ? (
+                                  <form action={recordAppointmentNoticeDelivery} className="space-y-2">
+                                    <input type="hidden" name="id" value={item.leadId} />
+                                    <input type="hidden" name="version" value={versions.get(item.leadId) ?? ""} />
+                                    <label className="flex items-start gap-2">
+                                      <input type="checkbox" name="confirmed" value="yes" required />
+                                      外部で承認済み確定案内を{lead.meetingOptionsDelivery?.channel === "LINE" ? "LINE送信" : "メール送信"}しました。
+                                    </label>
+                                    <p className="text-[11px] leading-4 text-teal-800">送信処理ではなく、送信済み事実だけを記録します。</p>
+                                    <button className="rounded-lg bg-teal-950 px-3 py-2 font-semibold text-white">確定案内を送信済みとして記録</button>
+                                  </form>
+                                ) : (
+                                  <p className="rounded-lg border border-rose-200 bg-rose-50 p-2 text-rose-800">
+                                    宛先メールを1件に確定できないため、確定案内を停止しました。営業責任者が連絡先を確認してください。
+                                  </p>
+                                )}
+                              </div>
+                            )}
+                          </section>
+                        )}
+                        {lead && lead.appointment && (item.action === "PREPARE_APPOINTMENT_REMINDER"
+                          || item.reason === "WAIT_FOR_HUMAN_APPOINTMENT_REMINDER_SEND_RECORD") && (
+                          <section className="mt-4 space-y-3 rounded-xl border border-sky-200 bg-sky-50 p-3 text-xs text-sky-950">
+                            <p className="font-semibold">アポイント前日案内</p>
+                            <p>{formatMeetingSlot(lead.appointment.selectedSlot)}／{lead.appointment.durationMinutes}分</p>
+                            {!lead.appointmentReminderDraft && (
+                              <form action={reviewAppointmentReminder} className="space-y-2">
+                                <input type="hidden" name="id" value={item.leadId} />
+                                <input type="hidden" name="version" value={versions.get(item.leadId) ?? ""} />
+                                <input type="hidden" name="operation" value="prepare" />
+                                <label className="flex items-start gap-2">
+                                  <input type="checkbox" name="confirmed" value="yes" required />
+                                  面談開始24時間前以内です。確定日時と参加URLから前日案内を作成します。
+                                </label>
+                                <button className="rounded-lg bg-sky-800 px-3 py-2 font-semibold text-white">前日案内を作成</button>
+                              </form>
+                            )}
+                            {lead.appointmentReminderDraft && (
+                              <div className="space-y-2 rounded-lg border border-sky-200 bg-white p-3">
+                                <p className="font-semibold">件名：{lead.appointmentReminderDraft.subject}</p>
+                                <p className="whitespace-pre-wrap text-sm leading-6">{lead.appointmentReminderDraft.body}</p>
+                                {lead.appointmentReminderDraft.signature && (
+                                  <p className="whitespace-pre-wrap border-t border-sky-100 pt-2 text-sm">{lead.appointmentReminderDraft.signature}</p>
+                                )}
+                              </div>
+                            )}
+                            {lead.appointmentReminderDraft && !lead.appointmentReminderApproved && (
+                              <form action={reviewAppointmentReminder} className="space-y-2">
+                                <input type="hidden" name="id" value={item.leadId} />
+                                <input type="hidden" name="version" value={versions.get(item.leadId) ?? ""} />
+                                <input type="hidden" name="operation" value="approve" />
+                                <label className="flex items-start gap-2">
+                                  <input type="checkbox" name="confirmed" value="yes" required />
+                                  面談日時・参加URL・署名を確認しました。
+                                </label>
+                                <button className="rounded-lg border border-sky-400 bg-white px-3 py-2 font-semibold text-sky-950">前日案内を承認</button>
+                              </form>
+                            )}
+                            {lead.appointmentReminderApproved && !lead.appointmentReminderRecordedAt && (
+                              <div className="space-y-3 border-t border-sky-200 pt-3">
+                                {lead.meetingOptionsDelivery?.channel === "EMAIL"
+                                  && salesEmailRecipient(lead.contact) && (
+                                  <a href={`/sales/appointment-reminder/${lead.id}`} className="inline-flex rounded-lg bg-blue-800 px-3 py-2 font-semibold text-white">
+                                    承認済み未送信の前日案内（.eml）
+                                  </a>
+                                )}
+                                {lead.meetingOptionsDelivery?.channel === "LINE" && (
+                                  <p className="rounded-lg bg-white p-2 text-sky-900">上の承認済み本文をLINEへコピーしてください。</p>
+                                )}
+                                {(lead.meetingOptionsDelivery?.channel === "LINE"
+                                  || Boolean(salesEmailRecipient(lead.contact))) ? (
+                                  <form action={recordAppointmentReminderDelivery} className="space-y-2">
+                                    <input type="hidden" name="id" value={item.leadId} />
+                                    <input type="hidden" name="version" value={versions.get(item.leadId) ?? ""} />
+                                    <label className="flex items-start gap-2">
+                                      <input type="checkbox" name="confirmed" value="yes" required />
+                                      外部で承認済み前日案内を{lead.meetingOptionsDelivery?.channel === "LINE" ? "LINE送信" : "メール送信"}しました。
+                                    </label>
+                                    <p className="text-[11px] leading-4 text-sky-800">送信処理ではなく、送信済み事実だけを記録します。</p>
+                                    <button className="rounded-lg bg-sky-950 px-3 py-2 font-semibold text-white">前日案内を送信済みとして記録</button>
+                                  </form>
+                                ) : (
+                                  <p className="rounded-lg border border-rose-200 bg-rose-50 p-2 text-rose-800">
+                                    宛先メールを1件に確定できないため、前日案内を停止しました。営業責任者が連絡先を確認してください。
+                                  </p>
+                                )}
+                              </div>
+                            )}
+                          </section>
+                        )}
+                        {lead && item.action === "RECORD_APPOINTMENT_OUTCOME" && lead.appointment && (
+                          <form action={recordAppointmentOutcome} className="mt-4 space-y-3 rounded-xl border border-violet-200 bg-violet-50 p-3 text-xs text-violet-950">
+                            <input type="hidden" name="id" value={item.leadId} />
+                            <input type="hidden" name="version" value={versions.get(item.leadId) ?? ""} />
+                            <p className="font-semibold">{formatMeetingSlot(lead.appointment.selectedSlot)}の面談結果</p>
+                            <label className="block font-semibold">結果
+                              <select name="result" required defaultValue="FOLLOW_UP" className="mt-1 w-full rounded-lg border border-violet-300 bg-white p-2 text-sm">
+                                <option value="FOLLOW_UP">次回対応</option>
+                                <option value="WON">受注</option>
+                                <option value="LOST">失注</option>
+                                <option value="NO_SHOW">不参加</option>
+                              </select>
+                            </label>
+                            <label className="block font-semibold">面談メモ
+                              <textarea name="notes" required maxLength={2000} rows={4} className="mt-1 w-full rounded-lg border border-violet-300 bg-white p-2 text-sm" />
+                            </label>
+                            <label className="flex items-start gap-2">
+                              <input type="checkbox" name="confirmed" value="yes" required />
+                              面談終了後の結果とメモを確認しました。
+                            </label>
+                            <p className="text-[11px] leading-4 text-violet-800">結果の保存だけを行い、メール・LINE送信やカレンダー変更は行いません。</p>
+                            <button className="rounded-lg bg-violet-800 px-3 py-2 font-semibold text-white">面談結果を記録</button>
+                          </form>
+                        )}
+                        {lead && item.action === "SCHEDULE_POST_MEETING_FOLLOW_UP"
+                          && lead.appointmentOutcome && (
+                          <form action={schedulePostMeetingFollowUp} className="mt-4 space-y-3 rounded-xl border border-sky-200 bg-sky-50 p-3 text-xs text-sky-950">
+                            <input type="hidden" name="id" value={item.leadId} />
+                            <input type="hidden" name="version" value={versions.get(item.leadId) ?? ""} />
+                            <p className="font-semibold">面談結果「次回対応」の具体的なフォローを設定</p>
+                            <label className="block font-semibold">対応内容
+                              <textarea name="action" required maxLength={2000} rows={4} className="mt-1 w-full rounded-lg border border-sky-300 bg-white p-2 text-sm" />
+                            </label>
+                            <div className="grid gap-3 sm:grid-cols-2">
+                              <label className="block font-semibold">期限（日本時間）
+                                <input type="datetime-local" name="dueAt" required className="mt-1 w-full rounded-lg border border-sky-300 bg-white p-2 text-sm" />
+                              </label>
+                              <label className="block font-semibold">担当者
+                                <input name="owner" required maxLength={160} placeholder="営業責任者" className="mt-1 w-full rounded-lg border border-sky-300 bg-white p-2 text-sm" />
+                              </label>
+                            </div>
+                            <label className="flex items-start gap-2">
+                              <input type="checkbox" name="confirmed" value="yes" required />
+                              内容・期限・担当者を確認しました。
+                            </label>
+                            <p className="text-[11px] leading-4 text-sky-800">管理情報の保存だけを行い、メール・LINE・外部AIは実行しません。</p>
+                            <button className="rounded-lg bg-sky-800 px-3 py-2 font-semibold text-white">面談後フォローを設定</button>
+                          </form>
+                        )}
+                        {lead && item.action === "COMPLETE_POST_MEETING_FOLLOW_UP"
+                          && lead.postMeetingFollowUp && (
+                          <form action={completePostMeetingFollowUp} className="mt-4 space-y-3 rounded-xl border border-rose-200 bg-rose-50 p-3 text-xs text-rose-950">
+                            <input type="hidden" name="id" value={item.leadId} />
+                            <input type="hidden" name="version" value={versions.get(item.leadId) ?? ""} />
+                            <p className="font-semibold">期限：{formatMeetingSlot(lead.postMeetingFollowUp.dueAt)}</p>
+                            <p className="whitespace-pre-wrap text-sm">{lead.postMeetingFollowUp.action}</p>
+                            <p>担当：{lead.postMeetingFollowUp.owner}</p>
+                            <label className="flex items-start gap-2">
+                              <input type="checkbox" name="confirmed" value="yes" required />
+                              上記の面談後フォローを実際に完了しました。
+                            </label>
+                            <p className="text-[11px] leading-4 text-rose-800">完了事実の記録だけを行い、外部送信は行いません。</p>
+                            <button className="rounded-lg bg-rose-800 px-3 py-2 font-semibold text-white">完了として記録</button>
+                          </form>
+                        )}
+                        {lead && followUpDefaults && (item.action === "PREPARE_FOLLOW_UP"
+                          || item.reason === "WAIT_FOR_HUMAN_FOLLOW_UP_SEND_RECORD") && (
+                          <section className="mt-4 space-y-3 rounded-xl border border-orange-200 bg-orange-50 p-3 text-xs text-orange-950">
+                            {!lead.followUpApproved && (
+                              <form action={reviewFollowUpDraft} className="space-y-3">
+                                <input type="hidden" name="id" value={item.leadId} />
+                                <input type="hidden" name="version" value={versions.get(item.leadId) ?? ""} />
+                                <input type="hidden" name="operation" value="save" />
+                                <p className="font-semibold">{lead.followUps.length + 1}回目の追客メール案</p>
+                                <label className="block font-semibold">件名
+                                  <input name="subject" required maxLength={160} defaultValue={lead.followUpDraft?.subject ?? followUpDefaults.subject} className="mt-1 w-full rounded-lg border border-orange-300 bg-white p-2 text-sm" />
+                                </label>
+                                <label className="block font-semibold">本文
+                                  <textarea name="body" required maxLength={4000} rows={7} defaultValue={lead.followUpDraft?.body ?? followUpDefaults.body} className="mt-1 w-full rounded-lg border border-orange-300 bg-white p-2 text-sm" />
+                                </label>
+                                <p className="text-[11px] leading-4 text-orange-800">署名は承認済み初回文面から継承します。保存しても送信されません。</p>
+                                <button className="rounded-lg bg-orange-800 px-3 py-2 font-semibold text-white">追客案を保存</button>
+                              </form>
+                            )}
+                            {lead.followUpDraft && !lead.followUpApproved && (
+                              <form action={reviewFollowUpDraft} className="space-y-2 border-t border-orange-200 pt-3">
+                                <input type="hidden" name="id" value={item.leadId} />
+                                <input type="hidden" name="version" value={versions.get(item.leadId) ?? ""} />
+                                <input type="hidden" name="operation" value="approve" />
+                                <p className="font-semibold">保存済み追客案を人間承認</p>
+                                <label className="flex items-start gap-2">
+                                  <input type="checkbox" name="confirmed" value="yes" required />
+                                  件名・本文・継承署名を確認しました。
+                                </label>
+                                <button className="rounded-lg border border-orange-400 bg-white px-3 py-2 font-semibold text-orange-950">追客案を承認</button>
+                              </form>
+                            )}
+                            {lead.followUpApproved && item.reason === "WAIT_FOR_HUMAN_FOLLOW_UP_SEND_RECORD" && (
+                              <div className="space-y-3 border-t border-orange-200 pt-3">
+                                {salesEmailRecipient(lead.contact) && (
+                                  <a href={`/sales/follow-up-email/${lead.id}`} className="inline-flex rounded-lg bg-blue-800 px-3 py-2 font-semibold text-white">
+                                    承認済み未送信の追客メール（.eml）
+                                  </a>
+                                )}
+                                <form action={recordFollowUpDelivery} className="space-y-2">
+                                  <input type="hidden" name="id" value={item.leadId} />
+                                  <input type="hidden" name="version" value={versions.get(item.leadId) ?? ""} />
+                                  <label className="flex items-start gap-2">
+                                    <input type="checkbox" name="confirmed" value="yes" required />
+                                    外部メールソフトで、この承認済み追客メールを送信しました。
+                                  </label>
+                                  <p className="text-[11px] leading-4 text-orange-800">送信処理ではなく、送信済み事実の記録だけを行います。</p>
+                                  <button className="rounded-lg bg-orange-950 px-3 py-2 font-semibold text-white">追客メールを送信済みとして記録</button>
+                                </form>
+                              </div>
+                            )}
+                          </section>
+                        )}
+                        {lead && !lead.optedOut && lead.outreachRecordedAt === null
+                          && lead.replies.length === 0 && lead.followUps.length === 0 && (
+                          <details className="mt-3 rounded-xl border border-zinc-200 bg-zinc-50 p-3">
                             <summary className="cursor-pointer text-sm font-semibold">企業の基本情報を編集</summary>
                             <p className="mt-2 text-xs leading-5 text-zinc-500">
                               初回送信前だけ編集できます。調査結果と下書きは保持し、承認済み文面は再承認待ちに戻します。
