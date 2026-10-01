@@ -1,7 +1,1 @@
-import type { NextConfig } from "next";
-
-const nextConfig: NextConfig = {
-  /* config options here */
-};
-
-export default nextConfig;
+aW1wb3J0IHR5cGUgeyBOZXh0Q29uZmlnIH0gZnJvbSAibmV4dCI7Cgpjb25zdCBuZXh0Q29uZmlnOiBOZXh0Q29uZmlnID0gewogIC8vIFVzZSBOZXh0J3MgVHlwZVNjcmlwdCBBUEkgcGF0aCBkdXJpbmcgYnVpbGRzLiBUaGlzIGtlZXBzIHByb2R1Y3Rpb24gY2hlY2tzCiAgLy8gZGV0ZXJtaW5pc3RpYyBpbiBydW5uZXJzIHdoZXJlIGNoaWxkLXByb2Nlc3Mgc3Rkb3V0IGlzIHVuYXZhaWxhYmxlLgogIGV4cGVyaW1lbnRhbDogewogICAgdXNlVHlwZVNjcmlwdENsaTogZmFsc2UsCiAgfSwKfTsKCmV4cG9ydCBkZWZhdWx0IG5leHRDb25maWc7Cg==
