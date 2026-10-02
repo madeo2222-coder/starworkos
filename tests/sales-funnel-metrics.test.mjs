@@ -52,6 +52,31 @@ test("builds the registered-to-appointment funnel and conversion rates", () => {
   assert.equal(metrics.rates.appointmentRate, 33.3);
 });
 
+test("excludes leads with forged supplied research evidence from funnel counts", () => {
+  const sent = {
+    researchComplete: true,
+    outreachApproved: true,
+    outreachRecordedAt: "2026-09-20T00:00:00.000Z",
+  };
+  const metrics = buildSalesFunnelMetrics([
+    lead(sent),
+    lead({
+      ...sent,
+      researchNotes: "公開情報を確認済み",
+      researchAudit: {
+        actorId: "researcher-1",
+        completedAt: "invalid",
+        sources: ["https://example.com/company"],
+      },
+    }),
+  ]);
+
+  assert.equal(metrics.counts.registered, 1);
+  assert.equal(metrics.counts.researched, 1);
+  assert.equal(metrics.counts.outreachSent, 1);
+  assert.equal(metrics.counts.invalid, 1);
+});
+
 test("reports audited appointment outcomes and overdue post-meeting work", () => {
   const appointment = {
     researchComplete: true,
