@@ -61,7 +61,7 @@ test("Codex delegation comment names the repository and preserves protected-acti
   assert.match(comment, /madeo2222-coder\/starworkos/);
   assert.match(comment, /Do not merge/);
   assert.match(comment, /human approval/);
-  assert.match(comment, /exact https:\/\/github\.com\/\.\.\.\/pull\/<number> URL/);
+  assert.match(comment, /exact https:\/\/github\.com\/\.\.\.\/pull\/\{number\} URL/);
   assert.match(comment, /report that explicitly instead of claiming a Pull Request was created/);
 });
 
