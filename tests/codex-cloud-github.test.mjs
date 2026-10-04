@@ -4,11 +4,13 @@ import {
   CODEX_GATEWAY_MAX_BODY_BYTES,
   buildCodexDelegationComment,
   buildCodexIssue,
+  buildCodexPublishRetryComment,
   codexDelegationMarker,
   codexIssueContractDigest,
   codexIssueMarker,
   findExistingCodexIssue,
   hasCodexDelegationComment,
+  hasCodexPublishRetryComment,
   isTrustedCodexIssue,
   parseRepository,
   validateCodexGatewayPayload,
@@ -59,6 +61,24 @@ test("Codex delegation comment names the repository and preserves protected-acti
   assert.match(comment, /madeo2222-coder\/starworkos/);
   assert.match(comment, /Do not merge/);
   assert.match(comment, /human approval/);
+  assert.match(comment, /exact https:\/\/github\.com\/\.\.\.\/pull\/\{number\} URL/);
+  assert.match(comment, /report that explicitly instead of claiming a Pull Request was created/);
+});
+
+test("Codex publication retry is deterministic and authenticated", () => {
+  const actor = "gateway-user";
+  const comment = buildCodexPublishRetryComment(payload.job.repository, payload.job.id);
+  assert.match(comment, /@codex/);
+  assert.match(comment, /did not contain a verifiable GitHub Pull Request URL/);
+  assert.match(comment, /Do not merge or deploy/);
+  assert.equal(
+    hasCodexPublishRetryComment([{ body: comment, user: { login: actor } }], payload.job.repository, payload.job.id, actor),
+    true,
+  );
+  assert.equal(
+    hasCodexPublishRetryComment([{ body: comment, user: { login: "attacker" } }], payload.job.repository, payload.job.id, actor),
+    false,
+  );
 });
 
 test("gateway retry helpers trust only the authenticated actor and exact issue contract", () => {

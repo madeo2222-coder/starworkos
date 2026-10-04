@@ -9,7 +9,9 @@ import {
 } from "@/lib/codex-cloud-reconciliation";
 import {
   CODEX_GITHUB_API_VERSION,
+  buildCodexPublishRetryComment,
   codexIssueContractDigest,
+  hasCodexPublishRetryComment,
   parseRepository,
 } from "@/lib/codex-cloud-github";
 import { hasMinimumTokenLength, isAuthorizedDispatchTrigger } from "@/lib/external-agent-dispatch";
@@ -30,12 +32,13 @@ function githubHeaders(token: string) {
   };
 }
 
-async function githubRequest(url: string, token: string) {
+async function githubRequest(url: string, token: string, init: RequestInit = {}) {
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), GITHUB_TIMEOUT_MS);
   try {
     return await fetch(url, {
-      headers: githubHeaders(token),
+      ...init,
+      headers: { ...githubHeaders(token), ...(init.headers ?? {}) },
       signal: controller.signal,
       cache: "no-store",
       redirect: "error",
@@ -133,7 +136,22 @@ export async function POST(request: Request) {
     const summary = summarizeCodexResult(finalComment.body);
     const prReference = extractRepositoryPullRequest(finalComment.body, job.repository);
     if (!prReference) {
-      return NextResponse.json({ ok: true, state: "RUNNING", jobId: job.id, reason: "WAITING_FOR_REVIEWABLE_PULL_REQUEST" }, { status: 202 });
+      if (!hasCodexPublishRetryComment(comments, job.repository, job.id, actor.login)) {
+        const retryBody = buildCodexPublishRetryComment(job.repository, job.id);
+        const retryResponse = await githubRequest(`${repoApi}/issues/${issueNumber}/comments`, githubTokenValue, {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ body: retryBody }),
+        });
+        if (!retryResponse.ok) {
+          return NextResponse.json({ ok: false, error: "RECONCILE_CODEX_PUBLISH_RETRY_FAILED" }, { status: 502 });
+        }
+        const retryComment = await retryResponse.json();
+        if (retryComment?.user?.login !== actor.login || retryComment?.body !== retryBody) {
+          return NextResponse.json({ ok: false, error: "RECONCILE_CODEX_PUBLISH_RETRY_IDENTITY_MISMATCH" }, { status: 502 });
+        }
+      }
+      return NextResponse.json({ ok: true, state: "RUNNING", jobId: job.id, reason: "REQUESTED_CODEX_PR_PUBLICATION" }, { status: 202 });
     }
 
     let branchName: string | null = null;
