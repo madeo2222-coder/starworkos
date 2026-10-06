@@ -1,11 +1,17 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { FormEvent, use, useState } from "react";
 import { createClient } from "@/utils/supabase/client";
+import { getLoginCallbackErrorMessage, getLoginSendErrorMessage } from "@/lib/login-errors";
 
-export default function LoginPage() {
+export default function LoginPage({ searchParams }: {
+  searchParams: Promise<{ error?: string | string[] }>;
+}) {
+  const params = use(searchParams);
   const [email, setEmail] = useState("");
-  const [message, setMessage] = useState("");
+  const [message, setMessage] = useState(() =>
+    getLoginCallbackErrorMessage(typeof params.error === "string" ? params.error : ""),
+  );
   const [isLoading, setIsLoading] = useState(false);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
@@ -17,22 +23,20 @@ export default function LoginPage() {
       const supabase = createClient();
 
       const { error } = await supabase.auth.signInWithOtp({
-        email,
+        email: email.trim(),
         options: {
           emailRedirectTo: `${window.location.origin}/auth/callback`,
         },
       });
 
       if (error) {
-        setMessage(
-          "ログインリンクを送信できませんでした。メールアドレスを確認して、もう一度お試しください。",
-        );
+        setMessage(getLoginSendErrorMessage(error));
         return;
       }
 
-      setMessage("ログイン用リンクをメールへ送信しました。");
+      setMessage("ログイン用リンクをメールへ送信しました。最後に届いたメールのリンクを、このブラウザーで開いてください。");
     } catch {
-      setMessage("予期しないエラーが発生しました。");
+      setMessage("認証サービスへ接続できませんでした。通信状態を確認し、続く場合はこの画面を管理者にお知らせください。");
     } finally {
       setIsLoading(false);
     }
@@ -82,7 +86,7 @@ export default function LoginPage() {
         </form>
 
         {message && (
-          <p className="mt-5 rounded-xl bg-gray-100 px-4 py-3 text-sm text-gray-700">
+          <p role="status" className="mt-5 rounded-xl bg-gray-100 px-4 py-3 text-sm text-gray-700">
             {message}
           </p>
         )}

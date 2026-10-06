@@ -33,7 +33,7 @@ test("login UI does not display raw authentication provider errors", async () =>
   assert.doesNotMatch(source, /setMessage\(`送信に失敗しました：\$\{error\.message\}`\)/);
   assert.match(
     source,
-    /ログインリンクを送信できませんでした。メールアドレスを確認して、もう一度お試しください。/,
+    /getLoginSendErrorMessage\(error\)/,
   );
 });
 
