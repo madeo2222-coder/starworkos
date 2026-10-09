@@ -306,7 +306,7 @@ test("dispatch route is fail-closed while shared execution stays idempotent and 
   const execution = await readFile(new URL("../lib/external-agent-dispatch-execution.ts", import.meta.url), "utf8");
   assert.match(route, /isAuthorizedDispatchTrigger/);
   assert.match(route, /DISPATCH_AUTHENTICATION_REQUIRED/);
-  assert.ok(route.indexOf("DISPATCH_AUTHENTICATION_REQUIRED") < route.indexOf("dispatchExternalAgentJob"));
+  assert.ok(route.indexOf("DISPATCH_AUTHENTICATION_REQUIRED") < route.indexOf("const result = await dispatchExternalAgentJob(jobId)"));
   assert.match(execution, /if \(!config\.ok\)/);
   assert.match(execution, /config\.gatewayToken/);
   assert.match(execution, /idempotency-key/);
