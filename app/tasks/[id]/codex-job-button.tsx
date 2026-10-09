@@ -7,7 +7,7 @@ type Feedback =
   | { kind: "idle"; message: "" }
   | { kind: "success" | "error"; message: string };
 
-type CreateJobResponse = {
+type JobResponse = {
   ok?: boolean;
   error?: string;
   job?: {
@@ -22,6 +22,10 @@ const ERROR_MESSAGES: Record<string, string> = {
     "このプロジェクトからCodexへ渡す許可設定がまだ完了していません。",
   EXTERNAL_AGENT_JOB_RESOURCE_NOT_FOUND:
     "Taskまたは担当AIを確認できませんでした。",
+  EXTERNAL_AGENT_JOB_NOT_FOUND:
+    "登録したCodexジョブを確認できませんでした。",
+  EXTERNAL_AGENT_JOB_NOT_QUEUED:
+    "このCodexジョブはすでに実行開始済みです。",
   EXTERNAL_AGENT_JOB_NOT_ELIGIBLE:
     "このTaskの現在の状態ではCodexへ依頼できません。",
   EXTERNAL_AGENT_JOB_IDEMPOTENCY_CONFLICT:
@@ -32,6 +36,18 @@ const ERROR_MESSAGES: Record<string, string> = {
     "Codexジョブを登録できませんでした。接続設定を確認してください。",
   EXTERNAL_AGENT_JOB_PAYLOAD_TOO_LARGE:
     "依頼内容が大きすぎます。",
+  EXTERNAL_AGENT_DISPATCH_DISABLED:
+    "Codex実行はまだ有効化されていません。依頼はキューに保存済みです。",
+  EXTERNAL_AGENT_DISPATCH_NOT_CONFIGURED:
+    "Codex接続設定が不足しています。依頼はキューに保存済みです。",
+  EXTERNAL_AGENT_GATEWAY_REJECTED:
+    "Codex側が実行開始を受け付けませんでした。依頼はキューに保存済みです。",
+  EXTERNAL_AGENT_GATEWAY_INVALID_RESPONSE:
+    "Codex側の応答を確認できませんでした。依頼はキューに保存済みです。",
+  EXTERNAL_AGENT_GATEWAY_UNAVAILABLE:
+    "Codexへ接続できませんでした。依頼はキューに保存済みです。",
+  EXTERNAL_AGENT_JOB_DISPATCH_STATE_REJECTED:
+    "Codexは開始しましたが、実行状態の保存に失敗しました。管理者確認が必要です。",
 };
 
 export default function CodexJobButton({
@@ -48,12 +64,12 @@ export default function CodexJobButton({
     message: "",
   });
 
-  async function createJob() {
+  async function createAndStartJob() {
     setSubmitting(true);
     setFeedback({ kind: "idle", message: "" });
 
     try {
-      const response = await fetch("/api/external-agent-jobs", {
+      const createResponse = await fetch("/api/external-agent-jobs", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -69,15 +85,17 @@ export default function CodexJobButton({
         }),
       });
 
-      const payload = (await response.json().catch(() => ({}))) as CreateJobResponse;
+      const createPayload = (await createResponse
+        .json()
+        .catch(() => ({}))) as JobResponse;
 
-      if (!response.ok || !payload.ok) {
-        if (response.status === 401) {
+      if (!createResponse.ok || !createPayload.ok) {
+        if (createResponse.status === 401) {
           router.push("/login");
           return;
         }
 
-        const code = payload.error ?? "";
+        const code = createPayload.error ?? "";
         setFeedback({
           kind: "error",
           message:
@@ -87,17 +105,53 @@ export default function CodexJobButton({
         return;
       }
 
+      const jobId = createPayload.job?.id;
+      if (!jobId) {
+        setFeedback({
+          kind: "error",
+          message:
+            "Codexジョブは登録されましたが、実行開始用のIDを取得できませんでした。",
+        });
+        router.refresh();
+        return;
+      }
+
+      const startResponse = await fetch(
+        `/api/external-agent-jobs/${encodeURIComponent(jobId)}/start`,
+        { method: "POST" },
+      );
+      const startPayload = (await startResponse
+        .json()
+        .catch(() => ({}))) as JobResponse;
+
+      if (!startResponse.ok || !startPayload.ok) {
+        if (startResponse.status === 401) {
+          router.push("/login");
+          return;
+        }
+
+        const code = startPayload.error ?? "";
+        setFeedback({
+          kind: "error",
+          message:
+            ERROR_MESSAGES[code] ??
+            "依頼はキューに保存済みですが、Codexの実行開始に失敗しました。",
+        });
+        router.refresh();
+        return;
+      }
+
       setFeedback({
         kind: "success",
         message:
-          "Codex連携キューへ登録しました。自動実行が始まると状態が「実行中」に変わります。",
+          "Codexへ開発依頼を渡し、実行を開始しました。状態はこの画面で確認できます。",
       });
       router.refresh();
     } catch {
       setFeedback({
         kind: "error",
         message:
-          "Codexジョブの登録通信に失敗しました。接続を確認してもう一度お試しください。",
+          "Codexとの通信に失敗しました。保存済み状態を画面更新後に確認してください。",
       });
     } finally {
       setSubmitting(false);
@@ -108,11 +162,11 @@ export default function CodexJobButton({
     <div>
       <button
         type="button"
-        onClick={createJob}
+        onClick={createAndStartJob}
         disabled={submitting}
         className="rounded-xl bg-violet-700 px-6 py-3 text-sm font-bold text-white hover:bg-violet-800 disabled:cursor-not-allowed disabled:opacity-60"
       >
-        {submitting ? "Codex連携キューへ登録中…" : "Codexへ開発依頼を登録"}
+        {submitting ? "Codexへ引継ぎ中…" : "Codexへ開発依頼を開始"}
       </button>
 
       {feedback.kind !== "idle" && (
