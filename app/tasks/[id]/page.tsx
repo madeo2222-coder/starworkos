@@ -9,6 +9,7 @@ import {
 import { createClient } from "@/utils/supabase/server";
 import { createServiceClient } from "@/utils/supabase/service";
 import CodexJobButton from "./codex-job-button";
+import CodexResultButton from "./codex-result-button";
 
 type Task = {
   id: string;
@@ -619,6 +620,12 @@ export default async function TaskDetailPage({
                   taskId={task.id}
                   aiEmployeeId={task.assigned_ai_employee_id}
                 />
+              </div>
+            )}
+
+            {externalJob?.status === "RUNNING" && (
+              <div className="mt-5">
+                <CodexResultButton jobId={externalJob.id} />
               </div>
             )}
           </section>

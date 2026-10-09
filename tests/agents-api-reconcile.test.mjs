@@ -39,6 +39,30 @@ test("reconciler publishes only validated artifacts and stops at human approval"
   assert.doesNotMatch(route, /merge_pull_request|production_deploy|apply_migration/i);
 });
 
+test("authenticated Task result collection rechecks visibility and authorization before using the internal reconciler", async () => {
+  const route = await readFile(new URL("../app/api/external-agent-jobs/[jobId]/reconcile/route.ts", import.meta.url), "utf8");
+  assert.match(route, /supabase\.auth\.getUser\(\)/);
+  assert.match(route, /\.from\("tasks"\)/);
+  assert.match(route, /external_agent_job_authorizations/);
+  assert.match(route, /\.eq\("user_id", user\.id\)/);
+  assert.match(route, /\.eq\("project_id", task\.project_id\)/);
+  assert.match(route, /\.eq\("repository", job\.repository\)/);
+  assert.match(route, /\.eq\("enabled", true\)/);
+  assert.match(route, /EXTERNAL_AGENT_DISPATCH_TRIGGER_TOKEN/);
+  assert.match(route, /reconcileInternalJob\(internalRequest\)/);
+  assert.ok(route.indexOf("external_agent_job_authorizations") < route.indexOf("reconcileInternalJob(internalRequest)"));
+});
+
+test("Task Center exposes result collection only for a running Codex job", async () => {
+  const page = await readFile(new URL("../app/tasks/[id]/page.tsx", import.meta.url), "utf8");
+  const button = await readFile(new URL("../app/tasks/[id]/codex-result-button.tsx", import.meta.url), "utf8");
+  assert.match(page, /externalJob\?\.status === "RUNNING"/);
+  assert.match(page, /CodexResultButton/);
+  assert.match(button, /Codexの成果を取得・確認/);
+  assert.match(button, /\/reconcile/);
+  assert.doesNotMatch(button, /EXTERNAL_AGENT_DISPATCH_TRIGGER_TOKEN/);
+});
+
 test("server-side publisher creates a non-production PR and never merges it", async () => {
   const publisher = await readFile(new URL("../lib/agents-api-github-publisher.ts", import.meta.url), "utf8");
   assert.match(publisher, /agents: apply job/);
