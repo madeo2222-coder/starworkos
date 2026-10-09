@@ -7,6 +7,8 @@ import {
   isValidUuid,
 } from "@/lib/workflow-creation";
 import { createClient } from "@/utils/supabase/server";
+import { createServiceClient } from "@/utils/supabase/service";
+import CodexJobButton from "./codex-job-button";
 
 type Task = {
   id: string;
@@ -33,6 +35,39 @@ type Workflow = {
   status: string;
   current_step_order: number | null;
 };
+
+type ExternalAgentJob = {
+  id: string;
+  status: string;
+  provider: string;
+  repository: string;
+  branch_name: string | null;
+  pull_request_url: string | null;
+  result_summary: string | null;
+  error_code: string | null;
+  error_summary: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
+function getExternalJobStatusLabel(status: string) {
+  switch (status) {
+    case "QUEUED":
+      return "Codex連携キューに登録済み";
+    case "RUNNING":
+      return "Codexで実行中";
+    case "WAITING_HUMAN_APPROVAL":
+      return "人間の確認待ち";
+    case "SUCCEEDED":
+      return "完了";
+    case "FAILED":
+      return "失敗";
+    case "CANCELLED":
+      return "キャンセル";
+    default:
+      return status;
+  }
+}
 
 function getStatusLabel(status: string) {
   switch (status) {
@@ -356,6 +391,48 @@ export default async function TaskDetailPage({
 
   const workflows: Workflow[] = workflowData ?? [];
 
+  let externalJob: ExternalAgentJob | null = null;
+  let externalJobStatusUnavailable = false;
+
+  try {
+    const service = createServiceClient();
+    const { data: jobData, error: jobError } = await service
+      .from("external_agent_jobs")
+      .select(`
+        id,
+        status,
+        provider,
+        repository,
+        branch_name,
+        pull_request_url,
+        result_summary,
+        error_code,
+        error_summary,
+        created_at,
+        updated_at
+      `)
+      .eq("task_id", task.id)
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+
+    if (jobError) {
+      externalJobStatusUnavailable = true;
+    } else {
+      externalJob = jobData as ExternalAgentJob | null;
+    }
+  } catch {
+    externalJobStatusUnavailable = true;
+  }
+
+  const canCreateExternalJob =
+    task.assigned_ai_employee_id &&
+    task.status !== "COMPLETED" &&
+    task.status !== "CANCELLED" &&
+    (!externalJob ||
+      externalJob.status === "FAILED" ||
+      externalJob.status === "CANCELLED");
+
   return (
     <main className="min-h-screen bg-gray-100 px-4 py-6 md:px-8">
       <div className="mx-auto max-w-5xl">
@@ -443,6 +520,107 @@ export default async function TaskDetailPage({
                 CEO Inboxを確認 →
               </Link>
             </div>
+          </section>
+        )}
+
+        {task.status !== "COMPLETED" && task.status !== "CANCELLED" && (
+          <section className="mt-6 rounded-2xl border border-violet-200 bg-violet-50 p-6">
+            <div className="flex flex-wrap items-start justify-between gap-4">
+              <div>
+                <h2 className="text-lg font-bold text-violet-950">
+                  Codex Cloud 開発引継ぎ
+                </h2>
+                <p className="mt-2 text-sm leading-6 text-violet-900">
+                  このTaskを外部開発ジョブとして登録し、既存のCodex連携へ引き継ぎます。
+                  mainへの反映や本番デプロイは自動承認しません。
+                </p>
+              </div>
+
+              {externalJob && (
+                <span className="rounded-full bg-white px-3 py-1 text-xs font-bold text-violet-900 shadow-sm">
+                  {getExternalJobStatusLabel(externalJob.status)}
+                </span>
+              )}
+            </div>
+
+            {externalJob ? (
+              <div className="mt-5 rounded-xl bg-white p-5 shadow-sm">
+                <dl className="grid gap-3 text-sm sm:grid-cols-2">
+                  <div>
+                    <dt className="font-semibold text-gray-500">状態</dt>
+                    <dd className="mt-1 font-bold text-gray-900">
+                      {getExternalJobStatusLabel(externalJob.status)}
+                    </dd>
+                  </div>
+                  <div>
+                    <dt className="font-semibold text-gray-500">対象</dt>
+                    <dd className="mt-1 font-bold text-gray-900">
+                      {externalJob.repository}
+                    </dd>
+                  </div>
+                </dl>
+
+                {externalJob.result_summary && (
+                  <p className="mt-4 whitespace-pre-wrap text-sm leading-6 text-gray-700">
+                    {externalJob.result_summary}
+                  </p>
+                )}
+
+                {externalJob.error_summary && (
+                  <p className="mt-4 rounded-lg bg-red-50 p-3 text-sm leading-6 text-red-800">
+                    {externalJob.error_summary}
+                  </p>
+                )}
+
+                <div className="mt-4 flex flex-wrap gap-4">
+                  {externalJob.pull_request_url && (
+                    <a
+                      href={externalJob.pull_request_url}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="text-sm font-bold text-violet-900 underline"
+                    >
+                      GitHub PRを確認 →
+                    </a>
+                  )}
+
+                  {externalJob.status === "WAITING_HUMAN_APPROVAL" && (
+                    <Link
+                      href="/ceo-inbox"
+                      className="text-sm font-bold text-violet-900 underline"
+                    >
+                      CEO Inboxで確認 →
+                    </Link>
+                  )}
+                </div>
+              </div>
+            ) : (
+              <p className="mt-4 text-sm font-semibold text-violet-900">
+                Codexへの開発依頼はまだ登録されていません。
+              </p>
+            )}
+
+            {externalJobStatusUnavailable && (
+              <p className="mt-4 rounded-lg bg-amber-100 p-3 text-sm leading-6 text-amber-900">
+                Codexジョブの保存状態を取得できませんでした。
+                接続設定を確認しつつ、Task自体の操作は続けられます。
+              </p>
+            )}
+
+            {!task.assigned_ai_employee_id && (
+              <p className="mt-4 rounded-lg bg-white p-3 text-sm leading-6 text-gray-700">
+                Codexへ渡すには、このTaskへ担当AIを割り当ててください。
+              </p>
+            )}
+
+            {canCreateExternalJob && task.assigned_ai_employee_id && (
+              <div className="mt-5">
+                <CodexJobButton
+                  taskId={task.id}
+                  aiEmployeeId={task.assigned_ai_employee_id}
+                />
+              </div>
+            )}
           </section>
         )}
 
