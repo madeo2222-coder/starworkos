@@ -1,79 +1,62 @@
 import { NextResponse } from "next/server";
-import { DISPATCH_MAX_BODY_BYTES, dispatchConfig, dispatchPayload, hasMinimumTokenLength, isAuthorizedDispatchTrigger, parseDispatchResponse, readBoundedJsonResponse, validateDispatchRequest } from "@/lib/external-agent-dispatch";
+import {
+  DISPATCH_MAX_BODY_BYTES,
+  hasMinimumTokenLength,
+  isAuthorizedDispatchTrigger,
+  validateDispatchRequest,
+} from "@/lib/external-agent-dispatch";
+import { dispatchExternalAgentJob } from "@/lib/external-agent-dispatch-execution";
 import { readJsonBodyWithLimit } from "@/lib/request-body";
-import { createServiceClient } from "@/utils/supabase/service";
 
 export const runtime = "nodejs";
 
-const DISPATCH_TIMEOUT_MS = 10_000;
-
 export async function POST(request: Request) {
-  const suppliedToken = request.headers.get("authorization")?.replace(/^Bearer\s+/i, "");
+  const suppliedToken = request.headers
+    .get("authorization")
+    ?.replace(/^Bearer\s+/i, "");
   const triggerToken = process.env.EXTERNAL_AGENT_DISPATCH_TRIGGER_TOKEN;
-  if (!hasMinimumTokenLength(triggerToken) || !isAuthorizedDispatchTrigger(process.env, suppliedToken)) {
-    return NextResponse.json({ ok: false, error: "DISPATCH_AUTHENTICATION_REQUIRED" }, { status: 401 });
+
+  if (
+    !hasMinimumTokenLength(triggerToken) ||
+    !isAuthorizedDispatchTrigger(process.env, suppliedToken)
+  ) {
+    return NextResponse.json(
+      { ok: false, error: "DISPATCH_AUTHENTICATION_REQUIRED" },
+      { status: 401 },
+    );
   }
 
-  const config = dispatchConfig();
-  if (!config.ok) return NextResponse.json({ ok: false, error: config.error }, { status: 503 });
-
-  const parsedBody = await readJsonBodyWithLimit(request, DISPATCH_MAX_BODY_BYTES);
-  if (!parsedBody.ok) return NextResponse.json({ ok: false, error: "DISPATCH_PAYLOAD_TOO_LARGE" }, { status: 413 });
-  const body = parsedBody.value;
-  const requestError = validateDispatchRequest(body);
-  if (requestError) return NextResponse.json({ ok: false, error: requestError }, { status: 400 });
-  const jobId = (body as { jobId: string }).jobId;
-
-  const supabase = createServiceClient();
-  const { data: job, error: jobError } = await supabase
-    .from("external_agent_jobs")
-    .select("id, task_id, ai_employee_id, provider, capability, repository, base_branch, requested_action, status, task_snapshot")
-    .eq("id", jobId)
-    .maybeSingle();
-  if (jobError) return NextResponse.json({ ok: false, error: "EXTERNAL_AGENT_JOB_LOOKUP_FAILED" }, { status: 500 });
-  if (!job) return NextResponse.json({ ok: false, error: "EXTERNAL_AGENT_JOB_NOT_FOUND" }, { status: 404 });
-  if (job.status !== "QUEUED") return NextResponse.json({ ok: false, error: "EXTERNAL_AGENT_JOB_NOT_QUEUED" }, { status: 409 });
-
-  const snapshot = job.task_snapshot;
-  if (!snapshot || typeof snapshot !== "object" || Array.isArray(snapshot)) {
-    return NextResponse.json({ ok: false, error: "EXTERNAL_AGENT_TASK_SNAPSHOT_MISSING" }, { status: 409 });
-  }
-  const task = snapshot as Record<string, unknown>;
-  if (typeof task.title !== "string" || !task.title.trim()) {
-    return NextResponse.json({ ok: false, error: "EXTERNAL_AGENT_TASK_SNAPSHOT_INVALID" }, { status: 409 });
+  const parsedBody = await readJsonBodyWithLimit(
+    request,
+    DISPATCH_MAX_BODY_BYTES,
+  );
+  if (!parsedBody.ok) {
+    return NextResponse.json(
+      { ok: false, error: "DISPATCH_PAYLOAD_TOO_LARGE" },
+      { status: 413 },
+    );
   }
 
-  const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), DISPATCH_TIMEOUT_MS);
-  let dispatchResult: ReturnType<typeof parseDispatchResponse>;
-  try {
-    const gatewayResponse = await fetch(config.url, {
-      method: "POST",
-      headers: {
-        authorization: `Bearer ${config.gatewayToken}`,
-        "content-type": "application/json",
-        "idempotency-key": `external-agent-job:${job.id}`,
-      },
-      body: JSON.stringify(dispatchPayload(job, task, config.callbackUrl)),
-      signal: controller.signal,
-      cache: "no-store",
-      redirect: "error",
-    });
-    if (!gatewayResponse.ok) return NextResponse.json({ ok: false, error: "EXTERNAL_AGENT_GATEWAY_REJECTED" }, { status: 502 });
-
-    dispatchResult = parseDispatchResponse(await readBoundedJsonResponse(gatewayResponse));
-    if (!dispatchResult) return NextResponse.json({ ok: false, error: "EXTERNAL_AGENT_GATEWAY_INVALID_RESPONSE" }, { status: 502 });
-  } catch {
-    return NextResponse.json({ ok: false, error: "EXTERNAL_AGENT_GATEWAY_UNAVAILABLE" }, { status: 502 });
-  } finally {
-    clearTimeout(timeout);
+  const requestError = validateDispatchRequest(parsedBody.value);
+  if (requestError) {
+    return NextResponse.json(
+      { ok: false, error: requestError },
+      { status: 400 },
+    );
   }
 
-  const { data, error } = await supabase.rpc("update_external_agent_job_result", {
-    p_job_id: job.id,
-    p_status: "RUNNING",
-    p_external_job_id: dispatchResult.externalJobId,
-  });
-  if (error) return NextResponse.json({ ok: false, error: "EXTERNAL_AGENT_JOB_DISPATCH_STATE_REJECTED" }, { status: 409 });
-  return NextResponse.json({ ok: true, job: data }, { status: 202 });
+  const jobId = (parsedBody.value as { jobId: string }).jobId;
+  const result = await dispatchExternalAgentJob(jobId);
+
+  if (!result.ok) {
+    return NextResponse.json(
+      { ok: false, error: result.error },
+      { status: result.status },
+    );
+  }
+
+  return NextResponse.json(
+    { ok: true, job: result.job },
+    { status: result.status },
+  );
 }

@@ -285,11 +285,11 @@ test("internal dispatch authentication uses a constant-time equality check", () 
 });
 
 test("dispatch requires an immutable task snapshot instead of re-reading Tasks at send time", async () => {
-  const route = await readFile(new URL("../app/api/internal/external-agent-jobs/dispatch/route.ts", import.meta.url), "utf8");
-  assert.match(route, /task_snapshot/);
-  assert.match(route, /EXTERNAL_AGENT_TASK_SNAPSHOT_MISSING/);
-  assert.match(route, /EXTERNAL_AGENT_TASK_SNAPSHOT_INVALID/);
-  assert.doesNotMatch(route, /\.from\("tasks"\)/);
+  const execution = await readFile(new URL("../lib/external-agent-dispatch-execution.ts", import.meta.url), "utf8");
+  assert.match(execution, /task_snapshot/);
+  assert.match(execution, /EXTERNAL_AGENT_TASK_SNAPSHOT_MISSING/);
+  assert.match(execution, /EXTERNAL_AGENT_TASK_SNAPSHOT_INVALID/);
+  assert.doesNotMatch(execution, /\.from\("tasks"\)/);
 });
 
 test("task snapshot migration captures new source Tasks without mutating guarded legacy jobs", async () => {
@@ -301,20 +301,21 @@ test("task snapshot migration captures new source Tasks without mutating guarded
   assert.match(snapshotMigration, /jsonb_typeof\(task_snapshot\) = 'object'/);
 });
 
-test("dispatch route is fail-closed, idempotent at the gateway, and never returns raw errors", async () => {
+test("dispatch route is fail-closed while shared execution stays idempotent and bounded", async () => {
   const route = await readFile(new URL("../app/api/internal/external-agent-jobs/dispatch/route.ts", import.meta.url), "utf8");
+  const execution = await readFile(new URL("../lib/external-agent-dispatch-execution.ts", import.meta.url), "utf8");
   assert.match(route, /isAuthorizedDispatchTrigger/);
   assert.match(route, /DISPATCH_AUTHENTICATION_REQUIRED/);
-  assert.match(route, /if \(!config\.ok\)/);
-  assert.ok(route.indexOf("DISPATCH_AUTHENTICATION_REQUIRED") < route.indexOf("const config = dispatchConfig()"));
-  assert.match(route, /config\.gatewayToken/);
-  assert.match(route, /idempotency-key/);
-  assert.match(route, /external-agent-job:\$\{job\.id\}/);
-  assert.match(route, /redirect: "error"/);
-  assert.match(route, /readBoundedJsonResponse\(gatewayResponse\)/);
-  assert.ok(route.indexOf("readBoundedJsonResponse(gatewayResponse)") < route.indexOf("clearTimeout(timeout)"));
-  assert.match(route, /p_status: "RUNNING"/);
+  assert.ok(route.indexOf("DISPATCH_AUTHENTICATION_REQUIRED") < route.indexOf("const result = await dispatchExternalAgentJob(jobId)"));
+  assert.match(execution, /if \(!config\.ok\)/);
+  assert.match(execution, /config\.gatewayToken/);
+  assert.match(execution, /idempotency-key/);
+  assert.match(execution, /external-agent-job:\$\{job\.id\}/);
+  assert.match(execution, /redirect: "error"/);
+  assert.match(execution, /readBoundedJsonResponse\(gatewayResponse\)/);
+  assert.match(execution, /p_status: "RUNNING"/);
   assert.doesNotMatch(route, /error: .*\.message/);
+  assert.doesNotMatch(execution, /error: .*\.message/);
 });
 
 test("dispatch rejects oversized payloads before decoding JSON or contacting the gateway", async () => {
@@ -324,6 +325,31 @@ test("dispatch rejects oversized payloads before decoding JSON or contacting the
   assert.match(route, /DISPATCH_PAYLOAD_TOO_LARGE/);
   assert.doesNotMatch(route, /request\.text\(\)/);
   assert.ok(route.indexOf("DISPATCH_AUTHENTICATION_REQUIRED") < route.indexOf("const parsedBody"));
+});
+
+test("authenticated user start route rechecks task visibility and repository authorization before dispatch", async () => {
+  const route = await readFile(new URL("../app/api/external-agent-jobs/[jobId]/start/route.ts", import.meta.url), "utf8");
+  assert.match(route, /supabase\.auth\.getUser\(\)/);
+  assert.match(route, /\.from\("tasks"\)/);
+  assert.match(route, /external_agent_job_authorizations/);
+  assert.match(route, /\.eq\("user_id", user\.id\)/);
+  assert.match(route, /\.eq\("project_id", task\.project_id\)/);
+  assert.match(route, /\.eq\("repository", job\.repository\)/);
+  assert.match(route, /\.eq\("enabled", true\)/);
+  assert.match(route, /job\.status !== "QUEUED"/);
+  assert.ok(route.indexOf("supabase.auth.getUser()") < route.indexOf("dispatchExternalAgentJob(jobId)"));
+  assert.ok(route.indexOf("external_agent_job_authorizations") < route.indexOf("dispatchExternalAgentJob(jobId)"));
+  assert.doesNotMatch(route, /EXTERNAL_AGENT_DISPATCH_TRIGGER_TOKEN/);
+});
+
+test("Task Codex button creates a job then explicitly starts it without exposing dispatch secrets", async () => {
+  const component = await readFile(new URL("../app/tasks/[id]/codex-job-button.tsx", import.meta.url), "utf8");
+  assert.match(component, /\/api\/external-agent-jobs/);
+  assert.match(component, /\/start/);
+  assert.match(component, /Codexへ開発依頼を開始/);
+  assert.match(component, /repository: "madeo2222-coder\/starworkos"/);
+  assert.doesNotMatch(component, /EXTERNAL_AGENT_DISPATCH_TRIGGER_TOKEN/);
+  assert.doesNotMatch(component, /自動実行が始まる/);
 });
 
 test("callback rejects oversized payloads before signature or database work", async () => {
